@@ -154,12 +154,12 @@ h4 { font-size: clamp(1.1rem, 2vw, 1.35rem); }
 p { margin-bottom: 1rem; }
 p:last-child { margin-bottom: 0; }
 
-a {
+a:not([class]) {
   color: var(--color-deep-blue);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
-a:hover { color: var(--color-teal); }
+a:not([class]):hover { color: var(--color-teal); }
 
 img, video {
   max-width: 100%;
@@ -494,6 +494,79 @@ img, video {
 
   .admin-main {
     margin-left: 0;
+  }
+}
+
+/* ─── Global Page Container (guaranteed centering) ───────── */
+.page-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .page-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* ─── Home Page Grid ─────────────────────────────────────── */
+.home-main-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+@media (min-width: 1024px) {
+  .home-main-grid {
+    grid-template-columns: 3fr 1fr;
+  }
+
+  .home-sidebar {
+    display: block;
+  }
+}
+
+@media (max-width: 1023px) {
+  .home-sidebar {
+    display: none;
+  }
+}
+
+/* ─── Section spacing ─────────────────────────────────────── */
+.pbvm-section {
+  width: 100%;
+  padding: 5rem 0;
+}
+
+.pbvm-section-sm {
+  width: 100%;
+  padding: 3.5rem 0;
+}
+
+@media (max-width: 768px) {
+  .pbvm-section {
+    padding: 3rem 0;
+  }
+  .pbvm-section-sm {
+    padding: 2rem 0;
+  }
+}
+
+/* ─── About Preview Two-Col Grid ────────────────────────── */
+.about-preview-grid {
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+@media (min-width: 1024px) {
+  .about-preview-grid {
+    grid-template-columns: 1.2fr 0.8fr !important;
+    gap: 4rem !important;
   }
 }
 

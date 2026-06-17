@@ -71,7 +71,7 @@ export default function RootLayout({
       lang="en"
       className={cn("h-full", "antialiased", poppins.variable, inter.variable, notoSansBengali.variable, "font-sans", geist.variable)}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col overflow-x-hidden w-full">
         <LanguageProvider>
           {children}
           <Toaster richColors closeButton position="top-right" />

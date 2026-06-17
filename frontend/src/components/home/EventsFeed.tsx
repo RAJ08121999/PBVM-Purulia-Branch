@@ -78,38 +78,92 @@ export const EventsFeed = () => {
         {events.map((evt) => (
           <div
             key={evt.id}
-            className="flex flex-col justify-between p-5 rounded-2xl bg-white border border-zinc-100 hover:border-zinc-200 dark:bg-black dark:border-zinc-900 dark:hover:border-zinc-800 transition-all hover:shadow-md hover:-translate-y-0.5"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              padding: "1.25rem",
+              borderRadius: "16px",
+              background: "#ffffff",
+              border: "1px solid #E2E8F0",
+              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)",
+              boxSizing: "border-box",
+              width: "100%",
+            }}
           >
-            <div className="flex flex-col gap-4">
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               {/* Date Box / Calendar styling */}
-              <div className="flex items-center gap-3">
-                <div className="flex flex-col items-center justify-center h-12 w-12 rounded-xl bg-teal-50 text-teal-600 dark:bg-teal-950/20 dark:text-teal-400 shrink-0 font-sans border border-teal-100 dark:border-teal-900/50">
-                  <span className="text-base font-black leading-none">{getCalendarDay(evt.date)}</span>
-                  <span className="text-xxs font-bold uppercase tracking-wider mt-0.5">{getCalendarMonth(evt.date)}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <div style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "3rem",
+                  width: "3rem",
+                  borderRadius: "12px",
+                  background: "#F0FDFA",
+                  color: "#0D9488",
+                  flexShrink: 0,
+                  border: "1px solid #CCFBF1",
+                }}>
+                  <span style={{ fontSize: "1.05rem", fontWeight: 900, lineHeight: 1 }}>{getCalendarDay(evt.date)}</span>
+                  <span style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginTop: "0.125rem" }}>{getCalendarMonth(evt.date)}</span>
                 </div>
-                <div className="flex flex-col">
-                  <span className="font-heading text-sm font-black text-zinc-900 dark:text-white leading-tight line-clamp-1">
+                <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
+                  <h4 style={{
+                    fontFamily: "var(--font-heading)",
+                    fontSize: "0.95rem",
+                    fontWeight: 600,
+                    color: "#1E293B",
+                    lineHeight: 1.35,
+                    margin: 0,
+                  }}>
                     {t(evt.titleEn, evt.titleBn)}
-                  </span>
-                  <div className="flex items-center gap-1 mt-0.5 font-body text-xs text-zinc-400 dark:text-zinc-500 font-semibold">
-                    <MapPin className="h-3 w-3 text-zinc-400" />
-                    <span className="line-clamp-1">{t(evt.venueEn, evt.venueBn)}</span>
+                  </h4>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.25rem", marginTop: "0.25rem", fontFamily: "var(--font-body)", fontSize: "0.75rem", color: "#64748B", fontWeight: 600 }}>
+                    <MapPin style={{ width: "0.75rem", height: "0.75rem", color: "#64748B" }} />
+                    <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "160px" }}>{t(evt.venueEn, evt.venueBn)}</span>
                   </div>
                 </div>
               </div>
 
               {/* Description */}
-              <p className="font-body text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed min-h-[48px]">
+              <p style={{
+                fontFamily: "var(--font-body)",
+                fontSize: "0.8rem",
+                color: "#64748B",
+                lineHeight: 1.6,
+                minHeight: "3rem",
+                margin: 0,
+                textAlign: "left",
+              }}>
                 {t(evt.descEn, evt.descBn)}
               </p>
             </div>
 
             {/* Read more Link */}
-            <div className="mt-6 pt-4 border-t border-zinc-50 dark:border-zinc-900/50 flex justify-between items-center">
-              <Link href={`/events/${evt.id}`}>
-                <span className="font-body text-xs font-bold text-teal-600 dark:text-teal-400 hover:text-teal-700 hover:underline cursor-pointer flex items-center gap-1">
+            <div style={{
+              marginTop: "1.25rem",
+              paddingTop: "1rem",
+              borderTop: "1px solid #F1F5F9",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center"
+            }}>
+              <Link href={`/events/${evt.id}`} style={{ textDecoration: "none" }}>
+                <span style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "0.8rem",
+                  fontWeight: 700,
+                  color: "#0D9488",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.25rem",
+                }}>
                   {t("More Details", "বিস্তারিত জানুন")}
-                  <ArrowRight className="h-3.5 w-3.5" />
+                  <ArrowRight style={{ width: "0.875rem", height: "0.875rem" }} />
                 </span>
               </Link>
             </div>

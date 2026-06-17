@@ -68,7 +68,17 @@ export const PhotoHighlights = () => {
           <Link
             key={item.id}
             href="/gallery"
-            className="group relative flex flex-col justify-end aspect-square rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            className="group relative shadow-sm hover:shadow-md transition-all cursor-pointer"
+            style={{
+              aspectRatio: "4/3",
+              textDecoration: "none",
+              position: "relative",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-end",
+              overflow: "hidden",
+              borderRadius: "16px",
+            }}
           >
             {/* Visual Colored Graphic Container simulating a photo */}
             <div className={`absolute inset-0 ${item.svgBg} transition-transform duration-500 group-hover:scale-105`} />
@@ -82,11 +92,42 @@ export const PhotoHighlights = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
             {/* Card Content details */}
-            <div className="relative p-5 flex flex-col gap-1 z-10 text-white">
-              <span className="font-body text-xxs font-black uppercase tracking-widest text-teal-400">
+            <div
+              style={{
+                position: "relative",
+                padding: "1.25rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.25rem",
+                zIndex: 10,
+                color: "#ffffff",
+                boxSizing: "border-box",
+                width: "100%",
+                textAlign: "left",
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "0.72rem",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  color: "#2DD4BF",
+                }}
+              >
                 {t(item.categoryEn, item.categoryBn)}
               </span>
-              <h4 className="font-heading text-sm font-extrabold leading-snug line-clamp-2">
+              <h4
+                style={{
+                  fontFamily: "var(--font-heading)",
+                  fontSize: "0.95rem",
+                  fontWeight: 600,
+                  color: "#ffffff",
+                  lineHeight: 1.35,
+                  margin: 0,
+                }}
+              >
                 {t(item.titleEn, item.titleBn)}
               </h4>
             </div>

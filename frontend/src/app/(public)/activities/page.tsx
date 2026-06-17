@@ -105,16 +105,25 @@ export default function ActivitiesPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-50 dark:bg-black">
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#F8FAFC" }}>
       
       {/* Header Banner */}
-      <section className="relative w-full py-20 bg-gradient-to-r from-teal-900 to-indigo-950 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:24px_24px]" />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center flex flex-col gap-4 z-10">
-          <h1 className="font-heading text-4xl sm:text-5xl font-black tracking-tight">
+      <section
+        style={{
+          width: "100%",
+          padding: "5rem 0 4rem",
+          background: "linear-gradient(135deg, #0A3D32 0%, #0B3D91 60%, #0D0D2B 100%)",
+          color: "#ffffff",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(to right,rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.04) 1px,transparent 1px)", backgroundSize: "40px 40px", pointerEvents: "none" }} />
+        <div className="page-container" style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
+          <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(1.8rem,4.5vw,3rem)", fontWeight: 800, color: "#ffffff", marginBottom: "1rem", lineHeight: 1.2 }}>
             {t("Our Scientific & Social Activities", "আমাদের মূল বৈজ্ঞানিক ও সামাজিক কর্মসূচি")}
           </h1>
-          <p className="font-body text-sm sm:text-base text-zinc-300 max-w-2xl mx-auto leading-relaxed">
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "1rem", color: "rgba(255,255,255,0.78)", maxWidth: "600px", margin: "0 auto", lineHeight: 1.75 }}>
             {t(
               "Explore details about the 10 core domains where PBVM Purulia active volunteers work to make science simple and functional for every citizen.",
               "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ পুরুলিয়া শাখার সক্রিয় স্বেচ্ছাসেবক দল যে ১০টি ক্ষেত্রে দৈনন্দিন জীবনে বিজ্ঞানকে সহজ ও কার্যকরী করতে কাজ করে, তার বিস্তারিত জানুন।"
@@ -124,8 +133,8 @@ export default function ActivitiesPage() {
       </section>
 
       {/* Main List Section */}
-      <section className="py-20">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+      <section style={{ width: "100%", padding: "4rem 0" }}>
+        <div className="page-container">
           <div className="flex flex-col gap-12">
             {Object.entries(ACTIVITY_META).map(([slug, meta]) => {
               const details = activityDetails[slug] || { descEn: "", descBn: "", objectives: [] }

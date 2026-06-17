@@ -55,46 +55,46 @@ export const Footer = () => {
   ]
 
   return (
-    <footer className="w-full bg-zinc-950 text-zinc-300 pt-16 pb-8 border-t border-zinc-900">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <footer style={{ width: "100%", background: "#09090B", color: "#D4D4D8", padding: "4rem 0 2rem 0", borderTop: "1px solid #18181B" }}>
+      <div className="page-container">
         
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           
           {/* Column 1: About PBVM */}
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2 border-b border-zinc-800 pb-2 w-fit">
-              <img src="/logo.png" alt="PBVM Logo" className="h-8 w-8 object-contain" />
-              <h3 className="font-heading text-lg font-bold text-white">
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "left" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", borderBottom: "1px solid #27272A", paddingBottom: "0.5rem", width: "fit-content" }}>
+              <img src="/logo.png" alt="PBVM Logo" style={{ height: "2rem", width: "2rem", objectFit: "contain" }} />
+              <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", fontWeight: 600, color: "#ffffff", margin: 0 }}>
                 {t("PBVM Purulia", "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ")}
               </h3>
             </div>
-            <p className="font-body text-sm text-zinc-400 leading-relaxed">
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", color: "#A1A1AA", lineHeight: 1.6, margin: 0 }}>
               {t(
                 "Paschim Banga Vigyan Mancha (West Bengal Science Forum) Purulia Branch is dedicated to promoting scientific temperament, rational thinking, and eradicating superstitions to build a progressive society.",
                 "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ পুরুলিয়া জেলা শাখা বিজ্ঞান মানসিকতা ও যুক্তিবাদী চিন্তাধারার প্রসার ঘটাতে এবং একটি প্রগতিশীল সমাজ গড়ে তোলার লক্ষ্যে কুসংস্কার দূর করতে নিয়োজিত।"
               )}
             </p>
             {/* Social Links */}
-            <div className="flex items-center gap-3 mt-2">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900 hover:bg-blue-600 text-zinc-400 hover:text-white transition-colors">
-                <FacebookIcon className="h-5 w-5" />
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginTop: "0.5rem" }}>
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" style={{ display: "flex", height: "2.25rem", width: "2.25rem", alignItems: "center", justifyItems: "center", justifyContent: "center", borderRadius: "50%", background: "#18181B", color: "#A1A1AA", transition: "all 0.2s" }} className="hover:bg-blue-600 hover:text-white">
+                <FacebookIcon style={{ height: "1.25rem", width: "1.25rem" }} />
               </a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900 hover:bg-red-600 text-zinc-400 hover:text-white transition-colors">
-                <YoutubeIcon className="h-5 w-5" />
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" style={{ display: "flex", height: "2.25rem", width: "2.25rem", alignItems: "center", justifyItems: "center", justifyContent: "center", borderRadius: "50%", background: "#18181B", color: "#A1A1AA", transition: "all 0.2s" }} className="hover:bg-red-600 hover:text-white">
+                <YoutubeIcon style={{ height: "1.25rem", width: "1.25rem" }} />
               </a>
             </div>
           </div>
 
           {/* Column 2: Quick Links */}
-          <div className="flex flex-col gap-4">
-            <h3 className="font-heading text-lg font-bold text-white border-b-2 border-teal-500 pb-2 w-fit">
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "left" }}>
+            <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", fontWeight: 600, color: "#ffffff", borderBottom: "2px solid #0D9488", paddingBottom: "0.5rem", width: "fit-content", margin: 0 }}>
               {t("Quick Links", "দ্রুত লিঙ্ক")}
             </h3>
-            <ul className="grid grid-cols-1 gap-2">
+            <ul style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0.5rem", listStyle: "none", padding: 0, margin: 0 }}>
               {quickLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="font-body text-sm hover:text-white transition-colors hover:underline">
+                  <Link href={link.href} style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", color: "#A1A1AA", textDecoration: "none", transition: "color 0.2s" }} className="hover:text-white hover:underline">
                     {t(link.labelEn, link.labelBn)}
                   </Link>
                 </li>
@@ -103,50 +103,60 @@ export const Footer = () => {
           </div>
 
           {/* Column 3: Contact Details */}
-          <div className="flex flex-col gap-4">
-            <h3 className="font-heading text-lg font-bold text-white border-b-2 border-teal-500 pb-2 w-fit">
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "left" }}>
+            <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", fontWeight: 600, color: "#ffffff", borderBottom: "2px solid #0D9488", paddingBottom: "0.5rem", width: "fit-content", margin: 0 }}>
               {t("Contact Us", "যোগাযোগ")}
             </h3>
-            <div className="flex flex-col gap-3 font-body text-sm">
-              <div className="flex gap-2.5 items-start">
-                <MapPin className="h-5 w-5 text-teal-500 shrink-0 mt-0.5" />
-                <span className="text-zinc-400">
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", fontFamily: "var(--font-body)", fontSize: "0.85rem", color: "#A1A1AA" }}>
+              <div style={{ display: "flex", gap: "0.625rem", alignItems: "start" }}>
+                <MapPin style={{ width: "1.25rem", height: "1.25rem", color: "#0D9488", flexShrink: 0, marginTop: "0.125rem" }} />
+                <span>
                   {t(
                     "District Science Centre Campus, North Lake Road, Purulia, West Bengal, Pin - 723101",
                     "জেলা বিজ্ঞান কেন্দ্র প্রাঙ্গণ, উত্তর লেক রোড, পুরুলিয়া, পশ্চিমবঙ্গ, পিন - ৭২৩১০১"
                   )}
                 </span>
               </div>
-              <div className="flex gap-2.5 items-center">
-                <Phone className="h-5 w-5 text-teal-500 shrink-0" />
-                <span className="text-zinc-400">+91 3252 222413</span>
+              <div style={{ display: "flex", gap: "0.625rem", alignItems: "center" }}>
+                <Phone style={{ width: "1.25rem", height: "1.25rem", color: "#0D9488", flexShrink: 0 }} />
+                <span>+91 3252 222413</span>
               </div>
-              <div className="flex gap-2.5 items-center">
-                <Mail className="h-5 w-5 text-teal-500 shrink-0" />
-                <span className="text-zinc-400">purulia.pbvm@gmail.com</span>
+              <div style={{ display: "flex", gap: "0.625rem", alignItems: "center" }}>
+                <Mail style={{ width: "1.25rem", height: "1.25rem", color: "#0D9488", flexShrink: 0 }} />
+                <span>purulia.pbvm@gmail.com</span>
               </div>
             </div>
           </div>
 
           {/* Column 4: Newsletter / Membership Call to Action */}
-          <div className="flex flex-col gap-4">
-            <h3 className="font-heading text-lg font-bold text-white border-b-2 border-teal-500 pb-2 w-fit">
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "left" }}>
+            <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", fontWeight: 600, color: "#ffffff", borderBottom: "2px solid #0D9488", paddingBottom: "0.5rem", width: "fit-content", margin: 0 }}>
               {t("Newsletter", "খবরের চিঠি")}
             </h3>
-            <p className="font-body text-sm text-zinc-400 leading-relaxed">
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", color: "#A1A1AA", lineHeight: 1.6, margin: 0 }}>
               {t(
                 "Subscribe to get notifications about upcoming science events, camps, and activities.",
                 "আসন্ন বিজ্ঞান ইভেন্ট, শিবির এবং কার্যক্রম সম্পর্কে বিজ্ঞপ্তি পেতে সাবস্ক্রাইব করুন।"
               )}
             </p>
-            <div className="flex gap-2 mt-1">
+            <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.25rem", width: "100%" }}>
               <input
                 type="email"
                 placeholder={t("Your Email", "আপনার ইমেল")}
-                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal-500"
+                style={{
+                  width: "100%",
+                  background: "#18181B",
+                  border: "1px solid #27272A",
+                  borderRadius: "8px",
+                  padding: "0.5rem 0.75rem",
+                  fontSize: "0.875rem",
+                  color: "#ffffff",
+                  outline: "none",
+                  boxSizing: "border-box"
+                }}
               />
-              <Button size="icon" className="bg-teal-600 hover:bg-teal-700 text-white shrink-0">
-                <Send className="h-4 w-4" />
+              <Button size="icon" style={{ background: "#0D9488", color: "#ffffff", flexShrink: 0 }} className="hover:bg-teal-700">
+                <Send style={{ width: "1rem", height: "1rem" }} />
               </Button>
             </div>
           </div>
@@ -154,14 +164,14 @@ export const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-zinc-900 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center">
-          <p className="font-body text-xs text-zinc-500">
+        <div style={{ borderTop: "1px solid #18181B", paddingTop: "2rem", display: "flex", flexDirection: "row", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "0.75rem", color: "#71717A", margin: 0 }}>
             &copy; {new Date().getFullYear()} {t("PBVM Purulia Branch. All rights reserved.", "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ, পুরুলিয়া শাখা। সর্বস্বত্ব সংরক্ষিত।")}
           </p>
-          <div className="flex gap-4 text-xs text-zinc-500">
-            <Link href="/join-us" className="hover:text-white transition-colors">{t("Become a Member", "সদস্য হন")}</Link>
+          <div style={{ display: "flex", gap: "1rem", fontSize: "0.75rem", color: "#71717A" }}>
+            <Link href="/join-us" style={{ color: "#71717A", textDecoration: "none" }} className="hover:text-white">{t("Become a Member", "সদস্য হন")}</Link>
             <span>&bull;</span>
-            <Link href="/admin/login" className="hover:text-white transition-colors">{t("Admin Login", "অ্যাডমিন লগইন")}</Link>
+            <Link href="/admin/login" style={{ color: "#71717A", textDecoration: "none" }} className="hover:text-white">{t("Admin Login", "অ্যাডমিন লগইন")}</Link>
           </div>
         </div>
 

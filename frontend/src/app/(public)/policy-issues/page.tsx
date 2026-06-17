@@ -72,16 +72,25 @@ export default function PolicyIssuesPage() {
     : articles.filter(art => art.tags.includes(selectedTag as any))
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-50 dark:bg-black">
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#F8FAFC" }}>
       
       {/* Header Banner */}
-      <section className="relative w-full py-20 bg-gradient-to-r from-blue-900 to-indigo-950 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:24px_24px]" />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center flex flex-col gap-4 z-10">
-          <h1 className="font-heading text-4xl sm:text-5xl font-black tracking-tight">
+      <section
+        style={{
+          width: "100%",
+          padding: "5rem 0 4rem",
+          background: "linear-gradient(135deg, #0B1F4A 0%, #0B3D91 60%, #0A3D32 100%)",
+          color: "#ffffff",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(to right,rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.04) 1px,transparent 1px)", backgroundSize: "40px 40px", pointerEvents: "none" }} />
+        <div className="page-container" style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
+          <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(1.8rem,4.5vw,3rem)", fontWeight: 800, color: "#ffffff", marginBottom: "1rem", lineHeight: 1.2 }}>
             {t("Policy Issues & Editorial Articles", "নীতিমালা ও বিজ্ঞান প্রবন্ধ")}
           </h1>
-          <p className="font-body text-sm sm:text-base text-zinc-300 max-w-2xl mx-auto leading-relaxed">
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "1rem", color: "rgba(255,255,255,0.78)", maxWidth: "600px", margin: "0 auto", lineHeight: 1.75 }}>
             {t(
               "Read research articles, environmental warnings, and scientific viewpoints on water, public health, education, and anti-superstition campaigns in Purulia.",
               "পুরুলিয়ার জলসংকট, জনস্বাস্থ্য, শিক্ষা ব্যবস্থা এবং কুসংস্কার বিরোধী আন্দোলনের উপর আমাদের বিজ্ঞানকর্মী ও গবেষকদের বিভিন্ন প্রবন্ধ পড়ুন।"
@@ -91,8 +100,8 @@ export default function PolicyIssuesPage() {
       </section>
 
       {/* Topic Tag Filter Bar */}
-      <section className="py-8 bg-white border-b border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 sticky top-16 z-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-wrap gap-2 justify-center">
+      <section style={{ width: "100%", padding: "1.5rem 0", background: "#ffffff", borderBottom: "1px solid #e2e8f0", position: "sticky", top: "64px", zIndex: 20 }}>
+        <div className="page-container" style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "0.5rem" }}>
           
           <Button
             variant={selectedTag === "All" ? "default" : "outline"}
@@ -119,8 +128,8 @@ export default function PolicyIssuesPage() {
       </section>
 
       {/* Articles Grid Listing */}
-      <section className="py-16">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <section style={{ width: "100%", padding: "3.5rem 0" }}>
+        <div className="page-container" style={{ maxWidth: "800px" }}>
           
           {filteredArticles.length === 0 ? (
             <div className="flex flex-col items-center justify-center text-center py-20 bg-white border border-zinc-100 rounded-3xl dark:bg-black dark:border-zinc-900">

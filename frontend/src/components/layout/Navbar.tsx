@@ -41,20 +41,20 @@ export const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-zinc-200 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-black/95">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="page-container" style={{ display: "flex", height: "4rem", alignItems: "center", justifyContent: "space-between" }}>
         
         {/* Brand Logo & Name */}
-        <Link href="/" className="flex items-center gap-2.5">
+        <Link href="/" className="flex items-center gap-2.5" style={{ textDecoration: "none" }}>
           <img
             src="/logo.png"
             alt="PBVM Logo"
             className="h-10 w-10 object-contain hover:scale-105 transition-transform"
           />
-          <div className="flex flex-col">
-            <span className="font-heading text-sm font-bold tracking-tight text-blue-900 dark:text-blue-400 sm:text-base">
+          <div className="flex flex-col" style={{ textAlign: "left" }}>
+            <span className="font-heading text-sm font-bold tracking-tight text-blue-900 dark:text-blue-400 sm:text-base" style={{ lineHeight: 1.2 }}>
               {t("PBVM Purulia", "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ")}
             </span>
-            <span className="text-xs font-medium text-teal-600 dark:text-teal-400 leading-none">
+            <span className="text-xs font-medium text-teal-600 dark:text-teal-400 leading-none" style={{ marginTop: "0.125rem" }}>
               {t("Purulia District Branch", "পুরুলিয়া জেলা শাখা")}
             </span>
           </div>
@@ -72,6 +72,7 @@ export const Navbar = () => {
                   ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 pb-1"
                   : "text-zinc-600 dark:text-zinc-300 pb-1"
               )}
+              style={{ textDecoration: "none" }}
             >
               {language === "bn" ? item.labelBn : item.labelEn}
             </Link>
@@ -79,10 +80,27 @@ export const Navbar = () => {
         </nav>
 
         {/* CTA & Language Toggle */}
-        <div className="flex items-center gap-2">
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           {/* Join Us Button (Desktop) */}
-          <Link href="/join-us" className="hidden sm:inline-block">
-            <Button size="sm" className="bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-full px-5">
+          <Link href="/join-us" className="hidden sm:inline-block" style={{ textDecoration: "none" }}>
+            <Button
+              style={{
+                background: "#0D9488",
+                color: "#ffffff",
+                fontWeight: 600,
+                borderRadius: "9999px",
+                padding: "0.5rem 1.25rem",
+                fontSize: "0.85rem",
+                border: "none",
+                cursor: "pointer",
+                height: "2.25rem",
+                boxSizing: "border-box",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+              className="hover:bg-teal-700"
+            >
               {t("Join Us", "যোগদান করুন")}
             </Button>
           </Link>
@@ -90,12 +108,26 @@ export const Navbar = () => {
           {/* Language Switcher */}
           <Button
             variant="outline"
-            size="sm"
             onClick={toggleLanguage}
-            className="flex items-center gap-1.5 rounded-full border-zinc-200 text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-900"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.35rem",
+              borderRadius: "9999px",
+              border: "1px solid #E2E8F0",
+              background: "#ffffff",
+              color: "#3F3F46",
+              padding: "0.5rem 1rem",
+              fontSize: "0.85rem",
+              cursor: "pointer",
+              height: "2.25rem",
+              boxSizing: "border-box",
+              justifyContent: "center"
+            }}
+            className="hover:bg-zinc-50"
           >
-            <Globe className="h-4 w-4 text-teal-600" />
-            <span className="text-xs font-bold font-sans">
+            <Globe style={{ height: "1rem", width: "1rem", color: "#0D9488" }} />
+            <span style={{ fontSize: "0.75rem", fontWeight: 700, fontFamily: "sans-serif" }}>
               {language === "en" ? "বাংলা" : "EN"}
             </span>
           </Button>

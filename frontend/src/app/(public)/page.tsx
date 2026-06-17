@@ -9,49 +9,66 @@ import EventsFeed from "@/components/home/EventsFeed"
 import PhotoHighlights from "@/components/home/PhotoHighlights"
 import JoinCTA from "@/components/home/JoinCTA"
 
+const sectionStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "5rem 0",
+}
+
+const containerStyle: React.CSSProperties = {
+  maxWidth: "1200px",
+  margin: "0 auto",
+  padding: "0 2rem",
+  width: "100%",
+}
+
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Chunk 2: Hero Slider */}
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      {/* Hero Slider */}
       <HeroBanner />
 
-      {/* Main Feeds Block: Dual columns on desktop */}
-      <section className="py-16 bg-white dark:bg-black">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            
-            {/* Left Main Content: Events and Photo Highlights */}
-            <div className="lg:col-span-3 flex flex-col gap-16">
-              {/* Chunk 3: Events Grid */}
+      {/* Main Feeds Block: Events + Gallery + Sidebar */}
+      <section style={{ ...sectionStyle, background: "#ffffff" }}>
+        <div style={containerStyle}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(1, 1fr)",
+              gap: "3rem",
+            }}
+            className="home-main-grid"
+          >
+            {/* Left Main Content */}
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "4rem" }}
+              className="home-main-content"
+            >
               <EventsFeed />
-
-              {/* Chunk 3: Gallery Highlights */}
               <PhotoHighlights />
             </div>
 
-            {/* Right Sidebar: Latest Announcements */}
-            <div className="lg:col-span-1">
-              <div className="sticky top-20">
-                {/* Chunk 3: Notifications */}
+            {/* Right Sidebar */}
+            <div className="home-sidebar">
+              <div style={{ position: "sticky", top: "80px" }}>
                 <NotificationsFeed />
               </div>
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* Chunk 2: About Overview */}
+      {/* About Overview */}
       <AboutPreview />
 
-      {/* Chunk 2: Activities Grid Dashboard */}
+      {/* Activities Grid */}
       <ActivitiesGrid />
 
-      {/* Chunk 3: Membership CTA Callout */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
-        <JoinCTA />
-      </div>
-
+      {/* Membership CTA */}
+      <section style={{ ...sectionStyle, background: "#f8fafc" }}>
+        <div style={containerStyle}>
+          <JoinCTA />
+        </div>
+      </section>
     </div>
   )
 }

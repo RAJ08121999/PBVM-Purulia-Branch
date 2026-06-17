@@ -166,16 +166,25 @@ export default function JoinUsPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-50 dark:bg-black">
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#F8FAFC" }}>
       
       {/* Header Banner */}
-      <section className="relative w-full py-20 bg-gradient-to-r from-blue-900 to-indigo-950 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:24px_24px]" />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center flex flex-col gap-4 z-10">
-          <h1 className="font-heading text-4xl sm:text-5xl font-black tracking-tight">
+      <section
+        style={{
+          width: "100%",
+          padding: "5rem 0 4rem",
+          background: "linear-gradient(135deg, #0B1F4A 0%, #0B3D91 60%, #0A3D32 100%)",
+          color: "#ffffff",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(to right,rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.04) 1px,transparent 1px)", backgroundSize: "40px 40px", pointerEvents: "none" }} />
+        <div className="page-container" style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
+          <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(1.8rem,4.5vw,3rem)", fontWeight: 800, color: "#ffffff", marginBottom: "1rem", lineHeight: 1.2 }}>
             {t("Join as a Member", "বিজ্ঞান মঞ্চের সদস্য হন")}
           </h1>
-          <p className="font-body text-sm sm:text-base text-zinc-300 max-w-2xl mx-auto leading-relaxed">
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "1rem", color: "rgba(255,255,255,0.78)", maxWidth: "600px", margin: "0 auto", lineHeight: 1.75 }}>
             {t(
               "Become a part of Paschim Banga Vigyan Mancha, Purulia District Branch. Join us in building a rational, scientific, and superstitious-free society.",
               "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ, পুরুলিয়া জেলা শাখার সাথে যুক্ত হোন। কুসংস্কারমুক্ত, যুক্তিবাদী ও বিজ্ঞানমনস্ক সমাজ গঠনে আমাদের সাথে কাঁধে কাঁধ মিলিয়ে কাজ করুন।"
@@ -185,8 +194,8 @@ export default function JoinUsPage() {
       </section>
 
       {/* Main Form Grid */}
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section style={{ width: "100%", padding: "4rem 0" }}>
+        <div className="page-container">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             
             {/* Left Side: Why Join Column */}
