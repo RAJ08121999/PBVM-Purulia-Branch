@@ -6,7 +6,7 @@ import {
   Compass,
   Target,
   Sparkles,
-  TreeOak,
+  Trees,
   HeartPulse,
   GraduationCap,
   Ban,
@@ -23,7 +23,7 @@ export default function AboutPage() {
   // 9 core objectives defined in SRS
   const objectives = [
     {
-      icon: <TreeOak className="h-6 w-6 text-emerald-500" />,
+      icon: <Trees className="h-6 w-6 text-emerald-500" />,
       titleEn: "Environmental Awareness & Conservation",
       titleBn: "পরিবেশ সচেতনতা ও সংরক্ষণ",
       descEn: "Promoting forestation, protecting wetlands, and building local awareness to counter climate change.",
