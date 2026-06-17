@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Poppins, Inter, Noto_Sans_Bengali, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { LanguageProvider } from "@/context/LanguageContext";
+import { Toaster } from "@/components/ui/sonner";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -69,7 +71,12 @@ export default function RootLayout({
       lang="en"
       className={cn("h-full", "antialiased", poppins.variable, inter.variable, notoSansBengali.variable, "font-sans", geist.variable)}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <LanguageProvider>
+          {children}
+          <Toaster richColors closeButton position="top-right" />
+        </LanguageProvider>
+      </body>
     </html>
   );
 }
