@@ -63,9 +63,12 @@ export const Footer = () => {
           
           {/* Column 1: About PBVM */}
           <div className="flex flex-col gap-4">
-            <h3 className="font-heading text-lg font-bold text-white border-b-2 border-teal-500 pb-2 w-fit">
-              {t("PBVM Purulia", "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ")}
-            </h3>
+            <div className="flex items-center gap-2 border-b border-zinc-800 pb-2 w-fit">
+              <img src="/logo.png" alt="PBVM Logo" className="h-8 w-8 object-contain" />
+              <h3 className="font-heading text-lg font-bold text-white">
+                {t("PBVM Purulia", "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ")}
+              </h3>
+            </div>
             <p className="font-body text-sm text-zinc-400 leading-relaxed">
               {t(
                 "Paschim Banga Vigyan Mancha (West Bengal Science Forum) Purulia Branch is dedicated to promoting scientific temperament, rational thinking, and eradicating superstitions to build a progressive society.",

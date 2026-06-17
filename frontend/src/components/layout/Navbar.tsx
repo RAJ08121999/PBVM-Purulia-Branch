@@ -45,9 +45,11 @@ export const Navbar = () => {
         
         {/* Brand Logo & Name */}
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white font-bold text-lg shadow-md hover:scale-105 transition-transform">
-            V
-          </div>
+          <img
+            src="/logo.png"
+            alt="PBVM Logo"
+            className="h-10 w-10 object-contain hover:scale-105 transition-transform"
+          />
           <div className="flex flex-col">
             <span className="font-heading text-sm font-bold tracking-tight text-blue-900 dark:text-blue-400 sm:text-base">
               {t("PBVM Purulia", "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ")}
@@ -109,9 +111,11 @@ export const Navbar = () => {
               <SheetContent side="right" className="w-[280px] sm:w-[350px] p-6 bg-white dark:bg-black">
                 <SheetHeader className="text-left border-b border-zinc-100 pb-4 mb-4 dark:border-zinc-900">
                   <SheetTitle className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white font-bold text-sm">
-                      V
-                    </div>
+                    <img
+                      src="/logo.png"
+                      alt="PBVM Logo"
+                      className="h-8 w-8 object-contain"
+                    />
                     <div className="flex flex-col">
                       <span className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
                         {t("PBVM Purulia", "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ")}

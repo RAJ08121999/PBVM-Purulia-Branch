@@ -109,24 +109,40 @@ export default function AboutPage() {
       {/* Origin & History Section */}
       <section className="py-20 bg-white dark:bg-zinc-950/20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto flex flex-col gap-6">
-            <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white border-b-2 border-teal-500 pb-3 w-fit">
-              {t("Our Story & Origin", "আমাদের ইতিহাস ও সূচনা")}
-            </h2>
-            <div className="font-body text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed flex flex-col gap-4">
-              <p>
-                {t(
-                  "Paschim Banga Vigyan Mancha (PBVM) was established in 1986 as the premier people's science organization in West Bengal. It was founded with the dream of creating a rational, progressive society by spreading scientific consciousness and logical reasoning among the masses.",
-                  "১৯৮৬ সালে পশ্চিমবঙ্গে বিজ্ঞান সচেতনতা ও যুক্তিবাদী দৃষ্টিভঙ্গির প্রসার ঘটিয়ে একটি প্রগতিশীল সমাজ গঠনের স্বপ্ন নিয়ে পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ (PBVM) প্রতিষ্ঠিত হয়। এটি রাজ্যের বৃহত্তম গণ-বিজ্ঞান সংগঠন হিসেবে পরিচিত।"
-                )}
-              </p>
-              <p>
-                {t(
-                  "The Purulia District Branch was set up to bring this movement to the grassroot level of Purulia. The district presents unique geographic and economic challenges. Over the decades, our branch has actively mobilized teachers, students, social workers, doctors, and farmers. We lead efforts in local afforestation, coordinate blood donation awareness, and run anti-superstition campaigns in remote villages.",
-                  "পুরুলিয়া জেলা শাখা এই আন্দোলনকে জেলার প্রতিটি প্রান্তে পৌঁছে দেওয়ার উদ্দেশ্যে গঠিত হয়। পুরুলিয়া জেলার ভৌগোলিক ও অর্থনৈতিক বৈচিত্র্যের কথা মাথায় রেখে, আমাদের শাখা কয়েক দশক ধরে শিক্ষক, ছাত্র, সমাজকর্মী, চিকিৎসক ও কৃষকদের একত্রিত করেছে। আমরা স্থানীয় বনায়ন, রক্তদানে উৎসাহ প্রদান এবং প্রত্যন্ত গ্রামগুলিতে ডাইনি বা ডাইনি শিকার প্রথার মতো সামাজিক কুসংস্কার ও কুপ্রথার বিরুদ্ধে লাগাতার প্রচার চালিয়ে আসছি।"
-                )}
-              </p>
+          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+            
+            {/* Story Text */}
+            <div className="md:col-span-8 flex flex-col gap-6">
+              <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white border-b-2 border-teal-500 pb-3 w-fit">
+                {t("Our Story & Origin", "আমাদের ইতিহাস ও সূচনা")}
+              </h2>
+              <div className="font-body text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed flex flex-col gap-4">
+                <p>
+                  {t(
+                    "Paschim Banga Vigyan Mancha (PBVM) was established in 1986 as the premier people's science organization in West Bengal. It was founded with the dream of creating a rational, progressive society by spreading scientific consciousness and logical reasoning among the masses.",
+                    "১৯৮৬ সালে পশ্চিমবঙ্গে বিজ্ঞান সচেতনতা ও যুক্তিবাদী দৃষ্টিভঙ্গির প্রসার ঘটিয়ে একটি প্রগতিশীল সমাজ গঠনের স্বপ্ন নিয়ে পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ (PBVM) প্রতিষ্ঠিত হয়। এটি রাজ্যের বৃহত্তম গণ-বিজ্ঞান সংগঠন হিসেবে পরিচিত।"
+                  )}
+                </p>
+                <p>
+                  {t(
+                    "The Purulia District Branch was set up to bring this movement to the grassroot level of Purulia. The district presents unique geographic and economic challenges. Over the decades, our branch has actively mobilized teachers, students, social workers, doctors, and farmers. We lead efforts in local afforestation, coordinate blood donation awareness, and run anti-superstition campaigns in remote villages.",
+                    "পুরুলিয়া জেলা শাখা এই আন্দোলনকে জেলার প্রতিটি প্রান্তে পৌঁছে দেওয়ার উদ্দেশ্যে গঠিত হয়। পুরুলিয়া জেলার ভৌগোলিক ও অর্থনৈতিক বৈচিত্র্যের কথা মাথায় রেখে, আমাদের শাখা কয়েক দশক ধরে শিক্ষক, ছাত্র, সমাজকর্মী, চিকিৎসক ও কৃষকদের একত্রিত করেছে। আমরা স্থানীয় বনায়ন, রক্তদানে উৎসাহ প্রদান এবং প্রত্যন্ত গ্রামগুলিতে ডাইনি বা ডাইনি শিকার প্রথার মতো সামাজিক কুসংস্কার ও কুপ্রথার বিরুদ্ধে লাগাতার প্রচার চালিয়ে আসছি।"
+                  )}
+                </p>
+              </div>
             </div>
+
+            {/* Official Logo Frame */}
+            <div className="md:col-span-4 flex justify-center">
+              <div className="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-100 dark:border-zinc-900 shadow-inner flex items-center justify-center max-w-[280px] w-full aspect-square">
+                <img
+                  src="/logo.png"
+                  alt="Official PBVM Logo"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
