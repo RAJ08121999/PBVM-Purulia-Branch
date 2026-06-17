@@ -2,6 +2,16 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@theme {
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+  --font-bengali: var(--font-bengali);
+  
+  --shadow-md: 0 4px 16px rgba(11, 61, 145, 0.10), 0 2px 6px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 40px rgba(11, 61, 145, 0.14), 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 2px 20px rgba(11, 61, 145, 0.08);
+}
+
 @custom-variant dark (&:is(.dark *));
 /* Fonts are loaded via next/font/google in layout.tsx (Poppins, Inter, Noto Sans Bengali) */
 

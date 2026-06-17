@@ -91,13 +91,13 @@ export default function AboutPage() {
     <div className="flex flex-col min-h-screen bg-zinc-50 dark:bg-black">
       
       {/* Header Banner */}
-      <section className="relative w-full py-20 bg-gradient-to-r from-blue-900 to-indigo-950 text-white overflow-hidden">
+      <section className="relative w-full py-24 bg-gradient-to-r from-blue-900 to-indigo-950 text-white overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:24px_24px]" />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center flex flex-col gap-4 z-10">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center gap-4 z-10">
           <h1 className="font-heading text-4xl sm:text-5xl font-black tracking-tight">
             {t("About PBVM Purulia", "আমাদের সম্পর্কে")}
           </h1>
-          <p className="font-body text-sm sm:text-base text-zinc-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="font-body text-sm sm:text-base text-zinc-350 max-w-2xl mx-auto leading-relaxed">
             {t(
               "Learn about the history, mission, vision, and core scientific objectives guiding Paschim Banga Vigyan Mancha, Purulia District Branch.",
               "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ, পুরুলিয়া জেলা শাখার ইতিহাস, লক্ষ্য, দৃষ্টিভঙ্গি এবং মূল উদ্দেশ্যসমূহ সম্পর্কে বিস্তারিত জানুন।"
@@ -109,11 +109,11 @@ export default function AboutPage() {
       {/* Origin & History Section */}
       <section className="py-20 bg-white dark:bg-zinc-950/20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+          <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Story Text */}
-            <div className="md:col-span-8 flex flex-col gap-6">
-              <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white border-b-2 border-teal-500 pb-3 w-fit">
+            <div className="lg:col-span-8 flex flex-col gap-6 text-center lg:text-left">
+              <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white border-b-2 border-teal-500 pb-3 w-fit mx-auto lg:mx-0">
                 {t("Our Story & Origin", "আমাদের ইতিহাস ও সূচনা")}
               </h2>
               <div className="font-body text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed flex flex-col gap-4">
@@ -133,12 +133,12 @@ export default function AboutPage() {
             </div>
 
             {/* Official Logo Frame */}
-            <div className="md:col-span-4 flex justify-center">
-              <div className="p-6 rounded-3xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-100 dark:border-zinc-900 shadow-inner flex items-center justify-center max-w-[280px] w-full aspect-square">
+            <div className="lg:col-span-4 flex justify-center">
+              <div className="p-8 rounded-full bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shadow-xl flex items-center justify-center max-w-[250px] w-full aspect-square hover:scale-105 transition-transform duration-300">
                 <img
                   src="/logo.png"
                   alt="Official PBVM Logo"
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain filter drop-shadow-sm"
                 />
               </div>
             </div>
@@ -148,19 +148,19 @@ export default function AboutPage() {
       </section>
 
       {/* Mission & Vision Section */}
-      <section className="py-16 bg-zinc-50 dark:bg-zinc-950/40">
+      <section className="py-20 bg-zinc-50 dark:bg-zinc-950/40">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             
             {/* Mission Card */}
-            <div className="p-8 rounded-2xl bg-white border border-zinc-100 dark:bg-black dark:border-zinc-900 shadow-sm flex flex-col gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50 text-teal-600 dark:bg-teal-950/20 dark:text-teal-400">
-                <Compass className="h-6 w-6" />
+            <div className="p-8 rounded-2xl bg-white border border-zinc-150/40 dark:bg-zinc-950/40 dark:border-zinc-900/80 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center text-center gap-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 text-teal-600 dark:bg-teal-950/20 dark:text-teal-400 shadow-sm">
+                <Compass className="h-7 w-7" />
               </div>
               <h3 className="font-heading text-xl font-bold text-zinc-900 dark:text-white">
                 {t("Our Mission", "আমাদের লক্ষ্য")}
               </h3>
-              <p className="font-body text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              <p className="font-body text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-sm">
                 {t(
                   "To popularize science in daily life, build analytical capability, and advocate for human-centric science policies that secure local ecology and public health.",
                   "দৈনন্দিন জীবনে বিজ্ঞানকে জনপ্রিয় করা, মানুষের বিশ্লেষণাত্মক ক্ষমতা বাড়ানো এবং জনস্বার্থ ও পরিবেশ রক্ষা করে এমন মানুষমুখী বিজ্ঞান ও প্রযুক্তি নীতির পক্ষে সওয়াল করা।"
@@ -169,14 +169,14 @@ export default function AboutPage() {
             </div>
 
             {/* Vision Card */}
-            <div className="p-8 rounded-2xl bg-white border border-zinc-100 dark:bg-black dark:border-zinc-900 shadow-sm flex flex-col gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/20 dark:text-blue-400">
-                <Target className="h-6 w-6" />
+            <div className="p-8 rounded-2xl bg-white border border-zinc-150/40 dark:bg-zinc-950/40 dark:border-zinc-900/80 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center text-center gap-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/20 dark:text-blue-400 shadow-sm">
+                <Target className="h-7 w-7" />
               </div>
               <h3 className="font-heading text-xl font-bold text-zinc-900 dark:text-white">
                 {t("Our Vision", "আমাদের দৃষ্টিভঙ্গি")}
               </h3>
-              <p className="font-body text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              <p className="font-body text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-sm">
                 {t(
                   "A rational, just, and self-reliant society where scientific knowledge is utilized solely for peace, environmental harmony, and the well-being of all individuals.",
                   "একটি যুক্তিবাদী, ন্যায়পরায়ণ এবং স্বনির্ভর সমাজ গঠন যেখানে বৈজ্ঞানিক জ্ঞান শুধুমাত্র শান্তি, পরিবেশের ভারসাম্য রক্ষা এবং মানুষের সামগ্রিক কল্যাণের জন্য ব্যবহৃত হবে।"
@@ -191,6 +191,7 @@ export default function AboutPage() {
       {/* Objectives Section */}
       <section className="py-20 bg-white dark:bg-black">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          
           <div className="flex flex-col items-center text-center gap-4 mb-16 max-w-2xl mx-auto">
             <span className="text-xs font-bold uppercase tracking-widest text-teal-600 dark:text-teal-400">
               {t("Our Goals", "আমাদের উদ্দেশ্য")}
@@ -204,22 +205,23 @@ export default function AboutPage() {
             {objectives.map((obj, idx) => (
               <div
                 key={idx}
-                className="flex items-start gap-4 p-6 rounded-2xl bg-zinc-50 hover:bg-white border border-zinc-100 hover:border-zinc-200 dark:bg-zinc-950/20 dark:hover:bg-zinc-900/40 dark:border-zinc-900 dark:hover:border-zinc-800 transition-all hover:shadow-md"
+                className="flex flex-col items-center text-center p-6 rounded-2xl bg-zinc-50 hover:bg-white border border-zinc-100 hover:border-zinc-200/80 dark:bg-zinc-950/20 dark:hover:bg-zinc-900/20 dark:border-zinc-900 dark:hover:border-zinc-800 transition-all hover:shadow-md duration-300 gap-4"
               >
-                <div className="p-3 rounded-xl bg-white dark:bg-zinc-900 shadow-sm shrink-0">
+                <div className="p-3 rounded-2xl bg-white dark:bg-zinc-900 shadow-sm shrink-0 flex items-center justify-center">
                   {obj.icon}
                 </div>
                 <div className="flex flex-col gap-2">
                   <h3 className="font-heading text-sm font-black text-zinc-900 dark:text-white leading-tight">
                     {t(obj.titleEn, obj.titleBn)}
                   </h3>
-                  <p className="font-body text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  <p className="font-body text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-[240px] mx-auto">
                     {t(obj.descEn, obj.descBn)}
                   </p>
                 </div>
               </div>
             ))}
           </div>
+
         </div>
       </section>
 
