@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
-import { Poppins, Inter, Noto_Sans_Bengali } from "next/font/google";
+import { Poppins, Inter, Noto_Sans_Bengali, Geist } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+
 
 // ─── Brand Fonts (SRS Section 5.9) ────────────────────────
 const poppins = Poppins({
@@ -63,7 +67,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${inter.variable} ${notoSansBengali.variable} h-full antialiased`}
+      className={cn("h-full", "antialiased", poppins.variable, inter.variable, notoSansBengali.variable, "font-sans", geist.variable)}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
