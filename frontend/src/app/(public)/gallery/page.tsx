@@ -110,15 +110,24 @@ export default function GalleryPage() {
 
       {/* Filter Options */}
       <section style={{ width: "100%", padding: "1.5rem 0", background: "#ffffff", borderBottom: "1px solid #e2e8f0", position: "sticky", top: "64px", zIndex: 20 }}>
-        <div className="page-container">
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
+        <div style={{ width: "100%", maxWidth: "1400px", margin: "0 auto", padding: "0 2rem", overflowX: "auto" }}>
+          <div style={{ display: "flex", flexWrap: "nowrap", alignItems: "center", justifyContent: "center", gap: "0.65rem", padding: "0.25rem 0", minWidth: "max-content", margin: "0 auto" }}>
             
             {/* "All" Filter Button */}
             <Button
               variant={activeCategory === "All" ? "default" : "outline"}
-              size="sm"
               onClick={() => setActiveCategory("All")}
-              className="rounded-full font-body font-bold"
+              style={{
+                borderRadius: "9999px",
+                padding: "0.5rem 1.25rem",
+                fontSize: "0.85rem",
+                fontWeight: 700,
+                height: "auto",
+                cursor: "pointer",
+                boxSizing: "border-box",
+                whiteSpace: "nowrap",
+              }}
+              className="font-body"
             >
               {t("All Categories", "সব ছবি")}
             </Button>
@@ -128,9 +137,18 @@ export default function GalleryPage() {
               <Button
                 key={cat}
                 variant={activeCategory === cat ? "default" : "outline"}
-                size="sm"
                 onClick={() => setActiveCategory(cat)}
-                className="rounded-full font-body font-bold"
+                style={{
+                  borderRadius: "9999px",
+                  padding: "0.5rem 1.25rem",
+                  fontSize: "0.85rem",
+                  fontWeight: 700,
+                  height: "auto",
+                  cursor: "pointer",
+                  boxSizing: "border-box",
+                  whiteSpace: "nowrap",
+                }}
+                className="font-body"
               >
                 {t(cat, cat === "Science Camps" ? "বিজ্ঞান শিবির" : cat === "Exhibitions" ? "বিজ্ঞান প্রদর্শনী" : cat === "Awareness Campaigns" ? "সচেতনতা প্রচার" : cat === "Skywatching" ? "আকাশ পর্যবেক্ষণ" : cat === "Environmental Activities" ? "পরিবেশ কর্মসূচি" : "কর্মশালা")}
               </Button>
@@ -171,7 +189,7 @@ export default function GalleryPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
 
                   {/* Content details */}
-                  <div className="relative p-5 flex flex-col gap-1 text-white z-10">
+                  <div className="relative flex flex-col text-white z-10" style={{ padding: "1.25rem 1.75rem", gap: "0.375rem" }}>
                     <span className="font-body text-xxs font-black uppercase tracking-widest text-teal-400">
                       {t(item.category, item.category === "Science Camps" ? "বিজ্ঞান শিবির" : item.category === "Exhibitions" ? "বিজ্ঞান প্রদর্শনী" : item.category === "Awareness Campaigns" ? "সচেতনতা প্রচার" : item.category === "Skywatching" ? "আকাশ পর্যবেক্ষণ" : item.category === "Environmental Activities" ? "পরিবেশ কর্মসূচি" : "কর্মশালা")}
                     </span>

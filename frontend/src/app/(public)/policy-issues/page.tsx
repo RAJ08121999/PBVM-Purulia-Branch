@@ -73,7 +73,7 @@ export default function PolicyIssuesPage() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#F8FAFC" }}>
-      
+
       {/* Header Banner */}
       <section
         style={{
@@ -101,13 +101,22 @@ export default function PolicyIssuesPage() {
 
       {/* Topic Tag Filter Bar */}
       <section style={{ width: "100%", padding: "1.5rem 0", background: "#ffffff", borderBottom: "1px solid #e2e8f0", position: "sticky", top: "64px", zIndex: 20 }}>
-        <div className="page-container" style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "0.5rem" }}>
-          
+        <div className="page-container" style={{ display: "flex", flexWrap: "nowrap", justifyContent: "center", gap: "0.5rem" }}>
+
           <Button
             variant={selectedTag === "All" ? "default" : "outline"}
             size="sm"
             onClick={() => setSelectedTag("All")}
-            className="rounded-full font-body font-bold"
+            style={{
+              borderRadius: "9999px",
+              padding: "0.5rem 1.25rem",
+              fontSize: "0.85rem",
+              fontWeight: 700,
+              height: "auto",
+              cursor: "pointer",
+              boxSizing: "border-box",
+              whiteSpace: "nowrap",
+            }}
           >
             {t("All Topics", "সব বিষয়")}
           </Button>
@@ -118,7 +127,16 @@ export default function PolicyIssuesPage() {
               variant={selectedTag === tag ? "default" : "outline"}
               size="sm"
               onClick={() => setSelectedTag(tag)}
-              className="rounded-full font-body font-bold"
+              style={{
+                borderRadius: "9999px",
+                padding: "0.5rem 1.25rem",
+                fontSize: "0.85rem",
+                fontWeight: 700,
+                height: "auto",
+                cursor: "pointer",
+                boxSizing: "border-box",
+                whiteSpace: "nowrap",
+              }}
             >
               {t(tag, tag === "Environment" ? "পরিবেশ" : tag === "Public Health" ? "জনস্বাস্থ্য" : tag === "Education" ? "শিক্ষা" : tag === "Science Policy" ? "বিজ্ঞান নীতি" : tag === "Technology Policy" ? "প্রযুক্তি নীতি" : tag === "Climate Change" ? "জলবায়ু পরিবর্তন" : "কুসংস্কার বিরোধী")}
             </Button>
@@ -130,7 +148,7 @@ export default function PolicyIssuesPage() {
       {/* Articles Grid Listing */}
       <section style={{ width: "100%", padding: "3.5rem 0" }}>
         <div className="page-container" style={{ maxWidth: "800px" }}>
-          
+
           {filteredArticles.length === 0 ? (
             <div className="flex flex-col items-center justify-center text-center py-20 bg-white border border-zinc-100 rounded-3xl dark:bg-black dark:border-zinc-900">
               <FileText className="h-12 w-12 text-zinc-300 dark:text-zinc-700 mb-4" />
@@ -144,9 +162,10 @@ export default function PolicyIssuesPage() {
                 <div
                   key={art.id}
                   onClick={() => setActiveArticle(art)}
-                  className="group flex flex-col gap-4 p-6 rounded-2xl bg-white border border-zinc-100 hover:border-zinc-200 dark:bg-black dark:border-zinc-900 dark:hover:border-zinc-800 transition-all hover:shadow-sm cursor-pointer"
+                  className="group flex flex-col gap-4 rounded-2xl bg-white border border-zinc-100 hover:border-zinc-200 dark:bg-black dark:border-zinc-900 dark:hover:border-zinc-800 transition-all hover:shadow-sm cursor-pointer"
+                  style={{ padding: "1rem" }}
                 >
-                  
+
                   {/* Article Title & Date */}
                   <div className="flex flex-col gap-2">
                     <div className="flex flex-wrap items-center gap-2">
@@ -184,16 +203,23 @@ export default function PolicyIssuesPage() {
         </div>
       </section>
 
-      {/* Expandable Article Modal Dialog */}
+       {/* Expandable Article Modal Dialog */}
       <Dialog open={!!activeArticle} onOpenChange={() => setActiveArticle(null)}>
-        <DialogContent className="max-w-2xl bg-white dark:bg-zinc-950 p-6 sm:p-8 rounded-3xl border border-zinc-100 dark:border-zinc-900">
+        <DialogContent
+          className="bg-white dark:bg-zinc-950 rounded-3xl border border-zinc-100 dark:border-zinc-900"
+          style={{
+            padding: "2.5rem",
+            maxWidth: "800px",
+            width: "95%",
+          }}
+        >
           {activeArticle && (
-            <div className="flex flex-col gap-6 max-h-[80vh] overflow-y-auto pr-2">
-              
-              <DialogHeader className="text-left border-b border-zinc-50 dark:border-zinc-900 pb-4">
-                <div className="flex flex-wrap items-center gap-2 mb-2">
+            <div className="flex flex-col max-h-[80vh] overflow-y-auto pr-2" style={{ gap: "1.5rem" }}>
+
+              <DialogHeader className="text-left border-b border-zinc-50 dark:border-zinc-900" style={{ paddingBottom: "1.25rem" }}>
+                <div className="flex flex-wrap items-center" style={{ gap: "0.5rem", marginBottom: "0.5rem" }}>
                   {activeArticle.tags.map((tag, i) => (
-                    <span key={i} className="inline-flex items-center gap-1 text-xxs font-black uppercase tracking-wider text-teal-600 bg-teal-50 px-2 py-0.5 rounded-md">
+                    <span key={i} className="inline-flex items-center gap-1 text-xxs font-black uppercase tracking-wider text-teal-600 bg-teal-50 rounded-md" style={{ padding: "0.25rem 0.5rem" }}>
                       {t(tag, tag === "Environment" ? "পরিবেশ" : tag === "Public Health" ? "জনস্বাস্থ্য" : tag === "Education" ? "শিক্ষা" : tag === "Science Policy" ? "বিজ্ঞান নীতি" : tag === "Technology Policy" ? "প্রযুক্তি নীতি" : tag === "Climate Change" ? "জলবায়ু পরিবর্তন" : "কুসংস্কার বিরোধী")}
                     </span>
                   ))}
@@ -211,9 +237,9 @@ export default function PolicyIssuesPage() {
               </DialogHeader>
 
               {/* Article Full Body */}
-              <div className="font-body text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed space-y-4">
+              <div className="font-body text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed" style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
                 {t(activeArticle.bodyEn, activeArticle.bodyBn).split("\n\n").map((para, i) => (
-                  <p key={i}>{para}</p>
+                  <p key={i} style={{ margin: 0 }}>{para}</p>
                 ))}
               </div>
 

@@ -113,7 +113,7 @@ export default function ContactPage() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#F8FAFC" }}>
-      
+
       {/* Header Banner */}
       <section
         style={{
@@ -143,12 +143,12 @@ export default function ContactPage() {
       <section style={{ width: "100%", padding: "4rem 0" }}>
         <div className="page-container">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-            
+
             {/* Left Side: Contact Information Cards */}
             <div className="lg:col-span-5 flex flex-col gap-8">
-              
+
               {/* Address card */}
-              <div className="p-6 rounded-2xl bg-white border border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 shadow-sm flex gap-4">
+              <div className="rounded-2xl bg-white border border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 shadow-sm flex gap-4" style={{ padding: "1rem" }}>
                 <div className="h-10 w-10 rounded-xl bg-teal-50 text-teal-600 dark:bg-teal-950/20 dark:text-teal-400 flex items-center justify-center shrink-0">
                   <MapPin className="h-5 w-5" />
                 </div>
@@ -158,15 +158,15 @@ export default function ContactPage() {
                   </h3>
                   <p className="font-body text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
                     {t(
-                      "District Science Centre Campus, North Lake Road, Purulia, West Bengal, Pin - 723101",
-                      "জেলা বিজ্ঞান কেন্দ্র প্রাঙ্গণ, উত্তর লেক রোড, পুরুলিয়া, পশ্চিমবঙ্গ, পিন - ৭২৩১০১"
+                      "Students Health Home, North Lake Road, Purulia, West Bengal, Pin - 723101",
+                      "ছাত্র-ছাত্রী স্বাস্থ্য ভবন, উত্তর লেক রোড, পুরুলিয়া, পশ্চিমবঙ্গ, পিন - ৭২৩১০১"
                     )}
                   </p>
                 </div>
               </div>
 
               {/* Phone card */}
-              <div className="p-6 rounded-2xl bg-white border border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 shadow-sm flex gap-4">
+              <div className="rounded-2xl bg-white border border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 shadow-sm flex gap-4" style={{ padding: "1rem" }}>
                 <div className="h-10 w-10 rounded-xl bg-teal-50 text-teal-600 dark:bg-teal-950/20 dark:text-teal-400 flex items-center justify-center shrink-0">
                   <Phone className="h-5 w-5" />
                 </div>
@@ -184,7 +184,7 @@ export default function ContactPage() {
               </div>
 
               {/* Email card */}
-              <div className="p-6 rounded-2xl bg-white border border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 shadow-sm flex gap-4">
+              <div className="rounded-2xl bg-white border border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 shadow-sm flex gap-4" style={{ padding: "1rem" }}>
                 <div className="h-10 w-10 rounded-xl bg-teal-50 text-teal-600 dark:bg-teal-950/20 dark:text-teal-400 flex items-center justify-center shrink-0">
                   <Mail className="h-5 w-5" />
                 </div>
@@ -201,25 +201,26 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* Map Placeholder Card (Extremely Rich Aesthetic) */}
+              {/* Google Maps Card */}
               <div className="rounded-2xl border border-zinc-100 dark:border-zinc-900 overflow-hidden shadow-sm h-64 relative bg-zinc-200 dark:bg-zinc-800">
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:16px_16px] flex flex-col items-center justify-center text-center p-4">
-                  <MapPin className="h-8 w-8 text-blue-600 mb-2 animate-bounce" />
-                  <span className="font-heading text-xs font-black text-zinc-900 dark:text-white mb-1">
-                    {t("Paschim Banga Vigyan Mancha Office", "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ কার্যালয়")}
-                  </span>
-                  <span className="font-body text-xxs text-zinc-500 dark:text-zinc-400 max-w-xs leading-relaxed">
-                    {t("Located within the District Science Centre Campus, Purulia.", "জেলা বিজ্ঞান কেন্দ্র প্রাঙ্গণ, পুরুলিয়ার ভেতরে অবস্থিত।")}
-                  </span>
-                </div>
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3663.4764920168577!2d86.36027957477944!3d23.334745604607612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39f67d8bfc2b1cf9%3A0xd7ed58218e26bf01!2sStudents%20Health%20Home!5e0!3m2!1sen!2sin!4v1781886485953!5m2!1sen!2sin"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Paschim Banga Vigyan Mancha Office Location"
+                />
               </div>
 
             </div>
 
             {/* Right Side: Contact Form Card */}
             <div className="lg:col-span-7">
-              <div className="p-8 rounded-3xl bg-white border border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 shadow-md">
-                
+              <div className="rounded-3xl bg-white border border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 shadow-md" style={{ padding: "1.5rem" }}>
+
                 {isSuccess ? (
                   <div className="flex flex-col items-center justify-center text-center py-16 gap-4 animate-fade-in">
                     <div className="h-16 w-16 rounded-full bg-green-50 text-green-600 dark:bg-green-950/20 dark:text-green-400 flex items-center justify-center mb-2">
@@ -256,7 +257,7 @@ export default function ContactPage() {
 
                     <Form {...form}>
                       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                        
+
                         {/* Name Input */}
                         <FormField
                           control={form.control}
@@ -266,21 +267,23 @@ export default function ContactPage() {
                               <FormLabel className="font-heading text-xs font-black uppercase tracking-wider">
                                 {t("Full Name", "সম্পূর্ণ নাম")}
                               </FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="text"
-                                  placeholder={t("e.g. Subhasish Sen", "উদাঃ শুভাশীষ সেন")}
-                                  className="rounded-xl border-zinc-200 dark:border-zinc-800 p-3 h-11 focus:bg-white text-sm"
-                                  {...field}
-                                />
-                              </FormControl>
+                              <div style={{ paddingBottom: "0.5rem" }}>
+                                <FormControl>
+                                  <Input
+                                    type="text"
+                                    placeholder={t("e.g. Subhasish Sen", "উদাঃ শুভাশীষ সেন")}
+                                    className="rounded-xl border-zinc-200 dark:border-zinc-800 p-3 h-11 focus:bg-white text-sm"
+                                    {...field}
+                                  />
+                                </FormControl>
+                              </div>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                          
+
                           {/* Email Input */}
                           <FormField
                             control={form.control}
@@ -290,14 +293,16 @@ export default function ContactPage() {
                                 <FormLabel className="font-heading text-xs font-black uppercase tracking-wider">
                                   {t("Email Address", "ইমেল আইডি")}
                                 </FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="email"
-                                    placeholder="subhasish@example.com"
-                                    className="rounded-xl border-zinc-200 dark:border-zinc-800 p-3 h-11 focus:bg-white text-sm"
-                                    {...field}
-                                  />
-                                </FormControl>
+                                <div style={{ paddingBottom: "0.5rem" }}>
+                                  <FormControl>
+                                    <Input
+                                      type="email"
+                                      placeholder="subhasish@example.com"
+                                      className="rounded-xl border-zinc-200 dark:border-zinc-800 p-3 h-11 focus:bg-white text-sm"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                </div>
                                 <FormMessage />
                               </FormItem>
                             )}
@@ -312,14 +317,16 @@ export default function ContactPage() {
                                 <FormLabel className="font-heading text-xs font-black uppercase tracking-wider">
                                   {t("Phone Number (Optional)", "ফোন নম্বর (ঐচ্ছিক)")}
                                 </FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="tel"
-                                    placeholder="e.g. 9876543210"
-                                    className="rounded-xl border-zinc-200 dark:border-zinc-800 p-3 h-11 focus:bg-white text-sm"
-                                    {...field}
-                                  />
-                                </FormControl>
+                                <div style={{ paddingBottom: "0.5rem" }}>
+                                  <FormControl>
+                                    <Input
+                                      type="tel"
+                                      placeholder="e.g. 9876543210"
+                                      className="rounded-xl border-zinc-200 dark:border-zinc-800 p-3 h-11 focus:bg-white text-sm"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                </div>
                                 <FormMessage />
                               </FormItem>
                             )}
@@ -336,17 +343,19 @@ export default function ContactPage() {
                               <FormLabel className="font-heading text-xs font-black uppercase tracking-wider">
                                 {t("Your Message", "আপনার বার্তা")}
                               </FormLabel>
-                              <FormControl>
-                                <Textarea
-                                  rows={5}
-                                  placeholder={t(
-                                    "Write your query or message here...",
-                                    "আপনার মতামত বা বার্তা এখানে লিখুন..."
-                                  )}
-                                  className="rounded-xl border-zinc-200 dark:border-zinc-800 p-3 focus:bg-white text-sm"
-                                  {...field}
-                                />
-                              </FormControl>
+                              <div style={{ paddingBottom: "0.5rem" }}>
+                                <FormControl>
+                                  <Textarea
+                                    rows={5}
+                                    placeholder={t(
+                                      "Write your query or message here...",
+                                      "আপনার মতামত বা বার্তা এখানে লিখুন..."
+                                    )}
+                                    className="rounded-xl border-zinc-200 dark:border-zinc-800 p-3 focus:bg-white text-sm"
+                                    {...field}
+                                  />
+                                </FormControl>
+                              </div>
                               <FormMessage />
                             </FormItem>
                           )}

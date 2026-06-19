@@ -86,7 +86,7 @@ export default function PublicationsPage() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#F8FAFC" }}>
-      
+
       {/* Header Banner */}
       <section
         style={{
@@ -116,44 +116,62 @@ export default function PublicationsPage() {
       <section style={{ width: "100%", padding: "1.5rem 0", background: "#ffffff", borderBottom: "1px solid #e2e8f0", position: "sticky", top: "64px", zIndex: 20 }}>
         <div className="page-container" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}>
-          
-          {/* Search Box */}
-          <div className="relative w-full md:max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-            <Input
-              type="text"
-              placeholder={t("Search by title...", "নাম দিয়ে খুঁজুন...")}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 rounded-full bg-zinc-50 border-zinc-200 text-sm focus:bg-white dark:bg-zinc-900 dark:border-zinc-800"
-            />
-          </div>
 
-          {/* Category Dropdown or Filters */}
-          <div className="flex flex-wrap gap-2 w-full md:w-auto justify-center md:justify-end">
-            <Button
-              variant={selectedCategory === "All" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedCategory("All")}
-              className="rounded-full font-body font-bold"
-            >
-              {t("All", "সব")}
-            </Button>
-            {PUBLICATION_CATEGORIES.map((cat) => (
+            {/* Search Box */}
+            <div className="relative w-full md:max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+              <Input
+                type="text"
+                placeholder={t("Search by title...", "নাম দিয়ে খুঁজুন...")}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 rounded-full bg-zinc-50 border-zinc-200 text-sm focus:bg-white dark:bg-zinc-900 dark:border-zinc-800"
+              />
+            </div>
+
+            {/* Category Dropdown or Filters */}
+            <div className="flex flex-wrap gap-2 w-full md:w-auto justify-center md:justify-end">
               <Button
-                key={cat}
-                variant={selectedCategory === cat ? "default" : "outline"}
+                variant={selectedCategory === "All" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setSelectedCategory(cat)}
-                className="rounded-full font-body font-bold"
+                onClick={() => setSelectedCategory("All")}
+                style={{
+                  borderRadius: "9999px",
+                  padding: "0.5rem 1.25rem",
+                  fontSize: "0.85rem",
+                  fontWeight: 700,
+                  height: "auto",
+                  cursor: "pointer",
+                  boxSizing: "border-box",
+                  whiteSpace: "nowrap",
+                }}
               >
-                {t(cat, cat === "Magazine" ? "পত্রিকা" : cat === "Booklet" ? "পুস্তিকা" : cat === "Report" ? "রিপোর্ট" : cat === "Awareness Material" ? "সচেতনতা লিপি" : "নিউজলেটার")}
+                {t("All", "সব")}
               </Button>
-            ))}
+              {PUBLICATION_CATEGORIES.map((cat) => (
+                <Button
+                  key={cat}
+                  variant={selectedCategory === cat ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedCategory(cat)}
+                  style={{
+                    borderRadius: "9999px",
+                    padding: "0.5rem 1.25rem",
+                    fontSize: "0.85rem",
+                    fontWeight: 700,
+                    height: "auto",
+                    cursor: "pointer",
+                    boxSizing: "border-box",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {t(cat, cat === "Magazine" ? "পত্রিকা" : cat === "Booklet" ? "পুস্তিকা" : cat === "Report" ? "রিপোর্ট" : cat === "Awareness Material" ? "সচেতনতা লিপি" : "নিউজলেটার")}
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
       {/* Publications Grid */}
       <section style={{ width: "100%", padding: "3.5rem 0" }}>
@@ -170,10 +188,14 @@ export default function PublicationsPage() {
               {filteredPublications.map((pub) => (
                 <div
                   key={pub.id}
-                  className="flex flex-col justify-between p-6 rounded-2xl bg-white border border-zinc-100 hover:border-zinc-200 dark:bg-black dark:border-zinc-900 dark:hover:border-zinc-800 transition-all hover:shadow-md"
+                  className="flex flex-col justify-between rounded-2xl bg-white border border-zinc-100 hover:border-zinc-200 dark:bg-black dark:border-zinc-900 dark:hover:border-zinc-800 transition-all hover:shadow-md"
+                  style={{
+                    padding: "0.8rem",
+                    margin: "0.5rem",
+                  }}
                 >
-                  <div className="flex flex-col gap-4">
-                    <div className="flex items-center justify-between border-b border-zinc-50 dark:border-zinc-900 pb-3">
+                  <div className="flex flex-col" style={{ gap: "1rem" }}>
+                    <div className="flex items-center justify-between border-b border-zinc-50 dark:border-zinc-900" style={{ paddingBottom: "0.75rem" }}>
                       <span className="font-body text-xxs font-black uppercase tracking-widest text-teal-600 dark:text-teal-400">
                         {t(pub.category, pub.category === "Magazine" ? "পত্রিকা" : pub.category === "Booklet" ? "পুস্তিকা" : pub.category === "Report" ? "রিপোর্ট" : pub.category === "Awareness Material" ? "সচেতনতা লিপি" : "নিউজলেটার")}
                       </span>
@@ -191,9 +213,16 @@ export default function PublicationsPage() {
                     </p>
                   </div>
 
-                  <div className="mt-8 pt-4 border-t border-zinc-50 dark:border-zinc-900/50">
+                  <div className="border-t border-zinc-50 dark:border-zinc-900/50" style={{ marginTop: "2rem", paddingTop: "1rem" }}>
                     <a href={pub.pdfUrl} download className="w-full">
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg flex items-center justify-center gap-2">
+                      <Button
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg flex items-center justify-center gap-2"
+                        style={{
+                          padding: "0.75rem 1.5rem",
+                          height: "auto",
+                          cursor: "pointer",
+                        }}
+                      >
                         <Download className="h-4.5 w-4.5" />
                         {t("Download PDF", "ডাউনলোড করুন")}
                       </Button>

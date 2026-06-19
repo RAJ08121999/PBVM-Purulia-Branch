@@ -41,33 +41,33 @@ export const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-zinc-200 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-black/95">
-      <div className="page-container" style={{ display: "flex", height: "4rem", alignItems: "center", justifyContent: "space-between" }}>
+      <div className="w-full max-w-[1920px] mx-auto px-4 lg:px-8 xl:px-12" style={{ display: "flex", height: "5rem", alignItems: "center", justifyContent: "space-between" }}>
         
         {/* Brand Logo & Name */}
-        <Link href="/" className="flex items-center gap-2.5" style={{ textDecoration: "none" }}>
+        <Link href="/" className="flex items-center gap-3 shrink-0" style={{ textDecoration: "none" }}>
           <img
             src="/logo.png"
             alt="PBVM Logo"
-            className="h-10 w-10 object-contain hover:scale-105 transition-transform"
+            className="h-12 w-12 object-contain hover:scale-105 transition-transform shrink-0"
           />
-          <div className="flex flex-col" style={{ textAlign: "left" }}>
-            <span className="font-heading text-sm font-bold tracking-tight text-blue-900 dark:text-blue-400 sm:text-base" style={{ lineHeight: 1.2 }}>
+          <div className="flex flex-col shrink-0" style={{ textAlign: "left" }}>
+            <span className="font-heading text-base font-bold tracking-tight text-blue-900 dark:text-blue-400 sm:text-lg" style={{ lineHeight: 1.2 }}>
               {t("PBVM Purulia", "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ")}
             </span>
-            <span className="text-xs font-medium text-teal-600 dark:text-teal-400 leading-none" style={{ marginTop: "0.125rem" }}>
+            <span className="text-xs sm:text-sm font-medium text-teal-600 dark:text-teal-400 leading-none" style={{ marginTop: "0.2rem" }}>
               {t("Purulia District Branch", "পুরুলিয়া জেলা শাখা")}
             </span>
           </div>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex lg:gap-x-6 items-center">
+        <nav className="hidden lg:flex lg:gap-x-5 xl:gap-x-8 items-center shrink-0">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "font-body text-xs font-semibold uppercase tracking-wider transition-colors hover:text-blue-600 dark:hover:text-blue-400",
+                "font-body text-xs xl:text-sm font-semibold uppercase tracking-wider transition-colors hover:text-blue-600 dark:hover:text-blue-400 whitespace-nowrap",
                 isActive(item.href)
                   ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 pb-1"
                   : "text-zinc-600 dark:text-zinc-300 pb-1"
@@ -80,7 +80,7 @@ export const Navbar = () => {
         </nav>
 
         {/* CTA & Language Toggle */}
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <div className="shrink-0" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           {/* Join Us Button (Desktop) */}
           <Link href="/join-us" className="hidden sm:inline-block" style={{ textDecoration: "none" }}>
             <Button

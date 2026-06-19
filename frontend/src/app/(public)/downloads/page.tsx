@@ -80,7 +80,7 @@ export default function DownloadsPage() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#F8FAFC" }}>
-      
+
       {/* Header Banner */}
       <section
         style={{
@@ -109,12 +109,21 @@ export default function DownloadsPage() {
       {/* Category Selection Filter */}
       <section style={{ width: "100%", padding: "1.5rem 0", background: "#ffffff", borderBottom: "1px solid #e2e8f0", position: "sticky", top: "64px", zIndex: 20 }}>
         <div className="page-container" style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "0.5rem" }}>
-          
+
           <Button
             variant={selectedCategory === "All" ? "default" : "outline"}
             size="sm"
             onClick={() => setSelectedCategory("All")}
-            className="rounded-full font-body font-bold"
+            style={{
+              borderRadius: "9999px",
+              padding: "0.5rem 1.25rem",
+              fontSize: "0.85rem",
+              fontWeight: 700,
+              height: "auto",
+              cursor: "pointer",
+              boxSizing: "border-box",
+              whiteSpace: "nowrap",
+            }}
           >
             {t("All Resources", "সব ফাইল")}
           </Button>
@@ -125,7 +134,16 @@ export default function DownloadsPage() {
               variant={selectedCategory === cat ? "default" : "outline"}
               size="sm"
               onClick={() => setSelectedCategory(cat)}
-              className="rounded-full font-body font-bold"
+              style={{
+                borderRadius: "9999px",
+                padding: "0.5rem 1.25rem",
+                fontSize: "0.85rem",
+                fontWeight: 700,
+                height: "auto",
+                cursor: "pointer",
+                boxSizing: "border-box",
+                whiteSpace: "nowrap",
+              }}
             >
               {t(cat, cat === "Membership Forms" ? "সদস্যপদ ফর্ম" : cat === "Event Brochures" ? "ইভেন্ট লিফলেট" : cat === "Awareness Materials" ? "সচেতনতা লিপি" : cat === "Posters" ? "পোস্টার" : cat === "Reports" ? "রিপোর্ট" : "প্রকাশনা")}
             </Button>
@@ -137,7 +155,7 @@ export default function DownloadsPage() {
       {/* Downloads Catalog list */}
       <section style={{ width: "100%", padding: "3.5rem 0" }}>
         <div className="page-container" style={{ maxWidth: "800px" }}>
-          
+
           {filteredItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center text-center py-20 bg-white border border-zinc-100 rounded-3xl dark:bg-black dark:border-zinc-900">
               <FileText className="h-12 w-12 text-zinc-300 dark:text-zinc-700 mb-4" />
@@ -150,9 +168,10 @@ export default function DownloadsPage() {
               {filteredItems.map((item) => (
                 <div
                   key={item.id}
-                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 rounded-2xl bg-white border border-zinc-100 hover:border-zinc-200 dark:bg-black dark:border-zinc-900 dark:hover:border-zinc-800 transition-all hover:shadow-sm gap-4"
+                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-2xl bg-white border border-zinc-100 hover:border-zinc-200 dark:bg-black dark:border-zinc-900 dark:hover:border-zinc-800 transition-all hover:shadow-sm gap-4"
+                  style={{ padding: "1rem" }}
                 >
-                  
+
                   {/* File Metadata Details */}
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-teal-50 text-teal-600 dark:bg-teal-950/20 dark:text-teal-400 flex items-center justify-center shrink-0">
@@ -176,6 +195,16 @@ export default function DownloadsPage() {
                   <Button
                     onClick={() => handleDownload(item.id, t(item.titleEn, item.titleBn))}
                     className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl flex items-center justify-center gap-1.5 shrink-0"
+                    style={{
+                      borderRadius: "9999px",
+                      padding: "0.5rem 1.25rem",
+                      fontSize: "0.85rem",
+                      fontWeight: 700,
+                      height: "auto",
+                      cursor: "pointer",
+                      boxSizing: "border-box",
+                      whiteSpace: "nowrap",
+                    }}
                   >
                     <Download className="h-4.5 w-4.5" />
                     {t("Download", "ডাউনলোড")}

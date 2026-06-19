@@ -106,7 +106,7 @@ export default function ActivitiesPage() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#F8FAFC" }}>
-      
+
       {/* Header Banner */}
       <section
         style={{
@@ -145,50 +145,51 @@ export default function ActivitiesPage() {
                 >
                   {/* Color strip accent */}
                   <div
-                    className="absolute top-0 left-0 w-3 lg:w-4 h-full"
+                    className="absolute top-0 left-0 w-5 lg:w-6 h-full"
                     style={{ backgroundColor: meta.color }}
                   />
 
-                  <div className="pl-6 lg:pl-8 pr-6 py-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                      
+                  {/* Added relative z-10 to stay above the strip, and ample padding */}
+                  <div className="relative z-10" style={{ padding: "1rem", paddingLeft: "3rem" }}>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12 items-start">
+
                       {/* Left: Icon and Intro */}
-                      <div className="lg:col-span-2 flex flex-col gap-4">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="flex h-12 w-12 items-center justify-center rounded-xl text-2.5xl shadow-sm shrink-0"
-                            style={{ backgroundColor: `${meta.color}15`, color: meta.color }}
-                          >
-                            {meta.icon}
-                          </div>
-                          <h2 className="font-heading text-xl lg:text-2xl font-black text-zinc-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                      <div className="lg:col-span-2 flex gap-5 lg:gap-6">
+                        <div
+                          className="flex h-12 w-14 lg:h-16 lg:w-16 items-center justify-center rounded-2xl text-2xl lg:text-3xl shadow-sm shrink-0 mt-1"
+                          style={{ backgroundColor: `${meta.color}15`, color: meta.color }}
+                        >
+                          {meta.icon}
+                        </div>
+                        <div className="flex flex-col gap-3">
+                          <h2 className="font-heading text-2xl lg:text-3xl font-black text-zinc-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                             {language === "bn" ? meta.titleBn : meta.titleEn}
                           </h2>
+                          <p className="font-body text-base lg:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed pr-4">
+                            {language === "bn" ? details.descBn : details.descEn}
+                          </p>
                         </div>
-                        <p className="font-body text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                          {language === "bn" ? details.descBn : details.descEn}
-                        </p>
                       </div>
 
                       {/* Right: Key Objectives List and Action */}
-                      <div className="flex flex-col gap-5 justify-between h-full">
-                        <div className="flex flex-col gap-2.5">
-                          <h4 className="font-heading text-xs font-bold uppercase tracking-widest text-zinc-400">
+                      <div className="flex flex-col gap-8 justify-between h-full">
+                        <div className="flex flex-col gap-4">
+                          <h4 className="font-heading text-sm lg:text-base font-bold uppercase tracking-widest text-zinc-400">
                             {t("Key Focus Areas", "মূল ক্ষেত্রসমূহ")}
                           </h4>
-                          <ul className="grid gap-1.5 font-body text-xs text-zinc-500 dark:text-zinc-400">
+                          <ul className="grid gap-3 font-body text-sm lg:text-base text-zinc-500 dark:text-zinc-400">
                             {details.objectives.slice(0, 3).map((obj, i) => (
-                              <li key={i} className="flex gap-2 items-start">
-                                <span className="text-teal-600 dark:text-teal-400 shrink-0 mt-0.5">&bull;</span>
-                                <span>{obj}</span>
+                              <li key={i} className="flex gap-3 items-start">
+                                <span className="text-teal-600 dark:text-teal-400 shrink-0 mt-1 text-lg">&bull;</span>
+                                <span className="leading-relaxed">{obj}</span>
                               </li>
                             ))}
                           </ul>
                         </div>
 
-                        <Link href={`/activities/${slug}`}>
+                        <Link href={`/activities/${slug}`} className="block mt-4 mb-2 lg:mb-4">
                           <Button
-                            className="w-full text-white font-bold rounded-lg shadow-sm"
+                            className="w-full text-white font-bold rounded-lg shadow-sm h-12 lg:h-14 text-sm lg:text-base cursor-pointer"
                             style={{ backgroundColor: meta.color }}
                           >
                             {t("Detailed Objectives", "বিস্তারিত উদ্দেশ্য")}

@@ -72,6 +72,13 @@ export default function ActivityDetailPage({ params }: PageProps) {
           date: "May 2026",
           contentEn: "Collected 45 units of blood to address seasonal shortage during summer.",
           contentBn: "গ্রীষ্মকালীন তীব্র রক্তের সংকট মেটাতে ৪৫ ইউনিট রক্ত সংগ্রহ করা হয়েছে।"
+        },
+        {
+          titleEn: "Blood Donation Camp at Purulia Sadar Hospital",
+          titleBn: "পুরুলিয়া সদর হাসপাতালে রক্তদান শিবির",
+          date: "May 2026",
+          contentEn: "Collected 45 units of blood to address seasonal shortage during summer.",
+          contentBn: "গ্রীষ্মকালীন তীব্র রক্তের সংকট মেটাতে ৪৫ ইউনিট রক্ত সংগ্রহ করা হয়েছে।"
         }
       ]
     },
@@ -283,110 +290,142 @@ export default function ActivityDetailPage({ params }: PageProps) {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-50 dark:bg-black">
-      
+    <div className="flex flex-col min-h-screen bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300">
+
       {/* Activity Header Banner */}
       <section
-        className="relative w-full py-24 text-white overflow-hidden"
+        className="relative w-full pt-20 pb-40 lg:pb-56 text-white overflow-hidden flex items-center justify-center"
         style={{
-          background: `linear-gradient(135deg, ${meta.color}dd, ${meta.color}99), url('/grid-pattern.svg')`,
-          backgroundColor: meta.color,
+          background: `linear-gradient(135deg, ${meta.color}, ${meta.color}dd)`,
         }}
       >
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:24px_24px]" />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 z-10 flex flex-col gap-6">
-          <Link href="/activities" className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-white/80 hover:text-white hover:underline w-fit">
-            <ArrowLeft className="h-4 w-4" />
-            {t("All Activities", "সকল কর্মসূচি")}
-          </Link>
-          <div className="flex items-center gap-3">
-            <span className="text-3xl sm:text-5xl">{meta.icon}</span>
-            <h1 className="font-heading text-3xl sm:text-5xl font-black tracking-tight leading-none">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 bg-black/10 mix-blend-multiply" />
+        <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-[500px] h-[500px] rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute bottom-0 left-0 translate-y-1/4 -translate-x-1/4 w-[400px] h-[400px] rounded-full bg-black/10 blur-3xl" />
+
+        <div className="relative w-full max-w-7xl px-6 lg:px-8 z-10 flex flex-col lg:flex-row gap-12 items-center justify-between mx-auto">
+          {/* Left: Text Content */}
+          <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-6 lg:w-2/3">
+            <Link href="/activities" className="flex items-center gap-2 text-sm font-bold text-white/90 hover:text-white transition-all group bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 px-5 py-2.5 rounded-full w-fit mb-2">
+              <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+              {t("Back to Activities", "সকল কর্মসূচিতে ফিরে যান")}
+            </Link>
+
+            <h1 className="font-heading text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight leading-[1.1] drop-shadow-sm">
               {language === "bn" ? meta.titleBn : meta.titleEn}
             </h1>
+
+            <p className="font-body text-lg sm:text-xl lg:text-2xl text-white/90 leading-relaxed font-medium max-w-2xl drop-shadow-sm">
+              {language === "bn" ? data.introBn : data.introEn}
+            </p>
           </div>
-          <p className="font-body text-base sm:text-lg text-white/90 max-w-3xl leading-relaxed">
-            {language === "bn" ? data.introBn : data.introEn}
-          </p>
+
+          {/* Right: Big Icon (Desktop Only) */}
+          <div className="hidden lg:flex lg:w-1/3 justify-center lg:justify-end pr-0 lg:pr-8">
+            <div className="h-56 w-56 xl:h-64 xl:w-64 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border-[6px] border-white/30 shadow-[0_0_40px_rgba(0,0,0,0.2)] relative transform hover:scale-105 transition-transform duration-500">
+              <span className="text-8xl xl:text-9xl drop-shadow-2xl z-10">{meta.icon}</span>
+              <div className="absolute inset-0 rounded-full border-2 border-white/50 animate-[ping_3s_ease-in-out_infinite] opacity-20" />
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Main Grid: Objectives & Stats */}
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-            
-            {/* Objectives Column (left) */}
-            <div className="lg:col-span-2 flex flex-col gap-6 bg-white dark:bg-zinc-950/20 border border-zinc-100 dark:border-zinc-900 rounded-3xl p-8 shadow-sm">
-              <h2 className="font-heading text-xl lg:text-2xl font-black text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-900 pb-4 flex items-center gap-2">
-                <CheckCircle className="h-6 w-6 text-teal-600" />
-                {t("Core Objectives", "মূল লক্ষ্য ও উদ্দেশ্যসমূহ")}
-              </h2>
-              <ul className="flex flex-col gap-4 font-body text-sm sm:text-base text-zinc-600 dark:text-zinc-400">
-                {data.objectives.map((obj, i) => (
-                  <li key={i} className="flex gap-3 items-start">
-                    <span className="h-5 w-5 rounded-full bg-teal-50 dark:bg-teal-950/30 flex items-center justify-center text-teal-600 font-bold text-xs shrink-0 mt-0.5">{i+1}</span>
-                    <span className="leading-relaxed">{obj}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+      {/* Main Content: Objectives & Stats */}
+      <section className="relative -mt-24 lg:-mt-36 px-4 sm:px-6 lg:px-8 z-20 w-full flex justify-center mb-16">
+        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
 
-            {/* Impact / Stats Column (right) */}
-            <div className="lg:col-span-1 flex flex-col gap-6">
-              
-              {/* Stats Card */}
-              <div className="bg-white dark:bg-zinc-950/20 border border-zinc-100 dark:border-zinc-900 rounded-3xl p-8 shadow-sm flex flex-col gap-6">
-                <h3 className="font-heading text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-blue-600" />
-                  {t("Impact in Purulia", "পুরুলিয়ায় আমাদের প্রভাব")}
-                </h3>
-                <div className="grid grid-cols-1 gap-6">
-                  {data.stats.map((stat, idx) => (
-                    <div key={idx} className="flex flex-col border-b border-zinc-50 dark:border-zinc-900/50 pb-4 last:border-b-0 last:pb-0">
-                      <span className="font-heading text-3xl font-black text-zinc-900 dark:text-white">
-                        {stat.value}
-                      </span>
-                      <span className="font-body text-xs font-semibold text-zinc-500 dark:text-zinc-400 mt-1">
-                        {t(stat.labelEn, stat.labelBn)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+          {/* Objectives Container */}
+          <div
+            className="lg:col-span-7 xl:col-span-8 flex flex-col justify-center items-center text-center gap-8 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-2xl border border-solid border-zinc-300 dark:border-zinc-700 rounded-3xl p-8 lg:p-12 shadow-2xl shadow-black/5 dark:shadow-black/40 transition-transform duration-300 hover:shadow-3xl"
+            style={{ marginTop: "1rem" }}
+          >
+            <h2 className="font-heading text-2xl lg:text-3xl font-black text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-800 pb-6 flex flex-col items-center justify-center gap-4 w-full">
+              <div className="p-3 bg-teal-50 dark:bg-teal-900/30 rounded-2xl text-teal-600 shadow-inner">
+                <CheckCircle className="h-8 w-8" />
               </div>
-
-            </div>
-
+              {t("Core Objectives", "মূল লক্ষ্য ও উদ্দেশ্যসমূহ")}
+            </h2>
+            <ul className="flex flex-col gap-6 font-body text-base lg:text-lg text-zinc-700 dark:text-zinc-300 w-full" style={{ paddingLeft: "1rem" }}>
+              {data.objectives.map((obj, i) => (
+                <li key={i} className="flex flex-row gap-5 items-start text-left group">
+                  <span className="h-10 w-10 rounded-full bg-teal-100 dark:bg-teal-900/50 flex items-center justify-center text-teal-700 dark:text-teal-400 font-black text-base shrink-0 shadow-sm group-hover:bg-teal-600 group-hover:text-white transition-colors">
+                    {i + 1}
+                  </span>
+                  <span className="leading-relaxed font-medium pt-2">{obj}</span>
+                </li>
+              ))}
+            </ul>
           </div>
+
+          {/* Impact Stats Container */}
+          <div
+            className="lg:col-span-5 xl:col-span-4 flex flex-col justify-center items-center text-center gap-8 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-2xl border border-solid border-zinc-300 dark:border-zinc-700 rounded-3xl p-8 lg:p-10 shadow-2xl shadow-black/5 dark:shadow-black/40"
+            style={{ marginTop: "1rem" }}
+          >
+            <h3 className="font-heading text-xl lg:text-2xl font-black text-zinc-900 dark:text-white flex flex-col items-center justify-center gap-4 border-b border-zinc-100 dark:border-zinc-800 pb-6 w-full">
+              <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-2xl text-blue-600 shadow-inner">
+                <BarChart3 className="h-7 w-7" />
+              </div>
+              {t("Impact in Purulia", "পুরুলিয়ায় আমাদের প্রভাব")}
+            </h3>
+            <div className="flex flex-col items-center gap-8 w-full">
+              {data.stats.map((stat, idx) => (
+                <div key={idx} className="flex flex-col items-center w-full border-b border-zinc-100 dark:border-zinc-800/80 pb-6 last:border-b-0 last:pb-0 group">
+                  <span className="font-heading text-4xl lg:text-5xl xl:text-6xl font-black text-zinc-900 dark:text-white tracking-tight group-hover:scale-105 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all origin-center">
+                    {stat.value}
+                  </span>
+                  <span className="font-body text-sm xl:text-base font-bold text-zinc-500 dark:text-zinc-400 mt-2 uppercase tracking-wider text-center">
+                    {t(stat.labelEn, stat.labelBn)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
       </section>
 
       {/* Reports Section */}
-      <section className="py-16 bg-zinc-100/40 dark:bg-zinc-950/10 border-t border-zinc-100 dark:border-zinc-900">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <h2 className="font-heading text-2xl font-black text-zinc-900 dark:text-white border-b-2 border-teal-500 pb-3 w-fit mb-8 flex items-center gap-2">
-            <Clock className="h-5.5 w-5.5 text-teal-600" />
-            {t("Recent Activity Reports", "সাম্প্রতিক কাজের বিবরণী")}
-          </h2>
-          <div className="flex flex-col gap-8">
-            {data.reports.map((rep, idx) => (
-              <div
-                key={idx}
-                className="bg-white dark:bg-black border border-zinc-100 dark:border-zinc-900 rounded-2xl p-6 shadow-sm flex flex-col gap-3"
-              >
-                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-50 dark:border-zinc-900/50 pb-3">
-                  <h3 className="font-heading text-base sm:text-lg font-black text-zinc-900 dark:text-white">
-                    {t(rep.titleEn, rep.titleBn)}
-                  </h3>
-                  <span className="font-body text-xs font-bold text-teal-600 bg-teal-50 px-2.5 py-1 rounded-full dark:bg-teal-950/30 dark:text-teal-400">
-                    {rep.date}
-                  </span>
-                </div>
-                <p className="font-body text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                  {t(rep.contentEn, rep.contentBn)}
-                </p>
+      <section className="w-full flex justify-center pb-48 pt-8">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-8">
+          <div className="flex flex-col gap-16 items-center">
+
+            {/* Centered Header */}
+            <div className="flex flex-col items-center justify-center gap-4 w-full" style={{ marginTop: "2rem" }}>
+              <div className="p-3 rounded-full bg-teal-100 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400 shadow-sm shrink-0 w-fit">
+                <Clock className="h-8 w-8" />
               </div>
-            ))}
+              <div className="flex flex-col items-center gap-2 text-center">
+                <h2 className="font-heading text-3xl lg:text-5xl font-black text-zinc-900 dark:text-white tracking-tight">
+                  {t("Recent Activity Reports", "সাম্প্রতিক কাজের বিবরণী")}
+                </h2>
+                <div className="h-1.5 w-24 bg-teal-500 rounded-full"></div>
+              </div>
+            </div>
+
+            {/* Reports Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full" style={{ marginBottom: "2rem" }}>
+              {data.reports.map((rep, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white dark:bg-zinc-900 border border-solid border-zinc-300 dark:border-zinc-700 rounded-3xl p-10 lg:p-14 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center gap-8 group md:col-span-1 data-[single=true]:md:col-span-2 data-[single=true]:max-w-3xl data-[single=true]:mx-auto"
+                  data-single={data.reports.length === 1}
+                >
+                  <div className="flex flex-col items-center gap-5 border-b border-zinc-100 dark:border-zinc-800 pb-6 w-full">
+                    <span className="font-body text-xs lg:text-sm font-bold text-teal-700 bg-teal-50 dark:bg-teal-900/30 dark:text-teal-400 px-5 py-2.5 rounded-full border border-teal-100 dark:border-teal-800/50 w-fit mx-auto shadow-sm">
+                      {rep.date}
+                    </span>
+                    <h3 className="font-heading text-xl lg:text-2xl xl:text-3xl font-black text-zinc-900 dark:text-white group-hover:text-teal-600 transition-colors leading-tight">
+                      {t(rep.titleEn, rep.titleBn)}
+                    </h3>
+                  </div>
+                  <p className="font-body text-base lg:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium max-w-2xl mx-auto">
+                    {t(rep.contentEn, rep.contentBn)}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -394,3 +433,4 @@ export default function ActivityDetailPage({ params }: PageProps) {
     </div>
   )
 }
+

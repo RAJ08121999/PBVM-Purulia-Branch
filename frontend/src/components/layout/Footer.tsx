@@ -57,10 +57,10 @@ export const Footer = () => {
   return (
     <footer style={{ width: "100%", background: "#09090B", color: "#D4D4D8", padding: "4rem 0 2rem 0", borderTop: "1px solid #18181B" }}>
       <div className="page-container">
-        
+
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          
+
           {/* Column 1: About PBVM */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "left" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", borderBottom: "1px solid #27272A", paddingBottom: "0.5rem", width: "fit-content" }}>
@@ -112,8 +112,8 @@ export const Footer = () => {
                 <MapPin style={{ width: "1.25rem", height: "1.25rem", color: "#0D9488", flexShrink: 0, marginTop: "0.125rem" }} />
                 <span>
                   {t(
-                    "District Science Centre Campus, North Lake Road, Purulia, West Bengal, Pin - 723101",
-                    "জেলা বিজ্ঞান কেন্দ্র প্রাঙ্গণ, উত্তর লেক রোড, পুরুলিয়া, পশ্চিমবঙ্গ, পিন - ৭২৩১০১"
+                    "Students Health Home Near Purulia Municipality, North Lake Road, Purulia, West Bengal, Pin - 723101",
+                    "ছাত্র-ছাত্রী স্বাস্থ্য ভবন, পুরুলিয়া পৌরসভা সংলগ্ন, উত্তর লেক রোড, পুরুলিয়া, পশ্চিমবঙ্গ, পিন - ৭২৩১০১"
                   )}
                 </span>
               </div>
