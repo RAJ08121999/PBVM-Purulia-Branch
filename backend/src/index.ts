@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
+import path from "path";
 import { connectDB } from "./config/db";
 
 // ─── Route imports ─────────────────────────────────────────
@@ -46,6 +47,9 @@ app.use(globalLimiter);
 // ─── Body Parsers ──────────────────────────────────────────
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
+// ─── Static Files for Uploads ──────────────────────────────
+app.use("/uploads", express.static(path.join(__dirname, "../public/uploads")));
 
 // ─── Health Check ──────────────────────────────────────────
 app.get("/health", (_req, res) => {

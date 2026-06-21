@@ -166,8 +166,8 @@ export default function JoinUsPage() {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#F8FAFC" }}>
-      
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#F8FAFC", padding: "1rem", textAlign: "center", alignItems: "center" }}>
+
       {/* Header Banner */}
       <section
         style={{
@@ -180,7 +180,7 @@ export default function JoinUsPage() {
         }}
       >
         <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(to right,rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.04) 1px,transparent 1px)", backgroundSize: "40px 40px", pointerEvents: "none" }} />
-        <div className="page-container" style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
+        <div className="page-container" style={{ position: "relative", zIndex: 1, textAlign: "center", padding: "1rem", display: "flex", flexDirection: "column", alignItems: "center" }}>
           <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(1.8rem,4.5vw,3rem)", fontWeight: 800, color: "#ffffff", marginBottom: "1rem", lineHeight: 1.2 }}>
             {t("Join as a Member", "বিজ্ঞান মঞ্চের সদস্য হন")}
           </h1>
@@ -194,21 +194,23 @@ export default function JoinUsPage() {
       </section>
 
       {/* Main Form Grid */}
-      <section style={{ width: "100%", padding: "4rem 0" }}>
-        <div className="page-container">
+      <section style={{ width: "100%", padding: "4rem 1rem", textAlign: "center", display: "flex", justifyContent: "center" }}>
+        <div className="page-container" style={{ padding: "1rem", textAlign: "center" }}>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-            
+
             {/* Left Side: Why Join Column */}
-            <div className="lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-24">
-              
+            <div
+              style={{ display: "flex", flexDirection: "column", padding: "1rem", position: "sticky", zIndex: 1 }}
+              className="lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-24">
+
               <div className="p-8 rounded-3xl bg-gradient-to-br from-blue-950 to-indigo-900 text-white shadow-md flex flex-col gap-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 h-40 w-40 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
-                
-                <div className="flex items-center gap-3">
+
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "1rem", position: "sticky", zIndex: 1 }}>
                   <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center">
                     <UserPlus className="h-5 w-5 text-teal-400" />
                   </div>
-                  <h3 className="font-heading text-lg font-black tracking-tight">
+                  <h3 className="font-heading text-lg font-black tracking-tight" style={{ color: "#f1f5f9" }}>
                     {t("Why Join Us?", "কেন যোগদান করবেন?")}
                   </h3>
                 </div>
@@ -279,8 +281,8 @@ export default function JoinUsPage() {
 
             {/* Right Side: Membership Application Form Card */}
             <div className="lg:col-span-8">
-              <div className="p-8 rounded-3xl bg-white border border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 shadow-md">
-                
+              <div className="rounded-3xl bg-white border border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 shadow-md" style={{ padding: "1rem", textAlign: "center" }}>
+
                 {isSuccess ? (
                   <div className="flex flex-col items-center justify-center text-center py-16 gap-4 animate-fade-in">
                     <div className="h-16 w-16 rounded-full bg-green-50 text-green-600 dark:bg-green-950/20 dark:text-green-400 flex items-center justify-center mb-2">
@@ -317,15 +319,15 @@ export default function JoinUsPage() {
 
                     <Form {...form}>
                       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                        
+
                         {/* Section 1: Personal Details */}
-                        <div className="space-y-4">
-                          <h4 className="font-heading text-xs font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider border-b border-zinc-100 dark:border-zinc-900 pb-2">
+                        <div className="space-y-4" style={{ paddingBottom: "2rem" }}>
+                          <h4 className="font-heading text-xs font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider border-b border-zinc-100 dark:border-zinc-900 pb-2" style={{ paddingBottom: "1rem" }}>
                             {t("1. Personal Details", "১. ব্যক্তিগত বিবরণ")}
                           </h4>
-                          
+
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                            
+
                             {/* Full Name */}
                             <div className="sm:col-span-2">
                               <FormField
@@ -340,6 +342,7 @@ export default function JoinUsPage() {
                                       <Input
                                         placeholder={t("e.g. Subhasish Sen", "উদাঃ শুভাশীষ সেন")}
                                         className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 focus:bg-white text-sm"
+                                        style={{ paddingLeft: "1rem" }}
                                         {...field}
                                       />
                                     </FormControl>
@@ -363,14 +366,14 @@ export default function JoinUsPage() {
                                     defaultValue={field.value}
                                   >
                                     <FormControl>
-                                      <SelectTrigger className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 focus:bg-white text-sm">
+                                      <SelectTrigger className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 focus:bg-white text-sm" style={{ paddingLeft: "1rem" }}>
                                         <SelectValue placeholder={t("Select", "নির্বাচন করুন")} />
                                       </SelectTrigger>
                                     </FormControl>
                                     <SelectContent className="bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded-xl">
-                                      <SelectItem value="Male">{t("Male", "পুরুষ")}</SelectItem>
-                                      <SelectItem value="Female">{t("Female", "মহিলা")}</SelectItem>
-                                      <SelectItem value="Other">{t("Other", "অন্যান্য")}</SelectItem>
+                                      <SelectItem value="Male" style={{ padding: "0.5rem 1rem" }}>{t("Male", "পুরুষ")}</SelectItem>
+                                      <SelectItem value="Female" style={{ padding: "0.5rem 1rem" }}>{t("Female", "মহিলা")}</SelectItem>
+                                      <SelectItem value="Other" style={{ padding: "0.5rem 1rem" }}>{t("Other", "অন্যান্য")}</SelectItem>
                                     </SelectContent>
                                   </Select>
                                   <FormMessage />
@@ -391,6 +394,7 @@ export default function JoinUsPage() {
                                     <Input
                                       type="date"
                                       className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 focus:bg-white text-sm"
+                                      style={{ paddingLeft: "1rem" }}
                                       {...field}
                                     />
                                   </FormControl>
@@ -412,6 +416,7 @@ export default function JoinUsPage() {
                                     <Input
                                       placeholder={t("e.g. M.Sc. Physics", "উদাঃ বি.এসসি")}
                                       className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 focus:bg-white text-sm"
+                                      style={{ paddingLeft: "1rem" }}
                                       {...field}
                                     />
                                   </FormControl>
@@ -433,6 +438,7 @@ export default function JoinUsPage() {
                                     <Input
                                       placeholder={t("e.g. High School Teacher", "উদাঃ শিক্ষকতা")}
                                       className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 focus:bg-white text-sm"
+                                      style={{ paddingLeft: "1rem" }}
                                       {...field}
                                     />
                                   </FormControl>
@@ -445,13 +451,13 @@ export default function JoinUsPage() {
                         </div>
 
                         {/* Section 2: Contact Details */}
-                        <div className="space-y-4">
-                          <h4 className="font-heading text-xs font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider border-b border-zinc-100 dark:border-zinc-900 pb-2">
+                        <div className="space-y-6" style={{ paddingBottom: "2rem" }}>
+                          <h4 className="font-heading text-xs font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider border-b border-zinc-100 dark:border-zinc-900 pb-2" style={{ paddingBottom: "1rem" }}>
                             {t("2. Contact & Address Details", "২. যোগাযোগের ঠিকানা ও বিবরণ")}
                           </h4>
-                          
+
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            
+
                             {/* Email */}
                             <FormField
                               control={form.control}
@@ -466,6 +472,7 @@ export default function JoinUsPage() {
                                       type="email"
                                       placeholder="subhasish@example.com"
                                       className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 focus:bg-white text-sm"
+                                      style={{ paddingLeft: "1rem" }}
                                       {...field}
                                     />
                                   </FormControl>
@@ -487,6 +494,7 @@ export default function JoinUsPage() {
                                     <Input
                                       placeholder="9876543210"
                                       className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 focus:bg-white text-sm"
+                                      style={{ paddingLeft: "1rem" }}
                                       {...field}
                                     />
                                   </FormControl>
@@ -510,6 +518,7 @@ export default function JoinUsPage() {
                                         rows={3}
                                         placeholder={t("Enter your full home address", "আপনার সম্পূর্ণ যোগাযোগের ঠিকানা লিখুন")}
                                         className="rounded-xl border-zinc-200 dark:border-zinc-800 focus:bg-white text-sm"
+                                        style={{ paddingLeft: "1rem", paddingTop: "0.5rem" }}
                                         {...field}
                                       />
                                     </FormControl>
@@ -531,6 +540,7 @@ export default function JoinUsPage() {
                                   <FormControl>
                                     <Input
                                       className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 focus:bg-white text-sm"
+                                      style={{ paddingLeft: "1rem" }}
                                       {...field}
                                     />
                                   </FormControl>
@@ -551,6 +561,7 @@ export default function JoinUsPage() {
                                   <FormControl>
                                     <Input
                                       className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 focus:bg-white text-sm"
+                                      style={{ paddingLeft: "1rem" }}
                                       {...field}
                                     />
                                   </FormControl>
@@ -563,17 +574,19 @@ export default function JoinUsPage() {
                         </div>
 
                         {/* Section 3: Interests & Motivation */}
-                        <div className="space-y-6">
-                          <h4 className="font-heading text-xs font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider border-b border-zinc-100 dark:border-zinc-900 pb-2">
+                        <div className="space-y-6" style={{ paddingBottom: "2rem" }}>
+                          <h4 className="font-heading text-xs font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider border-b border-zinc-100 dark:border-zinc-900 pb-2" style={{ paddingBottom: "1rem" }}>
                             {t("3. Areas of Interest & Motivation", "৩. আগ্রহের ক্ষেত্র ও উদ্দেশ্য")}
                           </h4>
 
                           {/* Checkbox Grid */}
                           <div className="space-y-3">
-                            <FormLabel className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">
+                            <FormLabel
+                              style={{ paddingBottom: "1rem" }}
+                              className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">
                               {t("Select areas you want to contribute to (Select at least one):", "যে সব ক্ষেত্রে আপনি যুক্ত হতে চান (অন্তত একটি নির্বাচন করুন):")}
                             </FormLabel>
-                            
+
                             <FormField
                               control={form.control}
                               name="areasOfInterest"
@@ -585,11 +598,10 @@ export default function JoinUsPage() {
                                       return (
                                         <label
                                           key={opt.id}
-                                          className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all hover:bg-zinc-50 dark:hover:bg-zinc-900/40 select-none ${
-                                            isChecked
-                                              ? "border-teal-500 bg-teal-50/20 dark:border-teal-500 dark:bg-teal-950/10"
-                                              : "border-zinc-100 dark:border-zinc-900"
-                                          }`}
+                                          className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all hover:bg-zinc-50 dark:hover:bg-zinc-900/40 select-none ${isChecked
+                                            ? "border-teal-500 bg-teal-50/20 dark:border-teal-500 dark:bg-teal-950/10"
+                                            : "border-zinc-100 dark:border-zinc-900"
+                                            }`}
                                         >
                                           <input
                                             type="checkbox"
@@ -618,7 +630,7 @@ export default function JoinUsPage() {
                             name="motivation"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">
+                                <FormLabel className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300" style={{ paddingTop: "1rem", display: "inline-block" }}>
                                   {t("Why do you want to join Paschim Banga Vigyan Mancha?", "আপনি কেন পশ্চিমবঙ্গ বিজ্ঞান মঞ্চে যোগ দিতে চান?")}
                                 </FormLabel>
                                 <FormDescription className="font-body text-xxs text-zinc-400">
@@ -632,6 +644,7 @@ export default function JoinUsPage() {
                                       "উদাঃ আমি আমার এলাকার মানুষদের বিজ্ঞান সচেতন করতে চাই, কুসংস্কার দূর করতে এবং শিক্ষার্থীদের জন্য বিজ্ঞান ক্যাম্প আয়োজনে যুক্ত হতে চাই..."
                                     )}
                                     className="rounded-xl border-zinc-200 dark:border-zinc-800 focus:bg-white text-sm"
+                                    style={{ paddingLeft: "1rem", paddingTop: "0.5rem" }}
                                     {...field}
                                   />
                                 </FormControl>

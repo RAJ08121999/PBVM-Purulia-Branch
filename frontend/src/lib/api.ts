@@ -65,7 +65,7 @@ export const publicApi = {
   getPolicyArticle: (id: string) => api.get(`/policy/${id}`),
 
   // Downloads
-  getDownloads: (params?: { category?: string }) =>
+  getDownloads: (params?: { category?: string; limit?: number }) =>
     api.get("/downloads", { params }),
   trackDownload: (id: string) => api.post(`/downloads/${id}/track`),
 
@@ -88,6 +88,7 @@ export const adminApi = {
     api.post("/auth/login", { email, password }),
   logout: () => api.post("/auth/logout"),
   getMe: () => api.get("/auth/me"),
+  updateProfile: (data: object) => api.put("/auth/update-profile", data),
 
   // Notifications CRUD
   createNotification: (data: object) => api.post("/notifications", data),
@@ -132,6 +133,7 @@ export const adminApi = {
     api.get("/contact/admin", { params }),
   updateContactStatus: (id: string, status: string) =>
     api.put(`/contact/${id}/status`, { status }),
+  deleteContactInquiry: (id: string) => api.delete(`/contact/admin/${id}`),
   exportContactInquiries: () =>
     api.get("/contact/export", { responseType: "blob" }),
 
@@ -140,6 +142,7 @@ export const adminApi = {
     api.get("/membership/admin", { params }),
   updateMembershipStatus: (id: string, status: string) =>
     api.put(`/membership/${id}/status`, { status }),
+  deleteMembership: (id: string) => api.delete(`/membership/admin/${id}`),
   exportMemberships: () =>
     api.get("/membership/export", { responseType: "blob" }),
 
