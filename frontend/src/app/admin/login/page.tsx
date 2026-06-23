@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 import { adminApi } from "@/lib/api";
@@ -75,23 +76,26 @@ export default function AdminLogin() {
         }}
       >
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-          {/* Logo Placeholder */}
+          {/* Brand Logo */}
           <div
             style={{
-              width: "60px",
-              height: "60px",
-              margin: "0 auto 1rem",
-              background: "var(--color-teal)",
-              borderRadius: "50%",
+              width: "70px",
+              height: "70px",
+              margin: "0 auto 1.25rem",
+              position: "relative",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "#fff",
-              fontWeight: "bold",
-              fontSize: "1.5rem",
             }}
           >
-            PB
+            <Image
+              src="/logo.png"
+              alt="PBVM Purulia Logo"
+              width={70}
+              height={70}
+              style={{ objectFit: "contain" }}
+              priority
+            />
           </div>
           <h2 style={{ fontSize: "1.75rem", color: "var(--color-deep-blue)" }}>Admin Portal</h2>
           <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem", marginTop: "0.25rem" }}>

@@ -56,7 +56,7 @@ export const publicApi = {
     api.get("/gallery", { params }),
 
   // Publications
-  getPublications: (params?: { category?: string; search?: string; page?: number }) =>
+  getPublications: (params?: { category?: string; search?: string; page?: number; limit?: number }) =>
     api.get("/publications", { params }),
 
   // Policy Articles
@@ -129,7 +129,7 @@ export const adminApi = {
   deleteDownload: (id: string) => api.delete(`/downloads/${id}`),
 
   // Contact Inquiries
-  getContactInquiries: (params?: { status?: string; page?: number }) =>
+  getContactInquiries: (params?: { status?: string; page?: number; limit?: number }) =>
     api.get("/contact/admin", { params }),
   updateContactStatus: (id: string, status: string) =>
     api.put(`/contact/${id}/status`, { status }),
@@ -138,7 +138,7 @@ export const adminApi = {
     api.get("/contact/export", { responseType: "blob" }),
 
   // Memberships
-  getMemberships: (params?: { status?: string; page?: number }) =>
+  getMemberships: (params?: { status?: string; page?: number; limit?: number }) =>
     api.get("/membership/admin", { params }),
   updateMembershipStatus: (id: string, status: string) =>
     api.put(`/membership/${id}/status`, { status }),

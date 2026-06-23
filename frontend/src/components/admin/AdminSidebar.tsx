@@ -80,9 +80,9 @@ export default function AdminSidebar({ admin, onOpenProfile }: AdminSidebarProps
       >
         <div
           style={{
-            width: "35px",
-            height: "35px",
-            background: "var(--color-orange)",
+            width: "50px",
+            height: "50px",
+            background: "white",
             borderRadius: "50%",
             display: "flex",
             alignItems: "center",
@@ -91,7 +91,7 @@ export default function AdminSidebar({ admin, onOpenProfile }: AdminSidebarProps
             color: "#fff",
           }}
         >
-          PB
+          <img src="/logo.png" alt="PBVM Purulia Logo" width={50} height={50} />
         </div>
         <div>
           <h2 style={{ fontSize: "1.15rem", fontWeight: 700, margin: 0, lineHeight: 1 }}>PBVM Purulia</h2>
