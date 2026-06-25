@@ -22,15 +22,33 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const allowedOrigins = new Set(
+  [
+    process.env.FRONTEND_URL,
+    ...(process.env.FRONTEND_URLS?.split(",") || []),
+    "https://pbvm-purulia-branch.vercel.app",
+    "http://localhost:3000",
+  ]
+    .map((origin) => origin?.trim())
+    .filter((origin): origin is string => Boolean(origin))
+);
 
 // ─── Security Middleware ───────────────────────────────────
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.has(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error(`CORS blocked origin: ${origin}`));
+    },
     credentials: false,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    optionsSuccessStatus: 204,
   })
 );
 
