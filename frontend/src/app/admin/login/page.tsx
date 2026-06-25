@@ -45,9 +45,21 @@ export default function AdminLogin() {
       } else {
         toast.error(res.data.message || "Login failed");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[LOGIN ERROR]", error);
-      const errMsg = error.response?.data?.message || "Invalid email or password";
+      let errMsg = "Invalid email or password";
+
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        typeof (error as { response?: unknown }).response === "object" &&
+        (error as { response?: { data?: unknown } }).response?.data &&
+        typeof (error as { response?: { data?: { message?: unknown } } }).response?.data?.message === "string"
+      ) {
+        errMsg = (error as { response: { data: { message: string } } }).response.data.message;
+      }
+
       toast.error(errMsg);
     } finally {
       setLoading(false);

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { UserCog, Plus, Trash2, ArrowLeft, Shield, ShieldCheck, X } from "lucide-react";
 import Link from "next/link";
@@ -10,26 +10,27 @@ import { adminApi } from "@/lib/api";
 interface AdminUser {
   _id: string;
   name: string;
-  userId: string;
-  role: "Super Admin" | "Admin";
+  email: string;
+  role: "SuperAdministrator" | "Administrator";
   createdAt: string;
 }
 
 export default function AdminManagement() {
-  const [user, setUser] = useState<{ _id: string; role: string; name: string } | null>(null);
+  const [user] = useState<{ _id: string; role: string; name: string } | null>(() => {
+    if (typeof window === "undefined") return null;
 
-  useEffect(() => {
     const adminStr = localStorage.getItem("pbvm_admin");
     if (adminStr) {
       try {
         const adminData = JSON.parse(adminStr);
-        // Map id to _id since auth endpoint returns id
-        setUser({ ...adminData, _id: adminData.id });
+        return { ...adminData, _id: adminData.id };
       } catch (e) {
         console.error("Failed to parse admin data", e);
       }
     }
-  }, []);
+
+    return null;
+  });
 
   const [admins, setAdmins] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,12 +38,12 @@ export default function AdminManagement() {
 
   // Form State
   const [name, setName] = useState("");
-  const [userId, setUserId] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"Super Admin" | "Admin">("Admin");
+  const [role, setRole] = useState<"SuperAdministrator" | "Administrator">("Administrator");
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchAdmins = async () => {
+  const fetchAdmins = useCallback(async () => {
     try {
       setLoading(true);
       const res = await adminApi.getAdmins();
@@ -55,38 +56,51 @@ export default function AdminManagement() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchAdmins();
-  }, []);
+    void Promise.resolve().then(fetchAdmins);
+  }, [fetchAdmins]);
 
   const openCreateModal = () => {
     setName("");
-    setUserId("");
+    setEmail("");
     setPassword("");
-    setRole("Admin");
+    setRole("Administrator");
     setModalOpen(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !userId || !password) {
+    if (!name || !email || !password) {
       toast.error("Please fill in all fields");
       return;
     }
 
     setSubmitting(true);
     try {
-      const res = await adminApi.createAdmin({ name, userId, password, role });
+      const res = await adminApi.createAdmin({ name, email, password, role });
       if (res.data.success) {
         toast.success("Admin created successfully!");
         setModalOpen(false);
         fetchAdmins();
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[CREATE ADMIN ERROR]", error);
-      toast.error(error.response?.data?.message || "Failed to create admin");
+      const message =
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        typeof error.response === "object" &&
+        error.response !== null &&
+        "data" in error.response &&
+        typeof error.response.data === "object" &&
+        error.response.data !== null &&
+        "message" in error.response.data &&
+        typeof error.response.data.message === "string"
+          ? error.response.data.message
+          : "Failed to create admin";
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }
@@ -106,14 +120,27 @@ export default function AdminManagement() {
         toast.success("Admin deleted successfully");
         setAdmins(prev => prev.filter(a => a._id !== id));
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[DELETE ADMIN ERROR]", error);
-      toast.error(error.response?.data?.message || "Failed to delete admin");
+      const message =
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        typeof error.response === "object" &&
+        error.response !== null &&
+        "data" in error.response &&
+        typeof error.response.data === "object" &&
+        error.response.data !== null &&
+        "message" in error.response.data &&
+        typeof error.response.data.message === "string"
+          ? error.response.data.message
+          : "Failed to delete admin";
+      toast.error(message);
     }
   };
 
   // Only Super Admins can see the create button
-  const canCreate = user?.role === "Super Admin";
+  const canCreate = user?.role === "SuperAdministrator";
 
   return (
     <AdminLayout>
@@ -169,7 +196,7 @@ export default function AdminManagement() {
                 <tr style={{ borderBottom: "2px solid var(--color-light-gray)", textAlign: "left", color: "var(--color-text-muted)", fontSize: "0.85rem", backgroundColor: "#f8fafc" }}>
                   <th style={{ padding: "1rem 1.5rem" }}>Role</th>
                   <th style={{ padding: "1rem 1.5rem" }}>Name</th>
-                  <th style={{ padding: "1rem 1.5rem" }}>User ID</th>
+                  <th style={{ padding: "1rem 1.5rem" }}>Email</th>
                   <th style={{ padding: "1rem 1.5rem" }}>Created Date</th>
                   {canCreate && <th style={{ padding: "1rem 1.5rem", textAlign: "right" }}>Actions</th>}
                 </tr>
@@ -178,9 +205,9 @@ export default function AdminManagement() {
                 {admins.map((admin) => (
                   <tr key={admin._id} style={{ borderBottom: "1px solid var(--color-light-gray)", transition: "background-color 0.2s" }} className="hover-bg">
                     <td style={{ padding: "1rem 1.5rem" }}>
-                      <span className={`badge ${admin.role === "Super Admin" ? "badge-orange" : "badge-blue"}`} style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
-                        {admin.role === "Super Admin" ? <ShieldCheck size={12} /> : <Shield size={12} />}
-                        {admin.role}
+                      <span className={`badge ${admin.role === "SuperAdministrator" ? "badge-orange" : "badge-blue"}`} style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
+                        {admin.role === "SuperAdministrator" ? <ShieldCheck size={12} /> : <Shield size={12} />}
+                        {admin.role === "SuperAdministrator" ? "Super Admin" : "Admin"}
                       </span>
                     </td>
                     <td style={{ padding: "1rem 1.5rem", fontWeight: 600, color: "var(--color-deep-blue)" }}>
@@ -188,7 +215,7 @@ export default function AdminManagement() {
                       {admin._id === user?._id && <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", fontWeight: 400, marginLeft: "0.5rem" }}>(You)</span>}
                     </td>
                     <td style={{ padding: "1rem 1.5rem", fontFamily: "monospace", color: "var(--color-text-muted)" }}>
-                      {admin.userId}
+                      {admin.email}
                     </td>
                     <td style={{ padding: "1rem 1.5rem", color: "var(--color-text-muted)", fontSize: "0.9rem" }}>
                       {new Date(admin.createdAt).toLocaleDateString()}
@@ -264,14 +291,14 @@ export default function AdminManagement() {
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">User ID *</label>
+                  <label className="form-label">Email *</label>
                   <input
-                    type="text"
+                    type="email"
                     className="form-input"
-                    value={userId}
-                    onChange={(e) => setUserId(e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
-                    placeholder="e.g. admin123"
+                    placeholder="admin@pbvmpurulia.org"
                   />
                 </div>
 
@@ -292,11 +319,11 @@ export default function AdminManagement() {
                   <select
                     className="form-input"
                     value={role}
-                    onChange={(e) => setRole(e.target.value as "Super Admin" | "Admin")}
+                    onChange={(e) => setRole(e.target.value as "SuperAdministrator" | "Administrator")}
                     required
                   >
-                    <option value="Admin">Admin</option>
-                    <option value="Super Admin">Super Admin</option>
+                    <option value="Administrator">Admin</option>
+                    <option value="SuperAdministrator">Super Admin</option>
                   </select>
                   <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginTop: "0.5rem" }}>
                     <strong>Admin:</strong> Can manage content but cannot create/delete other admins.<br />
