@@ -1,24 +1,20 @@
 "use client"
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { Users, Trash2, ArrowLeft, Download, Eye, X, Check, XCircle } from "lucide-react";
 import Link from "next/link";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { adminApi } from "@/lib/api";
+import type { MembershipApplication, MembershipStatus } from "@/types";
 
-interface Membership {
-  _id: string;
-  fullName: string;
-  email: string;
-  phone: string;
-  address: string;
-  dob: string;
-  occupation: string;
-  membershipType: "General" | "Life" | "Student";
-  status: "Pending" | "Approved" | "Rejected";
-  submittedAt: string;
-}
+type Membership = MembershipApplication;
+
+const statusLabels: Record<MembershipStatus, string> = {
+  pending: "Pending",
+  approved: "Approved",
+  rejected: "Rejected",
+};
 
 export default function AdminMemberships() {
   const [memberships, setMemberships] = useState<Membership[]>([]);
@@ -27,9 +23,8 @@ export default function AdminMemberships() {
   // View Modal State
   const [selectedMembership, setSelectedMembership] = useState<Membership | null>(null);
 
-  const fetchMemberships = async () => {
+  const fetchMemberships = useCallback(async () => {
     try {
-      setLoading(true);
       const res = await adminApi.getMemberships();
       if (res.data.success) {
         setMemberships(res.data.memberships || []);
@@ -40,25 +35,29 @@ export default function AdminMemberships() {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchMemberships();
   }, []);
 
-  const handleStatusUpdate = async (id: string, newStatus: string) => {
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void fetchMemberships();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [fetchMemberships]);
+
+  const handleStatusUpdate = async (id: string, newStatus: MembershipStatus) => {
     try {
       const res = await adminApi.updateMembershipStatus(id, newStatus);
       if (res.data.success) {
-        toast.success(`Membership status updated to ${newStatus}`);
+        toast.success(`Membership status updated to ${statusLabels[newStatus]}`);
         
         // Update local state
         setMemberships(prev => prev.map(m => 
-          m._id === id ? { ...m, status: newStatus as any } : m
+          m._id === id ? { ...m, status: newStatus } : m
         ));
         
         if (selectedMembership && selectedMembership._id === id) {
-          setSelectedMembership({ ...selectedMembership, status: newStatus as any });
+          setSelectedMembership({ ...selectedMembership, status: newStatus });
         }
       }
     } catch (error) {
@@ -97,10 +96,10 @@ export default function AdminMemberships() {
       ...memberships.map(m => [
         `"${m.fullName.replace(/"/g, '""')}"`,
         `"${m.email.replace(/"/g, '""')}"`,
-        `"${m.phone.replace(/"/g, '""')}"`,
-        `"${m.membershipType}"`,
-        `"${m.status}"`,
-        `"${new Date(m.dob).toLocaleDateString()}"`,
+        `"${m.phoneNumber.replace(/"/g, '""')}"`,
+        `"Applicant"`,
+        `"${statusLabels[m.status]}"`,
+        `"${new Date(m.dateOfBirth).toLocaleDateString()}"`,
         `"${m.occupation.replace(/"/g, '""')}"`,
         `"${m.address.replace(/"/g, '""').replace(/\n/g, ' ')}"`,
         `"${new Date(m.submittedAt).toLocaleDateString()}"`
@@ -119,9 +118,9 @@ export default function AdminMemberships() {
 
   const getStatusBadgeClass = (status: string) => {
     switch(status) {
-      case "Pending": return "badge-orange";
-      case "Approved": return "badge-green";
-      case "Rejected": return "badge-blue";
+      case "pending": return "badge-orange";
+      case "approved": return "badge-green";
+      case "rejected": return "badge-blue";
       default: return "badge-orange";
     }
   };
@@ -182,16 +181,16 @@ export default function AdminMemberships() {
                   <tr key={m._id} style={{ borderBottom: "1px solid var(--color-light-gray)", transition: "background-color 0.2s" }} className="hover-bg">
                     <td style={{ padding: "1rem 1.5rem" }}>
                       <span className={`badge ${getStatusBadgeClass(m.status)}`} style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}>
-                        {m.status}
+                        {statusLabels[m.status]}
                       </span>
                     </td>
                     <td style={{ padding: "1rem 1.5rem" }}>
                       <div style={{ fontWeight: 600, color: "var(--color-deep-blue)" }}>{m.fullName}</div>
-                      <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted)" }}>{m.email} • {m.phone}</div>
+                      <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted)" }}>{m.email} • {m.phoneNumber}</div>
                     </td>
                     <td style={{ padding: "1rem 1.5rem" }}>
                       <span className="badge badge-blue">
-                        {m.membershipType}
+                        Applicant
                       </span>
                     </td>
                     <td style={{ padding: "1rem 1.5rem", color: "var(--color-text-muted)", fontSize: "0.9rem" }}>
@@ -199,9 +198,9 @@ export default function AdminMemberships() {
                     </td>
                     <td style={{ padding: "1rem 1.5rem", textAlign: "right" }}>
                       <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
-                        {m.status === "Pending" && (
+                        {m.status === "pending" && (
                           <button
-                            onClick={() => handleStatusUpdate(m._id, "Approved")}
+                            onClick={() => handleStatusUpdate(m._id, "approved")}
                             className="btn btn-primary"
                             style={{ padding: "0.5rem", borderRadius: "var(--radius-sm)", display: "flex", alignItems: "center", justifyContent: "center", background: "#16a34a", borderColor: "#16a34a" }}
                             title="Approve"
@@ -277,20 +276,20 @@ export default function AdminMemberships() {
                   <div>
                     <h4 style={{ margin: 0, fontSize: "1.2rem", color: "var(--color-deep-blue)" }}>{selectedMembership.fullName}</h4>
                     <div style={{ color: "var(--color-text-muted)", fontSize: "0.9rem", marginTop: "0.25rem" }}>
-                      <span className="badge badge-blue" style={{ marginRight: "0.5rem" }}>{selectedMembership.membershipType} Member</span>
+                      <span className="badge badge-blue" style={{ marginRight: "0.5rem" }}>Applicant</span>
                       Applied on: {new Date(selectedMembership.submittedAt).toLocaleDateString()}
                     </div>
                   </div>
                   <div style={{ textAlign: "right" }}>
                     <select
                       value={selectedMembership.status}
-                      onChange={(e) => handleStatusUpdate(selectedMembership._id, e.target.value)}
+                      onChange={(e) => handleStatusUpdate(selectedMembership._id, e.target.value as MembershipStatus)}
                       className="form-input"
-                      style={{ padding: "0.25rem 0.5rem", fontSize: "0.85rem", height: "auto", minHeight: "0", fontWeight: 600, color: selectedMembership.status === "Approved" ? "#16a34a" : selectedMembership.status === "Rejected" ? "#ef4444" : "#f59e0b" }}
+                      style={{ padding: "0.25rem 0.5rem", fontSize: "0.85rem", height: "auto", minHeight: "0", fontWeight: 600, color: selectedMembership.status === "approved" ? "#16a34a" : selectedMembership.status === "rejected" ? "#ef4444" : "#f59e0b" }}
                     >
-                      <option value="Pending">Status: Pending</option>
-                      <option value="Approved">Status: Approved</option>
-                      <option value="Rejected">Status: Rejected</option>
+                      <option value="pending">Status: Pending</option>
+                      <option value="approved">Status: Approved</option>
+                      <option value="rejected">Status: Rejected</option>
                     </select>
                   </div>
                 </div>
@@ -300,13 +299,13 @@ export default function AdminMemberships() {
                     <h5 style={{ margin: "0 0 0.5rem 0", fontSize: "0.85rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Contact Info</h5>
                     <div style={{ fontSize: "0.95rem", color: "var(--color-dark-gray)", lineHeight: 1.6 }}>
                       <div><strong>Email:</strong> <a href={`mailto:${selectedMembership.email}`} style={{ color: "var(--color-deep-blue)" }}>{selectedMembership.email}</a></div>
-                      <div><strong>Phone:</strong> <a href={`tel:${selectedMembership.phone}`} style={{ color: "var(--color-deep-blue)" }}>{selectedMembership.phone}</a></div>
+                      <div><strong>Phone:</strong> <a href={`tel:${selectedMembership.phoneNumber}`} style={{ color: "var(--color-deep-blue)" }}>{selectedMembership.phoneNumber}</a></div>
                     </div>
                   </div>
                   <div>
                     <h5 style={{ margin: "0 0 0.5rem 0", fontSize: "0.85rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Personal Info</h5>
                     <div style={{ fontSize: "0.95rem", color: "var(--color-dark-gray)", lineHeight: 1.6 }}>
-                      <div><strong>DOB:</strong> {new Date(selectedMembership.dob).toLocaleDateString()}</div>
+                      <div><strong>DOB:</strong> {new Date(selectedMembership.dateOfBirth).toLocaleDateString()}</div>
                       <div><strong>Occupation:</strong> {selectedMembership.occupation}</div>
                     </div>
                   </div>
@@ -320,17 +319,17 @@ export default function AdminMemberships() {
                 </div>
 
                 <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-                  {selectedMembership.status === "Pending" && (
+                  {selectedMembership.status === "pending" && (
                     <>
                       <button
-                        onClick={() => handleStatusUpdate(selectedMembership._id, "Approved")}
+                        onClick={() => handleStatusUpdate(selectedMembership._id, "approved")}
                         className="btn"
                         style={{ flex: 1, borderRadius: "var(--radius-md)", background: "#dcfce7", color: "#166534", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}
                       >
                         <Check size={18} /> Approve
                       </button>
                       <button
-                        onClick={() => handleStatusUpdate(selectedMembership._id, "Rejected")}
+                        onClick={() => handleStatusUpdate(selectedMembership._id, "rejected")}
                         className="btn"
                         style={{ flex: 1, borderRadius: "var(--radius-md)", background: "#fee2e2", color: "#b91c1c", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}
                       >

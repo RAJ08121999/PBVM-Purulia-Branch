@@ -1,22 +1,27 @@
 "use client"
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { MessageSquare, Trash2, ArrowLeft, Download, Eye, X, Check } from "lucide-react";
 import Link from "next/link";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { adminApi } from "@/lib/api";
+import type { ContactStatus } from "@/types";
 
 interface ContactInquiry {
   _id: string;
   name: string;
   email: string;
-  phone: string;
-  subject: string;
+  phone?: string;
   message: string;
-  status: "New" | "In Progress" | "Resolved";
+  status: ContactStatus;
   submittedAt: string;
 }
+
+const statusLabels: Record<ContactStatus, string> = {
+  new: "New",
+  reviewed: "Reviewed",
+};
 
 export default function AdminContactInquiries() {
   const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
@@ -25,9 +30,8 @@ export default function AdminContactInquiries() {
   // View Modal State
   const [selectedInquiry, setSelectedInquiry] = useState<ContactInquiry | null>(null);
 
-  const fetchInquiries = async () => {
+  const fetchInquiries = useCallback(async () => {
     try {
-      setLoading(true);
       const res = await adminApi.getContactInquiries();
       if (res.data.success) {
         setInquiries(res.data.inquiries || []);
@@ -38,25 +42,29 @@ export default function AdminContactInquiries() {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchInquiries();
   }, []);
 
-  const handleStatusUpdate = async (id: string, newStatus: string) => {
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void fetchInquiries();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [fetchInquiries]);
+
+  const handleStatusUpdate = async (id: string, newStatus: ContactStatus) => {
     try {
       const res = await adminApi.updateContactStatus(id, newStatus);
       if (res.data.success) {
-        toast.success(`Status updated to ${newStatus}`);
+        toast.success(`Status updated to ${statusLabels[newStatus]}`);
         
         // Update local state instead of refetching to be snappier
         setInquiries(prev => prev.map(inq => 
-          inq._id === id ? { ...inq, status: newStatus as any } : inq
+          inq._id === id ? { ...inq, status: newStatus } : inq
         ));
         
         if (selectedInquiry && selectedInquiry._id === id) {
-          setSelectedInquiry({ ...selectedInquiry, status: newStatus as any });
+          setSelectedInquiry({ ...selectedInquiry, status: newStatus });
         }
       }
     } catch (error) {
@@ -89,15 +97,14 @@ export default function AdminContactInquiries() {
       return;
     }
 
-    const headers = ["Name", "Email", "Phone", "Subject", "Status", "Date Submitted", "Message"];
+    const headers = ["Name", "Email", "Phone", "Status", "Date Submitted", "Message"];
     const csvContent = [
       headers.join(","),
       ...inquiries.map(inq => [
         `"${inq.name.replace(/"/g, '""')}"`,
         `"${inq.email.replace(/"/g, '""')}"`,
-        `"${inq.phone.replace(/"/g, '""')}"`,
-        `"${inq.subject.replace(/"/g, '""')}"`,
-        `"${inq.status}"`,
+        `"${(inq.phone || "").replace(/"/g, '""')}"`,
+        `"${statusLabels[inq.status]}"`,
         `"${new Date(inq.submittedAt).toLocaleDateString()}"`,
         `"${inq.message.replace(/"/g, '""').replace(/\n/g, ' ')}"`
       ].join(","))
@@ -115,9 +122,8 @@ export default function AdminContactInquiries() {
 
   const getStatusBadgeClass = (status: string) => {
     switch(status) {
-      case "New": return "badge-orange";
-      case "In Progress": return "badge-blue";
-      case "Resolved": return "badge-green";
+      case "new": return "badge-orange";
+      case "reviewed": return "badge-green";
       default: return "badge-orange";
     }
   };
@@ -168,7 +174,7 @@ export default function AdminContactInquiries() {
                 <tr style={{ borderBottom: "2px solid var(--color-light-gray)", textAlign: "left", color: "var(--color-text-muted)", fontSize: "0.85rem", backgroundColor: "#f8fafc" }}>
                   <th style={{ padding: "1rem 1.5rem" }}>Status</th>
                   <th style={{ padding: "1rem 1.5rem" }}>Name</th>
-                  <th style={{ padding: "1rem 1.5rem" }}>Subject</th>
+                  <th style={{ padding: "1rem 1.5rem" }}>Message</th>
                   <th style={{ padding: "1rem 1.5rem" }}>Date</th>
                   <th style={{ padding: "1rem 1.5rem", textAlign: "right" }}>Actions</th>
                 </tr>
@@ -178,7 +184,7 @@ export default function AdminContactInquiries() {
                   <tr key={inq._id} style={{ borderBottom: "1px solid var(--color-light-gray)", transition: "background-color 0.2s" }} className="hover-bg">
                     <td style={{ padding: "1rem 1.5rem" }}>
                       <span className={`badge ${getStatusBadgeClass(inq.status)}`} style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}>
-                        {inq.status}
+                        {statusLabels[inq.status]}
                       </span>
                     </td>
                     <td style={{ padding: "1rem 1.5rem" }}>
@@ -186,7 +192,7 @@ export default function AdminContactInquiries() {
                       <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted)" }}>{inq.email}</div>
                     </td>
                     <td style={{ padding: "1rem 1.5rem", color: "var(--color-text-muted)", maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {inq.subject}
+                      {inq.message}
                     </td>
                     <td style={{ padding: "1rem 1.5rem", color: "var(--color-text-muted)", fontSize: "0.9rem" }}>
                       {new Date(inq.submittedAt).toLocaleDateString()}
@@ -261,7 +267,8 @@ export default function AdminContactInquiries() {
                   <div>
                     <h4 style={{ margin: 0, fontSize: "1.1rem", color: "var(--color-deep-blue)" }}>{selectedInquiry.name}</h4>
                     <div style={{ color: "var(--color-text-muted)", fontSize: "0.9rem", marginTop: "0.25rem" }}>
-                      <a href={`mailto:${selectedInquiry.email}`} style={{ color: "inherit" }}>{selectedInquiry.email}</a> • <a href={`tel:${selectedInquiry.phone}`} style={{ color: "inherit" }}>{selectedInquiry.phone}</a>
+                      <a href={`mailto:${selectedInquiry.email}`} style={{ color: "inherit" }}>{selectedInquiry.email}</a>
+                      {selectedInquiry.phone ? <> • <a href={`tel:${selectedInquiry.phone}`} style={{ color: "inherit" }}>{selectedInquiry.phone}</a></> : null}
                     </div>
                   </div>
                   <div style={{ textAlign: "right" }}>
@@ -270,21 +277,20 @@ export default function AdminContactInquiries() {
                     </div>
                     <select
                       value={selectedInquiry.status}
-                      onChange={(e) => handleStatusUpdate(selectedInquiry._id, e.target.value)}
+                      onChange={(e) => handleStatusUpdate(selectedInquiry._id, e.target.value as ContactStatus)}
                       className="form-input"
                       style={{ padding: "0.25rem 0.5rem", fontSize: "0.85rem", height: "auto", minHeight: "0" }}
                     >
-                      <option value="New">Status: New</option>
-                      <option value="In Progress">Status: In Progress</option>
-                      <option value="Resolved">Status: Resolved</option>
+                      <option value="new">Status: New</option>
+                      <option value="reviewed">Status: Reviewed</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
-                  <h5 style={{ margin: "0 0 0.5rem 0", fontSize: "0.95rem", color: "var(--color-text-muted)", fontWeight: 600 }}>Subject</h5>
+                  <h5 style={{ margin: "0 0 0.5rem 0", fontSize: "0.95rem", color: "var(--color-text-muted)", fontWeight: 600 }}>Status</h5>
                   <div style={{ fontSize: "1.05rem", color: "var(--color-deep-blue)", fontWeight: 500 }}>
-                    {selectedInquiry.subject}
+                    {statusLabels[selectedInquiry.status]}
                   </div>
                 </div>
 
@@ -296,13 +302,13 @@ export default function AdminContactInquiries() {
                 </div>
 
                 <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-                  {selectedInquiry.status !== "Resolved" && (
+                  {selectedInquiry.status !== "reviewed" && (
                     <button
-                      onClick={() => handleStatusUpdate(selectedInquiry._id, "Resolved")}
+                      onClick={() => handleStatusUpdate(selectedInquiry._id, "reviewed")}
                       className="btn"
                       style={{ flex: 1, borderRadius: "var(--radius-md)", background: "#dcfce7", color: "#166534", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}
                     >
-                      <Check size={18} /> Mark as Resolved
+                      <Check size={18} /> Mark as Reviewed
                     </button>
                   )}
                   <a

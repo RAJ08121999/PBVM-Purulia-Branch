@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import type { ContactStatus, MembershipStatus } from "@/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
@@ -131,8 +132,8 @@ export const adminApi = {
   // Contact Inquiries
   getContactInquiries: (params?: { status?: string; page?: number; limit?: number }) =>
     api.get("/contact/admin", { params }),
-  updateContactStatus: (id: string, status: string) =>
-    api.put(`/contact/${id}/status`, { status }),
+  updateContactStatus: (id: string, status: ContactStatus | string) =>
+    api.put(`/contact/${id}/status`, { status: status.toLowerCase() }),
   deleteContactInquiry: (id: string) => api.delete(`/contact/admin/${id}`),
   exportContactInquiries: () =>
     api.get("/contact/export", { responseType: "blob" }),
@@ -140,8 +141,8 @@ export const adminApi = {
   // Memberships
   getMemberships: (params?: { status?: string; page?: number; limit?: number }) =>
     api.get("/membership/admin", { params }),
-  updateMembershipStatus: (id: string, status: string) =>
-    api.put(`/membership/${id}/status`, { status }),
+  updateMembershipStatus: (id: string, status: MembershipStatus | string) =>
+    api.put(`/membership/${id}/status`, { status: status.toLowerCase() }),
   deleteMembership: (id: string) => api.delete(`/membership/admin/${id}`),
   exportMemberships: () =>
     api.get("/membership/export", { responseType: "blob" }),
