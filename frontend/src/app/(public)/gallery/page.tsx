@@ -1,71 +1,44 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState , useEffect } from "react"
 import { useLanguage } from "@/context/LanguageContext"
 import { GALLERY_CATEGORIES } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
 import { Image as ImageIcon, ZoomIn } from "lucide-react"
+import { publicApi } from "@/lib/api";
+import Image from "next/image"
 
 interface GalleryItem {
-  id: string
-  titleEn: string
-  titleBn: string
-  category: typeof GALLERY_CATEGORIES[number]
-  svgBg: string
+  _id: string;
+  fileUrl: string;
+  category: typeof GALLERY_CATEGORIES[number];
+  caption?: {
+    en: string;
+    bn: string;
+  };
 }
 
 export default function GalleryPage() {
-  const { language, t } = useLanguage()
+  const { t } = useLanguage()
   const [activeCategory, setActiveCategory] = useState<string>("All")
   const [lightboxIndex, setLightboxIndex] = useState<number>(-1)
 
-  // Mock gallery items corresponding to FR-GAL
-  const galleryItems: GalleryItem[] = [
-    {
-      id: "gal-1",
-      titleEn: "Annual Children's Science Congress 2026",
-      titleBn: "বার্ষিক শিশু বিজ্ঞান কংগ্রেস ২০২৬",
-      category: "Science Camps",
-      svgBg: "bg-gradient-to-tr from-blue-700 to-indigo-900",
-    },
-    {
-      id: "gal-2",
-      titleEn: "Skywatching and Constellation Camp",
-      titleBn: "আকাশ পর্যবেক্ষণ ও নক্ষত্র চেনার শিবির",
-      category: "Skywatching",
-      svgBg: "bg-gradient-to-tr from-slate-900 to-zinc-900",
-    },
-    {
-      id: "gal-3",
-      titleEn: "Tree Plantation Drive in Baghmundi Block",
-      titleBn: "বাঘমুন্ডি ব্লকে বৃক্ষরোপণ কর্মসূচি",
-      category: "Environmental Activities",
-      svgBg: "bg-gradient-to-tr from-teal-700 to-emerald-800",
-    },
-    {
-      id: "gal-4",
-      titleEn: "Anti-Superstition Street Theatre Play",
-      titleBn: "কুসংস্কার বিরোধী পথনাটক পরিবেশনা",
-      category: "Awareness Campaigns",
-      svgBg: "bg-gradient-to-tr from-orange-600 to-red-800",
-    },
-    {
-      id: "gal-5",
-      titleEn: "Vocational Clay Stove Building Class",
-      titleBn: "ধোঁয়াহীন উন্নত উনুন তৈরির ক্লাস",
-      category: "Workshops",
-      svgBg: "bg-gradient-to-tr from-zinc-700 to-slate-800",
-    },
-    {
-      id: "gal-6",
-      titleEn: "District Level Model Exhibition 2026",
-      titleBn: "জেলা স্তরের বিজ্ঞান মডেল প্রদর্শনী ২০২৬",
-      category: "Exhibitions",
-      svgBg: "bg-gradient-to-tr from-rose-700 to-purple-800",
-    },
-  ]
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      try {
+        const res = await publicApi.getGallery();
+        setGalleryItems(res.data.images);
+      } catch (error) {
+        console.error("Failed to fetch gallery:", error);
+      }
+    };
+  
+    fetchGallery();
+  }, []);
 
   // Filter items
   const filteredItems = activeCategory === "All"
@@ -77,8 +50,8 @@ export default function GalleryPage() {
   // or define fallback colored slide placeholders.
   // The slides array expects object with `src` or custom nodes. We will generate nice mock color canvas URLs
   const slides = filteredItems.map((item) => ({
-    src: `https://placehold.co/800x600/${item.svgBg.includes("blue") ? "3b82f6" : item.svgBg.includes("teal") ? "0f766e" : item.svgBg.includes("orange") ? "ea580c" : "1e293b"}/ffffff?text=${encodeURIComponent(language === "bn" ? item.titleBn : item.titleEn)}`,
-  }))
+    src: item.fileUrl,
+  }));
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#F8FAFC" }}>
@@ -173,20 +146,23 @@ export default function GalleryPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredItems.map((item, idx) => (
                 <div
-                  key={item.id}
+                  key={item._id}
                   onClick={() => setLightboxIndex(idx)}
                   className="group relative flex flex-col justify-end aspect-4/3 rounded-2xl overflow-hidden shadow-sm hover:shadow-md cursor-pointer border border-zinc-100 dark:border-zinc-900"
                 >
-                  {/* Colored simulation image */}
-                  <div className={`absolute inset-0 ${item.svgBg} transition-transform duration-500 group-hover:scale-105`} />
-                  
+                  <Image
+                    src={item.fileUrl}
+                    alt={t(item.caption?.en || "Gallery Image", item.caption?.bn || "গ্যালারির ছবি")}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />                                    
                   {/* Hover icon */}
                   <div className="absolute top-4 right-4 h-9 w-9 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm flex items-center justify-center text-white">
                     <ZoomIn className="h-4.5 w-4.5" />
                   </div>
 
                   {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/30 to-transparent" />
 
                   {/* Content details */}
                   <div className="relative flex flex-col text-white z-10" style={{ padding: "1.25rem 1.75rem", gap: "0.375rem" }}>
@@ -194,7 +170,7 @@ export default function GalleryPage() {
                       {t(item.category, item.category === "Science Camps" ? "বিজ্ঞান শিবির" : item.category === "Exhibitions" ? "বিজ্ঞান প্রদর্শনী" : item.category === "Awareness Campaigns" ? "সচেতনতা প্রচার" : item.category === "Skywatching" ? "আকাশ পর্যবেক্ষণ" : item.category === "Environmental Activities" ? "পরিবেশ কর্মসূচি" : "কর্মশালা")}
                     </span>
                     <h3 className="font-heading text-sm sm:text-base font-extrabold leading-snug">
-                      {t(item.titleEn, item.titleBn)}
+                      {t(item.caption?.en || "", item.caption?.bn || "")}
                     </h3>
                   </div>
 
