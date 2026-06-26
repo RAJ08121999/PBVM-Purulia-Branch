@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
-import { Edit, Save, X, Plus, Trash2, ArrowLeft, Image as ImageIcon, Video, HelpCircle } from "lucide-react";
+import { Edit, Save, X, Plus, Trash2, ArrowLeft, Video } from "lucide-react";
 import Link from "next/link";
-import AdminLayout from "@/components/admin/AdminLayout";
+import Image from "next/image";
 import { adminApi, publicApi } from "@/lib/api";
 
 interface BilingualString {
@@ -55,7 +55,25 @@ export default function AdminActivities() {
   const [newGalleryFiles, setNewGalleryFiles] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
 
-  const fetchActivities = async () => {
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const res = await publicApi.getActivities();
+        if (res.data.success) {
+          setActivities(res.data.activities || []);
+        }
+      } catch (error) {
+        console.error("[FETCH ACTIVITIES ERROR]", error);
+        toast.error("Failed to load activities");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchActivities();
+  }, []);
+
+  const refetchActivities = async () => {
     try {
       const res = await publicApi.getActivities();
       if (res.data.success) {
@@ -64,14 +82,8 @@ export default function AdminActivities() {
     } catch (error) {
       console.error("[FETCH ACTIVITIES ERROR]", error);
       toast.error("Failed to load activities");
-    } finally {
-      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchActivities();
-  }, []);
 
   const startEdit = (activity: ActivityData) => {
     setSelectedActivity(activity);
@@ -148,21 +160,6 @@ export default function AdminActivities() {
     setImpactStats((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Reports Dynamic Array
-  const addReport = () => {
-    setReports((prev) => [...prev, { en: "", bn: "" }]);
-  };
-  const updateReport = (index: number, lang: "en" | "bn", val: string) => {
-    setReports((prev) => {
-      const clone = [...prev];
-      clone[index] = { ...clone[index], [lang]: val };
-      return clone;
-    });
-  };
-  const removeReport = (index: number) => {
-    setReports((prev) => prev.filter((_, i) => i !== index));
-  };
-
   // Gallery Deletion
   const removeExistingGalleryImage = (imgUrl: string) => {
     setExistingGallery((prev) => prev.filter((u) => u !== imgUrl));
@@ -200,19 +197,19 @@ export default function AdminActivities() {
       if (res.data.success) {
         toast.success("Activity details updated successfully!");
         setSelectedActivity(null);
-        fetchActivities();
+        refetchActivities();
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { message?: string } } };
       console.error("[SAVE ACTIVITY ERROR]", error);
-      toast.error(error.response?.data?.message || "Failed to update activity");
+      toast.error(axiosError.response?.data?.message || "Failed to update activity");
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <AdminLayout>
-      <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
         {/* Header Block */}
         {!selectedActivity && (
           <div>
@@ -240,7 +237,7 @@ export default function AdminActivities() {
             {activities.map((act) => (
               <div key={act._id} className="card" style={{ display: "flex", flexDirection: "column" }}>
                 <div style={{ position: "relative", height: "140px", backgroundColor: "var(--color-mid-gray)" }}>
-                  <img src={act.bannerImage} alt={act.title.en} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <Image src={act.bannerImage} alt={act.title.en} fill style={{ objectFit: "cover" }} />
                   <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.8), transparent)", display: "flex", alignItems: "flex-end", padding: "1rem" }}>
                     <h3 style={{ color: "#ffffff", fontSize: "1.1rem", margin: 0, fontWeight: 700 }}>
                       {act.title.en}
@@ -306,6 +303,7 @@ export default function AdminActivities() {
                   </h3>
                   <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
                     <div style={{ width: "120px", height: "80px", borderRadius: "8px", overflow: "hidden", backgroundColor: "var(--color-mid-gray)" }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={bannerPreview} alt="Banner Preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     </div>
                     <div style={{ flex: 1 }}>
@@ -517,6 +515,7 @@ export default function AdminActivities() {
                   {/* Existing gallery */}
                   {existingGallery.map((imgUrl, i) => (
                     <div key={`exist-${i}`} style={{ position: "relative", aspectRatio: "4/3", borderRadius: "6px", overflow: "hidden", border: "1px solid var(--color-mid-gray)" }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={imgUrl} alt={`Gallery ${i}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       <button
                         type="button"
@@ -533,6 +532,7 @@ export default function AdminActivities() {
                     const localPreview = URL.createObjectURL(file);
                     return (
                       <div key={`new-${i}`} style={{ position: "relative", aspectRatio: "4/3", borderRadius: "6px", overflow: "hidden", border: "2px dashed var(--color-teal)" }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={localPreview} alt={`New Gallery ${i}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         <button
                           type="button"
@@ -575,6 +575,5 @@ export default function AdminActivities() {
           </div>
         )}
       </div>
-    </AdminLayout>
   );
 }

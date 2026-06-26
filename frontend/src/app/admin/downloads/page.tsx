@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { FileDown, Plus, Trash2, X, Upload, ArrowLeft, FileText } from "lucide-react";
 import Link from "next/link";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { adminApi, publicApi } from "@/lib/api";
 
 const DOWNLOAD_TYPES = ["Form", "Notice", "Result", "Other"];
@@ -109,8 +108,7 @@ export default function AdminDownloads() {
   };
 
   return (
-    <AdminLayout>
-      <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
           <div>
@@ -320,6 +318,5 @@ export default function AdminDownloads() {
           </div>
         )}
       </div>
-    </AdminLayout>
   );
 }

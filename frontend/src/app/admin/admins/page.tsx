@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { UserCog, Plus, Trash2, ArrowLeft, Shield, ShieldCheck, X } from "lucide-react";
 import Link from "next/link";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { adminApi } from "@/lib/api";
 
 interface AdminUser {
@@ -143,8 +142,7 @@ export default function AdminManagement() {
   const canCreate = user?.role === "SuperAdministrator";
 
   return (
-    <AdminLayout>
-      <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
           <div>
@@ -355,6 +353,5 @@ export default function AdminManagement() {
           </div>
         )}
       </div>
-    </AdminLayout>
   );
 }

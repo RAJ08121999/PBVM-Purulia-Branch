@@ -2,9 +2,9 @@
 
 import React, { useState, useRef } from "react";
 import { toast } from "sonner";
-import { Printer, Upload, Trash2, ArrowLeft, RefreshCw, UserCheck } from "lucide-react";
+import { Printer, Upload, Trash2, ArrowLeft, UserCheck } from "lucide-react";
 import Link from "next/link";
-import AdminLayout from "@/components/admin/AdminLayout";
+import Image from "next/image";
 
 type ActivityLevel = "highly" | "moderately" | "emerging";
 
@@ -107,8 +107,8 @@ export default function VolunteerIDCardGenerator() {
   const bgImage = getCardBgImage(formData.level);
 
   return (
-    <AdminLayout>
-      <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }} className="no-print">
+    <>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }} className="no-print">
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
           <div>
@@ -215,7 +215,7 @@ export default function VolunteerIDCardGenerator() {
               <div style={{ display: "flex", gap: "1rem", alignItems: "center", marginTop: "0.5rem" }}>
                 {formData.photoUrl ? (
                   <div style={{ position: "relative", width: "70px", height: "70px" }}>
-                    <img
+                    <Image
                       src={formData.photoUrl}
                       alt="Preview"
                       style={{ width: "70px", height: "70px", objectFit: "cover", borderRadius: "var(--radius-md)", border: "1px solid var(--color-mid-gray)" }}
@@ -391,7 +391,7 @@ export default function VolunteerIDCardGenerator() {
                   }}
                 >
                   {formData.photoUrl ? (
-                    <img src={formData.photoUrl} alt={formData.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    <Image src={formData.photoUrl} alt={formData.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   ) : (
                     <div style={{ textAlign: "center", color: "var(--color-text-muted)" }}>
                       <UserCheck size={40} style={{ opacity: 0.5, margin: "0 auto 0.5rem" }} />
@@ -475,7 +475,7 @@ export default function VolunteerIDCardGenerator() {
             </button>
           </div>
         </div>
-      </div>
+    </div>
 
       {/* Printable Area - Rendered ONLY in print mode */}
       <div id="print-card-area" className="only-print">
@@ -562,7 +562,7 @@ export default function VolunteerIDCardGenerator() {
               }}
             >
               {formData.photoUrl ? (
-                <img src={formData.photoUrl} alt={formData.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <Image src={formData.photoUrl} alt={formData.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 <div style={{ fontSize: "1.5mm", color: "var(--color-text-muted)", textAlign: "center" }}>
                   No Photo
@@ -661,6 +661,6 @@ export default function VolunteerIDCardGenerator() {
           }
         }
       `}</style>
-    </AdminLayout>
+  </>
   );
 }

@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { MessageSquare, Trash2, ArrowLeft, Download, Eye, X, Check } from "lucide-react";
 import Link from "next/link";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { adminApi } from "@/lib/api";
 import type { ContactStatus } from "@/types";
 
@@ -129,8 +128,7 @@ export default function AdminContactInquiries() {
   };
 
   return (
-    <AdminLayout>
-      <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
           <div>
@@ -324,6 +322,5 @@ export default function AdminContactInquiries() {
           </div>
         )}
       </div>
-    </AdminLayout>
   );
 }

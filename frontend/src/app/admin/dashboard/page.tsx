@@ -14,7 +14,6 @@ import {
   PlusCircle,
   TrendingUp,
 } from "lucide-react";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { adminApi, publicApi } from "@/lib/api";
 
 interface Stats {
@@ -133,8 +132,7 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <AdminLayout>
-      <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
         {/* Header Block */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
           <div>
@@ -328,6 +326,5 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
-    </AdminLayout>
   );
 }

@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { Image as ImageIcon, Plus, Trash2, X, Upload, ArrowLeft, Filter } from "lucide-react";
 import Link from "next/link";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { adminApi, publicApi } from "@/lib/api";
 
 const CATEGORIES = [
@@ -39,9 +38,8 @@ export default function AdminGallery() {
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchImages = async () => {
+  const refetchImages = async () => {
     try {
-      setLoading(true);
       const res = await publicApi.getGallery({ category: activeCategory, limit: 100 });
       if (res.data.success) {
         setImages(res.data.images || []);
@@ -49,12 +47,25 @@ export default function AdminGallery() {
     } catch (error) {
       console.error("[FETCH GALLERY ERROR]", error);
       toast.error("Failed to load gallery images");
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        setLoading(true);
+        const res = await publicApi.getGallery({ category: activeCategory, limit: 100 });
+        if (res.data.success) {
+          setImages(res.data.images || []);
+        }
+      } catch (error) {
+        console.error("[FETCH GALLERY ERROR]", error);
+        toast.error("Failed to load gallery images");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchImages();
   }, [activeCategory]);
 
@@ -100,11 +111,12 @@ export default function AdminGallery() {
       if (res.data.success) {
         toast.success(`${res.data.images?.length || 0} images uploaded successfully!`);
         setModalOpen(false);
-        fetchImages();
+        refetchImages();
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { message?: string } } };
       console.error("[UPLOAD GALLERY ERROR]", error);
-      toast.error(error.response?.data?.message || "Failed to upload images");
+      toast.error(axiosError.response?.data?.message || "Failed to upload images");
     } finally {
       setSubmitting(false);
     }
@@ -117,7 +129,7 @@ export default function AdminGallery() {
       const res = await adminApi.deleteGalleryImage(id);
       if (res.data.success) {
         toast.success("Image deleted successfully");
-        fetchImages();
+        refetchImages();
       }
     } catch (error) {
       console.error("[DELETE GALLERY ERROR]", error);
@@ -126,8 +138,7 @@ export default function AdminGallery() {
   };
 
   return (
-    <AdminLayout>
-      <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
           <div>
@@ -192,6 +203,7 @@ export default function AdminGallery() {
             {images.map((img) => (
               <div key={img._id} className="card" style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
                 <div style={{ position: "relative", aspectRatio: "4/3", backgroundColor: "var(--color-mid-gray)" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={img.fileUrl} alt="Gallery" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   <div style={{ position: "absolute", top: "0.5rem", right: "0.5rem", display: "flex", gap: "0.25rem" }}>
                     <button
@@ -334,13 +346,14 @@ export default function AdminGallery() {
                     {uploadFiles.length === 0 ? (
                       <div style={{ textAlign: "center", color: "var(--color-text-muted)" }}>
                         <Upload size={32} style={{ margin: "0 auto 0.5rem", opacity: 0.5 }} />
-                        <p style={{ fontSize: "0.85rem", margin: 0 }}>Click "Add Files" to select images.</p>
+                        <p style={{ fontSize: "0.85rem", margin: 0 }}>Click &quot;Add Files&quot; to select images.</p>
                       </div>
                     ) : (
                       uploadFiles.map((file, i) => {
                         const localPreview = URL.createObjectURL(file);
                         return (
                           <div key={i} style={{ position: "relative", aspectRatio: "1", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--color-mid-gray)" }}>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={localPreview} alt="Preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                             <button
                               type="button"
@@ -390,6 +403,5 @@ export default function AdminGallery() {
           </div>
         )}
       </div>
-    </AdminLayout>
   );
 }

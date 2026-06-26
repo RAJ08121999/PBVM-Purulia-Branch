@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Bell, Edit, Trash2, Pin, Archive, Plus, X, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { adminApi, publicApi } from "@/lib/api";
 
 interface Notification {
@@ -117,8 +116,7 @@ export default function AdminNotifications() {
   };
 
   return (
-    <AdminLayout>
-      <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
           <div>
@@ -330,6 +328,5 @@ export default function AdminNotifications() {
           </div>
         )}
       </div>
-    </AdminLayout>
   );
 }

@@ -102,7 +102,18 @@ export default function AdminSidebar({ admin, onOpenProfile }: AdminSidebarProps
       </div>
 
       {/* Navigation Items */}
-      <div style={{ flex: 1, padding: "1.5rem 1rem", overflowY: "auto", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+      <div style={{ 
+        flex: 1, 
+        padding: "1.5rem 1rem", 
+        overflowY: "auto", 
+        display: "flex", 
+        flexDirection: "column", 
+        gap: "0.25rem",
+        scrollbarWidth: "none",
+        msOverflowStyle: "none"
+      }}
+      className="no-scrollbar"
+      >
         {navItems.map((item) => {
           // If item is restricted to Super Admin, hide it for standard Admin
           if (item.role === "SuperAdministrator" && admin?.role !== "SuperAdministrator") {
@@ -210,6 +221,13 @@ export default function AdminSidebar({ admin, onOpenProfile }: AdminSidebarProps
           </div>
         </div>
       )}
+      
+      {/* Hide scrollbar styles */}
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </div>
   );
 }

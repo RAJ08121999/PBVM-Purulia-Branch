@@ -2,9 +2,8 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
-import { Calendar, Plus, Edit, Trash2, X, Save, ArrowLeft, MapPin } from "lucide-react";
+import { Calendar, Plus, Edit, Trash2, X, ArrowLeft, MapPin } from "lucide-react";
 import Link from "next/link";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { adminApi, publicApi } from "@/lib/api";
 
 interface BilingualString {
@@ -43,7 +42,7 @@ export default function AdminEvents() {
   const [newGalleryFiles, setNewGalleryFiles] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchEvents = async () => {
+  const refetchEvents = async () => {
     try {
       const res = await publicApi.getEvents({ limit: 100 });
       if (res.data.success) {
@@ -52,12 +51,24 @@ export default function AdminEvents() {
     } catch (error) {
       console.error("[FETCH EVENTS ERROR]", error);
       toast.error("Failed to load events");
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await publicApi.getEvents({ limit: 100 });
+        if (res.data.success) {
+          setEvents(res.data.events || []);
+        }
+      } catch (error) {
+        console.error("[FETCH EVENTS ERROR]", error);
+        toast.error("Failed to load events");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchEvents();
   }, []);
 
@@ -132,19 +143,20 @@ export default function AdminEvents() {
         if (res.data.success) {
           toast.success("Event updated successfully!");
           setModalOpen(false);
-          fetchEvents();
+          refetchEvents();
         }
       } else {
         const res = await adminApi.createEvent(formData);
         if (res.data.success) {
           toast.success("Event created successfully!");
           setModalOpen(false);
-          fetchEvents();
+          refetchEvents();
         }
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { message?: string } } };
       console.error("[SUBMIT EVENT ERROR]", error);
-      toast.error(error.response?.data?.message || "Failed to save event");
+      toast.error(axiosError.response?.data?.message || "Failed to save event");
     } finally {
       setSubmitting(false);
     }
@@ -159,7 +171,7 @@ export default function AdminEvents() {
       const res = await adminApi.deleteEvent(id);
       if (res.data.success) {
         toast.success("Event deleted successfully!");
-        fetchEvents();
+        refetchEvents();
       }
     } catch (error) {
       console.error("[DELETE EVENT ERROR]", error);
@@ -168,8 +180,7 @@ export default function AdminEvents() {
   };
 
   return (
-    <AdminLayout>
-      <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
           <div>
@@ -203,7 +214,7 @@ export default function AdminEvents() {
         ) : events.length === 0 ? (
           <div className="card" style={{ padding: "3rem", textAlign: "center", color: "var(--color-text-muted)" }}>
             <Calendar size={48} style={{ margin: "0 auto 1rem", opacity: 0.5 }} />
-            <p>No events found. Click "Add Event" to publish your first event listing.</p>
+            <p>No events found. Click &quot;Add Event&quot; to publish your first event listing.</p>
           </div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "1.5rem" }}>
@@ -211,6 +222,7 @@ export default function AdminEvents() {
               <div key={evt._id} className="card" style={{ display: "flex", flexDirection: "column", height: "100%" }}>
                 {evt.gallery && evt.gallery.length > 0 && (
                   <div style={{ height: "150px", overflow: "hidden", backgroundColor: "var(--color-mid-gray)" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={evt.gallery[0]} alt={evt.title.en} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   </div>
                 )}
@@ -364,6 +376,7 @@ export default function AdminEvents() {
                     {/* Existing */}
                     {existingGallery.map((url, i) => (
                       <div key={`exist-${i}`} style={{ position: "relative", aspectRatio: "4/3", borderRadius: "4px", overflow: "hidden" }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={url} alt="Event Photo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         <button
                           type="button"
@@ -379,6 +392,7 @@ export default function AdminEvents() {
                       const localPreview = URL.createObjectURL(file);
                       return (
                         <div key={`new-${i}`} style={{ position: "relative", aspectRatio: "4/3", borderRadius: "4px", overflow: "hidden", border: "2px dashed var(--color-teal)" }}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={localPreview} alt="Event Photo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                           <button
                             type="button"
@@ -416,6 +430,5 @@ export default function AdminEvents() {
           </div>
         )}
       </div>
-    </AdminLayout>
   );
 }
