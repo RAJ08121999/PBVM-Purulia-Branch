@@ -5,6 +5,7 @@ import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
 import path from "path";
 import { connectDB } from "./config/db";
+import "./config/cloudinary";
 
 // ─── Route imports ─────────────────────────────────────────
 import authRoutes from "./routes/auth.routes";

@@ -1,25 +1,29 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState , useEffect } from "react"
 import Link from "next/link"
 import { useLanguage } from "@/context/LanguageContext"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, Calendar, MapPin, ArrowRight, Sparkles } from "lucide-react"
+import { Search, Calendar, MapPin, ArrowRight,} from "lucide-react"
+import { publicApi } from "@/lib/api"
+import Image from "next/image"
 
 interface EventItem {
-  id: string
-  titleEn: string
-  titleBn: string
+  _id: string
+  title: {
+    en: string
+    bn: string
+  }
+  description: {
+    en: string
+    bn: string
+  }
+  venue: string
   date: string
-  venueEn: string
-  venueBn: string
-  descEn: string
-  descBn: string
-  type: "Upcoming" | "Past"
-  time: string
-  contactEn: string
-  contactBn: string
+  registrationLink: string
+  gallery: string[]
+  status: "upcoming" | "past"
 }
 
 export default function EventsPage() {
@@ -27,98 +31,45 @@ export default function EventsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedFilter, setSelectedFilter] = useState<"All" | "Upcoming" | "Past">("All")
 
-  const events: EventItem[] = [
-    {
-      id: "evt-1",
-      titleEn: "Hands-on Astronomy Skywatching Camp",
-      titleBn: "হাতে-কলমে আকাশ পর্যবেক্ষণ শিবির",
-      date: "2026-06-25",
-      time: "6:00 PM - 9:00 PM",
-      venueEn: "Purulia Zilla School Ground",
-      venueBn: "পুরুলিয়া জিলা স্কুল প্রাঙ্গণ",
-      descEn: "Observe the rings of Saturn, craters of Moon, and constellations under telescope guidance.",
-      descBn: "টেলিস্কোপের মাধ্যমে শনির বলয়, চাঁদের গহ্বর এবং বিভিন্ন নক্ষত্রমণ্ডল দেখার ব্যবহারিক শিবির।",
-      type: "Upcoming",
-      contactEn: "Coordination Office (+91 3252 222413)",
-      contactBn: "সমন্বয় শাখা (+৯১ ৩২৫২ ২২২৪১৩)",
-    },
-    {
-      id: "evt-2",
-      titleEn: "Seminars on Scientific Temperament",
-      titleBn: "বিজ্ঞান ও যুক্তিবাদী মননশীলতার সেমিনার",
-      date: "2026-07-02",
-      time: "11:00 AM - 3:00 PM",
-      venueEn: "Rabindra Bhaban Auditorium, Purulia",
-      venueBn: "রবীন্দ্র ভবন অডিটোরিয়াম, পুরুলিয়া",
-      descEn: "Debating science vs superstition with talks by popular rationalists and science authors.",
-      descBn: "কুসংস্কার বনাম বিজ্ঞান বিতর্ক এবং বিজ্ঞান লেখকদের নিয়ে বিশেষ আলোচনা সভা।",
-      type: "Upcoming",
-      contactEn: "Science Publicity Cell",
-      contactBn: "বিজ্ঞান প্রচার সেল",
-    },
-    {
-      id: "evt-3",
-      titleEn: "Afforestation & Wetland Protection Campaign",
-      titleBn: "বৃক্ষরোপণ ও জলাভূমি সংরক্ষণ প্রচার অভিযান",
-      date: "2026-07-10",
-      time: "9:00 AM - 1:00 PM",
-      venueEn: "Joypur Block Forest Area",
-      venueBn: "জয়পুর ব্লক বনভূমি অঞ্চল",
-      descEn: "Community plantation drive and awareness program about saving wetlands of Purulia.",
-      descBn: "স্থানীয় জলাশয় রক্ষা ও নতুন বৃক্ষরোপণ নিয়ে গণ-সচেতনতামূলক ক্যাম্প ও র‍্যালি।",
-      type: "Upcoming",
-      contactEn: "Eco-Protection Wing",
-      contactBn: "পরিবেশ রক্ষা শাখা",
-    },
-    {
-      id: "evt-4",
-      titleEn: "Purulia District Science Congress 2026",
-      titleBn: "পুরুলিয়া জেলা বিজ্ঞান কংগ্রেস ২০২৬",
-      date: "2026-05-15",
-      time: "10:00 AM - 5:00 PM",
-      venueEn: "District Science Centre, Purulia",
-      venueBn: "জেলা বিজ্ঞান কেন্দ্র, পুরুলিয়া",
-      descEn: "Annual congregation of student projects, models, and research briefs from block-level schools.",
-      descBn: "ব্লক স্তরের স্কুলগুলির ছাত্রছাত্রীদের তৈরি বিজ্ঞান মডেল ও গবেষণা প্রস্তাবের বার্ষিক প্রদর্শনী ও আলোচনা সভা।",
-      type: "Past",
-      contactEn: "Children's Science Congress Team",
-      contactBn: "শিশু বিজ্ঞান কংগ্রেস টিম",
-    },
-    {
-      id: "evt-5",
-      titleEn: "Snakebite Awareness and First Aid Workshop",
-      titleBn: "সর্পদংশন সচেতনতা ও প্রাথমিক চিকিৎসা কর্মশালা",
-      date: "2026-05-20",
-      time: "11:30 AM - 2:30 PM",
-      venueEn: "Jhalda Community Hall",
-      venueBn: "ঝালদা কমিউনিটি হল",
-      descEn: "Training sessions on snake identification, myth-busting, and emergency protocols in village blocks.",
-      descBn: "গ্রামাঞ্চলের মানুষদের সর্পদংশন প্রতিরোধ, সাপ চেনার বিজ্ঞানসম্মত পদ্ধতি ও জরুরি চিকিৎসা বিষয়ক বিশেষ প্রশিক্ষণ শিবির।",
-      type: "Past",
-      contactEn: "Health Activists Forum",
-      contactBn: "স্বাস্থ্যকর্মী ফোরাম",
-    },
-    {
-      id: "evt-6",
-      titleEn: "Summer Science Camp for High Schoolers",
-      titleBn: "হাইস্কুল পড়ুয়াদের সামার বিজ্ঞান ক্যাম্প",
-      date: "2026-06-10",
-      time: "10:00 AM - 4:00 PM",
-      venueEn: "Students Health Home, Purulia",
-      venueBn: "ছাত্র-ছাত্রী স্বাস্থ্য ভবন, পুরুলিয়া",
-      descEn: "A 3-day workshop showcasing low-cost hands-on chemistry, physics, and robotics projects.",
-      descBn: "কম খরচে হাতে-কলমে রসায়ন, পদার্থবিদ্যা এবং প্রাথমিক রোবোটিক্স মডেল তৈরির ৩ দিনের বিশেষ কর্মশালা।",
-      type: "Past",
-      contactEn: "Hands-on Science Committee",
-      contactBn: "হাতে-কলমে বিজ্ঞান কমিটি",
-    },
-  ]
+  const [events, setEvents] = useState<EventItem[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const [upcomingRes, pastRes] = await Promise.all([
+          publicApi.getEvents({
+            status: "upcoming",
+            limit: 100,
+          }),
+          publicApi.getEvents({
+            status: "past",
+            limit: 100,
+          }),
+        ])
+  
+        setEvents([
+          ...upcomingRes.data.events,
+          ...pastRes.data.events,
+        ])
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+  
+    fetchEvents()
+  }, []);
 
   // Filter & Search Logic
   const filteredEvents = events.filter((evt) => {
-    const title = language === "bn" ? evt.titleBn : evt.titleEn
+    const title = language === "bn" ? evt.title.bn : evt.title.en
     const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesFilter = selectedFilter === "All" || evt.type === selectedFilter
+    const matchesFilter =
+      selectedFilter === "All" ||
+      (selectedFilter === "Upcoming" && evt.status === "upcoming") ||
+      (selectedFilter === "Past" && evt.status === "past")
     return matchesSearch && matchesFilter
   })
 
@@ -229,7 +180,12 @@ export default function EventsPage() {
       {/* Events Grid */}
       <section style={{ width: "100%", padding: "3.5rem 0" }}>
         <div className="page-container">
-          {filteredEvents.length === 0 ? (
+        {loading ? (
+            <div className="py-20 text-center">
+              {t("Loading events...", "ইভেন্ট লোড হচ্ছে...")}
+            </div>
+          ) : filteredEvents.length === 0 ? (
+                    
             <div className="flex flex-col items-center justify-center text-center py-20">
               <Calendar className="h-12 w-12 text-zinc-300 dark:text-zinc-700 mb-4" />
               <p className="font-body text-sm text-zinc-500 dark:text-zinc-400">
@@ -240,54 +196,75 @@ export default function EventsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredEvents.map((evt) => (
                 <div
-                  key={evt.id}
+                  key={evt._id}
                   className="flex flex-col justify-between rounded-2xl bg-white border border-zinc-100 hover:border-zinc-200 dark:bg-black dark:border-zinc-900 dark:hover:border-zinc-800 transition-all hover:shadow-md relative overflow-hidden"
                   style={{
                     padding: "1.5rem",
                     margin: "0.5rem",
                   }}
                 >
+                  {evt.gallery.length > 0 && (
+                    <Image
+                      src={evt.gallery[0]}
+                      width={600}
+                      height={300}
+                      alt={t(evt.title.en, evt.title.bn)}
+                      className="w-full h-52 object-cover rounded-xl mb-4"
+                    />
+                  )}
                   <div className="flex flex-col" style={{ gap: "1rem" }}>
                     {/* Badge and Type */}
                     <div className="flex items-center justify-between border-b border-zinc-50 dark:border-zinc-900" style={{ paddingBottom: "0.75rem" }}>
                       <span
                         className="font-body text-xxs font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
                         style={{
-                          backgroundColor: evt.type === "Upcoming" ? "#E0F2FE" : "#F4F4F5",
-                          color: evt.type === "Upcoming" ? "#0369A1" : "#71717A",
+                          backgroundColor: evt.status === "upcoming" ? "#E0F2FE" : "#F4F4F5",
+                          color: evt.status === "upcoming" ? "#0369A1" : "#71717A",
                         }}
                       >
-                        {t(evt.type, evt.type === "Upcoming" ? "আসন্ন" : "বিগত")}
+                        {t(
+                            evt.status === "upcoming"
+                              ? "Upcoming"
+                              : "Past",
+                            evt.status === "upcoming"
+                              ? "আসন্ন"
+                              : "বিগত"
+                          )}
                       </span>
                       <span className="font-body text-xs text-zinc-400 dark:text-zinc-500 flex items-center gap-1 font-semibold">
                         <Calendar className="h-3.5 w-3.5" />
-                        {evt.date}
+                        {new Date(evt.date).toLocaleDateString("en-IN")}
                       </span>
                     </div>
 
                     <h3 className="font-heading text-base sm:text-lg font-black text-zinc-900 dark:text-white leading-snug">
-                      {t(evt.titleEn, evt.titleBn)}
+                      {t(evt.title.en, evt.title.bn)}
                     </h3>
 
                     <p className="font-body text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                      {t(evt.descEn, evt.descBn)}
+                      {t(evt.description.en, evt.description.bn)}
                     </p>
 
                     {/* Venue & Time details */}
                     <div className="flex flex-col gap-1.5 mt-2 font-body text-xxs text-zinc-500 dark:text-zinc-400 border-t border-zinc-50 dark:border-zinc-900" style={{ paddingTop: "0.75rem" }}>
                       <div className="flex items-center gap-1.5 font-bold">
                         <MapPin className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
-                        <span>{t(evt.venueEn, evt.venueBn)}</span>
+                        <span>{t(evt.venue, evt.venue)}</span>
                       </div>
                       <div className="flex items-center gap-1.5 font-semibold">
                         <span className="text-zinc-400 dark:text-zinc-600 font-black">&bull;</span>
-                        <span>{evt.time}</span>
+                        <span>
+                          {new Date(evt.date).toLocaleTimeString("en-IN", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
                       </div>
                     </div>
                   </div>
 
                   <div className="border-t border-zinc-50 dark:border-zinc-900/50" style={{ marginTop: "1.5rem", paddingTop: "1rem" }}>
-                    <Link href={`/events/${evt.id}`} className="w-full">
+                    <Link href={`/events/${evt._id}`} className="w-full">
                       <Button
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg flex items-center justify-center gap-2"
                         style={{
