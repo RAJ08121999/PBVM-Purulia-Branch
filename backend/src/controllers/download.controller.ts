@@ -57,6 +57,10 @@ export const createDownload = async (req: AuthRequest, res: Response): Promise<v
       title,
       category,
       file: fileUrl,
+    
+      originalName: req.file.originalname,
+      fileSize: req.file.size,
+      mimeType: req.file.mimetype,
     });
 
     await download.save();

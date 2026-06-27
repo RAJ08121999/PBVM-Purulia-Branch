@@ -1,81 +1,86 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useLanguage } from "@/context/LanguageContext"
 import { DOWNLOAD_CATEGORIES } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { FileText, Download, ArrowDownToLine } from "lucide-react"
+import { FileText, Download } from "lucide-react"
 import { toast } from "sonner"
+import { publicApi } from "@/lib/api"
 
 interface DownloadItem {
-  id: string
-  titleEn: string
-  titleBn: string
-  category: typeof DOWNLOAD_CATEGORIES[number]
-  fileSize: string
-  downloads: number
+  _id: string;
+  title: {
+    en: string;
+    bn: string;
+  };
+  category: string;
+  file: string;
+  downloadCount: number;
+  createdAt: string;
 }
 
 export default function DownloadsPage() {
-  const { language, t } = useLanguage()
+  const { t } = useLanguage()
   const [selectedCategory, setSelectedCategory] = useState<string>("All")
-  const [items, setItems] = useState<DownloadItem[]>([
-    {
-      id: "d-1",
-      titleEn: "Official PBVM Purulia Membership Form",
-      titleBn: "অফিসিয়াল পিবিভিএম পুরুলিয়া সদস্যপদ ফর্ম",
-      category: "Membership Forms",
-      fileSize: "245 KB",
-      downloads: 142,
-    },
-    {
-      id: "d-2",
-      titleEn: "Annual Science Talent Search Syllabus & Guidelines",
-      titleBn: "বার্ষিক বিজ্ঞান প্রতিভা অন্বেষণ সিলেবাস ও নির্দেশিকা",
-      category: "Event Brochures",
-      fileSize: "512 KB",
-      downloads: 389,
-    },
-    {
-      id: "d-3",
-      titleEn: "How to Detect Adulterated Food: Household Magic Exposes",
-      titleBn: "কীভাবে ভেজাল খাদ্য সনাক্ত করবেন: ঘরোয়া পরীক্ষার সহজ লিপি",
-      category: "Awareness Materials",
-      fileSize: "1.2 MB",
-      downloads: 504,
-    },
-    {
-      id: "d-4",
-      titleEn: "Protect Purulia Water Resource & Wetlands Poster",
-      titleBn: "পুরুলিয়ার জলসম্পদ ও জলাভূমি রক্ষা করুন পোস্টার",
-      category: "Posters",
-      fileSize: "4.8 MB",
-      downloads: 92,
-    },
-    {
-      id: "d-5",
-      titleEn: "Annual Science Congress District Report 2025",
-      titleBn: "বার্ষিক বিজ্ঞান কংগ্রেস জেলা সমীক্ষা রিপোর্ট ২০২৫",
-      category: "Reports",
-      fileSize: "2.1 MB",
-      downloads: 67,
-    },
-  ])
+  const [items, setItems] = useState<DownloadItem[]>([]);
+  const [loading, setLoading] = useState(true);
+ 
+  useEffect(() => {
+    const fetchDownloads = async () => {
+      try {
+        setLoading(true);
+  
+        const res = await publicApi.getDownloads();
+  
+        if (res.data.success) {
+          setItems(res.data.downloads ?? []);
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to load downloads");
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchDownloads();
+  }, []);
 
   // Filter items
-  const filteredItems = selectedCategory === "All"
+  const filteredItems =
+  selectedCategory === "All"
     ? items
-    : items.filter(item => item.category === selectedCategory)
+    : items.filter((item) => item.category === selectedCategory);
+
 
   // Track download mock action
-  const handleDownload = (id: string, name: string) => {
-    // Increment the download count locally
-    setItems(prev =>
-      prev.map(item =>
-        item.id === id ? { ...item, downloads: item.downloads + 1 } : item
-      )
-    )
-    toast.success(`${t("Downloading", "ডাউনলোড হচ্ছে")}: ${name}`)
+  const handleDownload = async (item: DownloadItem) => {
+    try {
+      // increase download count in database
+      await publicApi.trackDownload(item._id);
+  
+      // update UI immediately
+      setItems((prev) =>
+        prev.map((d) =>
+          d._id === item._id
+            ? { ...d, downloadCount: d.downloadCount + 1 }
+            : d
+        )
+      );
+  
+      // trigger actual download
+      window.open(item.file, "_blank");
+  
+      toast.success(t("Download started", "ডাউনলোড শুরু হয়েছে"));
+    } catch (err) {
+      console.error(err);
+      toast.error(t("Download failed", "ডাউনলোড ব্যর্থ হয়েছে"));
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -167,7 +172,7 @@ export default function DownloadsPage() {
             <div className="flex flex-col gap-4">
               {filteredItems.map((item) => (
                 <div
-                  key={item.id}
+                  key={item._id}
                   className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-2xl bg-white border border-zinc-100 hover:border-zinc-200 dark:bg-black dark:border-zinc-900 dark:hover:border-zinc-800 transition-all hover:shadow-sm gap-4"
                   style={{ padding: "1rem" }}
                 >
@@ -179,21 +184,18 @@ export default function DownloadsPage() {
                     </div>
                     <div className="flex flex-col">
                       <span className="font-heading text-sm sm:text-base font-black text-zinc-900 dark:text-white leading-tight">
-                        {t(item.titleEn, item.titleBn)}
+                        {t(item.title.en, item.title.bn)}
                       </span>
                       <div className="flex items-center gap-2 mt-1 font-body text-xxs text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-wider">
                         <span>{t(item.category, item.category === "Membership Forms" ? "সদস্যপদ ফর্ম" : item.category === "Event Brochures" ? "ইভেন্ট লিফলেট" : item.category === "Awareness Materials" ? "সচেতনতা লিপি" : item.category === "Posters" ? "পোস্টার" : item.category === "Reports" ? "রিপোর্ট" : "প্রকাশনা")}</span>
-                        <span>&bull;</span>
-                        <span>{item.fileSize}</span>
-                        <span>&bull;</span>
-                        <span className="text-teal-600 dark:text-teal-400">{item.downloads} {t("downloads", "ডাউনলোড")}</span>
+                        <span className="text-teal-600 dark:text-teal-400">{item.downloadCount} {t("downloads", "ডাউনলোড")}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Action Trigger */}
                   <Button
-                    onClick={() => handleDownload(item.id, t(item.titleEn, item.titleBn))}
+                    onClick={() => handleDownload(item)}
                     className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl flex items-center justify-center gap-1.5 shrink-0"
                     style={{
                       borderRadius: "9999px",

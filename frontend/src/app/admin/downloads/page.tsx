@@ -5,15 +5,19 @@ import { toast } from "sonner";
 import { FileDown, Plus, Trash2, X, Upload, ArrowLeft, FileText } from "lucide-react";
 import Link from "next/link";
 import { adminApi, publicApi } from "@/lib/api";
-
-const DOWNLOAD_TYPES = ["Form", "Notice", "Result", "Other"];
+import { DOWNLOAD_CATEGORIES } from "@/lib/utils";
+import axios from "axios";
 
 interface Download {
   _id: string;
-  title: { en: string; bn: string };
-  type: string;
-  fileUrl: string;
-  uploadedAt: string;
+  title: {
+    en: string;
+    bn: string;
+  };
+  category: string;
+  file: string;
+  downloadCount: number;
+  createdAt: string;
 }
 
 export default function AdminDownloads() {
@@ -24,7 +28,9 @@ export default function AdminDownloads() {
   // Form State
   const [titleEn, setTitleEn] = useState("");
   const [titleBn, setTitleBn] = useState("");
-  const [type, setType] = useState(DOWNLOAD_TYPES[0]);
+  const [category, setCategory] = useState<(typeof DOWNLOAD_CATEGORIES)[number]>(
+    DOWNLOAD_CATEGORIES[0]
+  );
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -52,7 +58,7 @@ export default function AdminDownloads() {
   const openUploadModal = () => {
     setTitleEn("");
     setTitleBn("");
-    setType(DOWNLOAD_TYPES[0]);
+    setCategory(DOWNLOAD_CATEGORIES[0]);
     setFile(null);
     setModalOpen(true);
   };
@@ -74,7 +80,7 @@ export default function AdminDownloads() {
     setSubmitting(true);
     const formData = new FormData();
     formData.append("title", JSON.stringify({ en: titleEn, bn: titleBn }));
-    formData.append("type", type);
+    formData.append("category", category);
     formData.append("file", file);
 
     try {
@@ -84,9 +90,12 @@ export default function AdminDownloads() {
         setModalOpen(false);
         fetchDownloads();
       }
-    } catch (error: any) {
-      console.error("[UPLOAD DOWNLOAD ERROR]", error);
-      toast.error(error.response?.data?.message || "Failed to upload file");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message ?? "Failed to upload file");
+      } else {
+        toast.error("Failed to upload file");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -161,20 +170,31 @@ export default function AdminDownloads() {
                     <tr key={item._id} style={{ borderBottom: "1px solid var(--color-light-gray)", transition: "background-color 0.2s" }} className="hover-bg">
                       <td style={{ padding: "1rem 1.5rem" }}>
                         <span className="badge badge-blue">
-                          {item.type}
+                          {item.category}
                         </span>
                       </td>
                       <td style={{ padding: "1rem 1.5rem" }}>
                         <div style={{ fontWeight: 600, color: "var(--color-deep-blue)" }}>{item.title.en}</div>
                         <div style={{ fontSize: "0.85rem", color: "var(--color-text-muted)", fontFamily: "var(--font-bengali)" }}>{item.title.bn}</div>
                       </td>
-                      <td style={{ padding: "1rem 1.5rem", color: "var(--color-text-muted)", fontSize: "0.9rem" }}>
-                        {new Date(item.uploadedAt).toLocaleDateString()}
+                      <td
+                        style={{
+                          padding: "1rem 1.5rem",
+                          color: "var(--color-text-muted)",
+                          fontSize: "0.9rem",
+                        }}
+                      >
+                        {new Date(item.createdAt).toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
                       </td>
+
                       <td style={{ padding: "1rem 1.5rem", textAlign: "right" }}>
                         <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
                           <a
-                            href={item.fileUrl}
+                            href={item.file}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="btn btn-secondary"
@@ -267,12 +287,15 @@ export default function AdminDownloads() {
                   <label className="form-label">Category Type *</label>
                   <select
                     className="form-input"
-                    value={type}
-                    onChange={(e) => setType(e.target.value)}
-                    required
+                    value={category}
+                    onChange={(e) =>
+                      setCategory(e.target.value as (typeof DOWNLOAD_CATEGORIES)[number])
+                    }
                   >
-                    {DOWNLOAD_TYPES.map((t) => (
-                      <option key={t} value={t}>{t}</option>
+                    {DOWNLOAD_CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
                     ))}
                   </select>
                 </div>

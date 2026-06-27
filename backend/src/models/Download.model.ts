@@ -4,9 +4,22 @@ interface BilingualString { en: string; bn: string; }
 
 export interface IDownload extends Document {
   title: BilingualString;
-  category: "Membership Forms" | "Event Brochures" | "Awareness Materials" | "Posters" | "Reports" | "Publications";
+  category:
+    | "Membership Forms"
+    | "Event Brochures"
+    | "Awareness Materials"
+    | "Posters"
+    | "Reports"
+    | "Publications";
+
   file: string;
+
+  originalName: string;
+  fileSize: number;
+  mimeType: string;
+
   downloadCount: number;
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,14 +28,48 @@ const BilingualStringSchema = new Schema<BilingualString>({ en: String, bn: Stri
 
 const DownloadSchema = new Schema<IDownload>(
   {
-    title: { type: BilingualStringSchema, required: true },
-    category: {
-      type: String,
-      enum: ["Membership Forms","Event Brochures","Awareness Materials","Posters","Reports","Publications"],
+    title: {
+      type: BilingualStringSchema,
       required: true,
     },
-    file: { type: String, required: true },
-    downloadCount: { type: Number, default: 0 },
+
+    category: {
+      type: String,
+      enum: [
+        "Membership Forms",
+        "Event Brochures",
+        "Awareness Materials",
+        "Posters",
+        "Reports",
+        "Publications",
+      ],
+      required: true,
+    },
+
+    file: {
+      type: String,
+      required: true,
+    },
+
+    originalName: {
+      type: String,
+      required: true,
+    },
+
+    fileSize: {
+      type: Number,
+      required: true,
+    },
+
+    mimeType: {
+      type: String,
+      required: true,
+    },
+
+    downloadCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
