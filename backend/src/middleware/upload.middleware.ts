@@ -38,8 +38,9 @@ const uploadToCloudinary = (fileBuffer: Buffer, folder: string, filename: string
     const stream = cloudinary.uploader.upload_stream(
       {
         folder: `pbvm_purulia/${folder}`,
-        public_id: path.parse(filename).name,
+        public_id: `${Date.now()}-${path.parse(filename).name}`,
         resource_type: isPdf ? "raw" : "auto",
+        format: isPdf ? "pdf" : undefined,
       },
       (error, result) => {
         if (error) return reject(error);

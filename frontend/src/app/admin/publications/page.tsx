@@ -5,16 +5,20 @@ import { toast } from "sonner";
 import { Book, Plus, Trash2, X, Upload, ArrowLeft, FileText } from "lucide-react";
 import Link from "next/link";
 import { adminApi, publicApi } from "@/lib/api";
+import Image from "next/image";
 
 const PUBLICATION_TYPES = ["Book", "Magazine", "Report", "Other"];
 
 interface Publication {
   _id: string;
-  title: { en: string; bn: string };
-  type: string;
-  pdfUrl: string;
-  coverImageUrl?: string;
-  publishedDate: string;
+  title: {
+    en: string;
+    bn: string;
+  };
+  category: string;
+  pdfFile: string;
+  thumbnailImage?: string;
+  publishDate: string;
   author?: string;
 }
 
@@ -26,7 +30,7 @@ export default function AdminPublications() {
   // Form State
   const [titleEn, setTitleEn] = useState("");
   const [titleBn, setTitleBn] = useState("");
-  const [type, setType] = useState(PUBLICATION_TYPES[0]);
+  const [category, setCategory] = useState(PUBLICATION_TYPES[0]);
   const [author, setAuthor] = useState("");
   const [publishedDate, setPublishedDate] = useState("");
   const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -58,7 +62,7 @@ export default function AdminPublications() {
   const openUploadModal = () => {
     setTitleEn("");
     setTitleBn("");
-    setType(PUBLICATION_TYPES[0]);
+    setCategory(PUBLICATION_TYPES[0]);
     setAuthor("");
     setPublishedDate(new Date().toISOString().split("T")[0]);
     setPdfFile(null);
@@ -98,12 +102,12 @@ export default function AdminPublications() {
     setSubmitting(true);
     const formData = new FormData();
     formData.append("title", JSON.stringify({ en: titleEn, bn: titleBn }));
-    formData.append("type", type);
+    formData.append("category", category);
     if (author) formData.append("author", author);
-    if (publishedDate) formData.append("publishedDate", publishedDate);
-    formData.append("pdf", pdfFile);
+    if (publishedDate) formData.append("publishDate", publishedDate);
+    formData.append("pdfFile", pdfFile);
     if (coverFile) {
-      formData.append("cover", coverFile);
+      formData.append("thumbnailImage", coverFile);
     }
 
     try {
@@ -178,14 +182,14 @@ export default function AdminPublications() {
             {publications.map((pub) => (
               <div key={pub._id} className="card" style={{ display: "flex", flexDirection: "column", overflow: "hidden", position: "relative" }}>
                 <div style={{ position: "relative", aspectRatio: "3/4", backgroundColor: "var(--color-light-gray)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  {pub.coverImageUrl ? (
-                    <img src={pub.coverImageUrl} alt={pub.title.en} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  {pub.thumbnailImage ? (
+                    <Image src={pub.thumbnailImage} alt={pub.title.en} fill/>
                   ) : (
                     <FileText size={64} style={{ color: "var(--color-mid-gray)" }} />
                   )}
                   <div style={{ position: "absolute", top: "0.5rem", right: "0.5rem" }}>
                     <span className="badge badge-orange" style={{ backdropFilter: "blur(4px)", background: "rgba(224, 122, 95, 0.9)" }}>
-                      {pub.type}
+                      {pub.category}
                     </span>
                   </div>
                 </div>
@@ -199,12 +203,12 @@ export default function AdminPublications() {
                   </h4>
                   <div style={{ fontSize: "0.85rem", color: "var(--color-text-muted)", marginTop: "auto", paddingTop: "0.5rem" }}>
                     {pub.author && <div><strong>Author:</strong> {pub.author}</div>}
-                    <div><strong>Published:</strong> {new Date(pub.publishedDate).toLocaleDateString()}</div>
+                    <div><strong>Published:</strong> {new Date(pub.publishDate).toLocaleDateString()}</div>
                   </div>
                   
                   <div style={{ display: "flex", gap: "0.5rem", marginTop: "1rem" }}>
                     <a
-                      href={pub.pdfUrl}
+                      href={pub.pdfFile}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-secondary"
@@ -294,8 +298,8 @@ export default function AdminPublications() {
                     <label className="form-label">Type *</label>
                     <select
                       className="form-input"
-                      value={type}
-                      onChange={(e) => setType(e.target.value)}
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
                       required
                     >
                       {PUBLICATION_TYPES.map((t) => (
