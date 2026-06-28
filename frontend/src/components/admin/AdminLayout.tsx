@@ -133,12 +133,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (!authenticated) return null;
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--color-light-gray)" }}>
+    <div style={{ minHeight: "100vh", width: "100%", background: "var(--color-light-gray)", display: "block" }}>
       {/* Sidebar Navigation */}
       <AdminSidebar admin={admin} onOpenProfile={() => setProfileOpen(true)} />
 
-      {/* Main Administrative Canvas */}
-      <main style={{ marginLeft: "260px", minHeight: "100vh", padding: "2.5rem" }} className="admin-main">
+      {/* Main Administrative Canvas - Force expansion to fill available space */}
+      <main
+        style={{
+          marginLeft: "260px",
+          width: "calc(100% - 260px)",
+          minHeight: "100vh",
+          padding: "2.5rem",
+          boxSizing: "border-box"
+        }}
+        className="admin-main"
+      >
         {children}
       </main>
 
