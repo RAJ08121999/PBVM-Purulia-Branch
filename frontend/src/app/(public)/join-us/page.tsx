@@ -177,6 +177,7 @@ export default function JoinUsPage() {
           color: "#ffffff",
           position: "relative",
           overflow: "hidden",
+          padding: "4rem"
         }}
       >
         <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(to right,rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.04) 1px,transparent 1px)", backgroundSize: "40px 40px", pointerEvents: "none" }} />
@@ -200,12 +201,13 @@ export default function JoinUsPage() {
 
             {/* Left Side: Why Join Column */}
             <div
+              style={{ paddingTop: "2rem" }}
               className="lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-24">
 
               <div className="p-6 sm:p-8 rounded-3xl bg-linear-to-br from-blue-950 to-indigo-900 text-white shadow-md flex flex-col gap-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 h-40 w-40 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
 
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "1rem", position: "sticky", zIndex: 1 , paddingTop:"1rem"}}>
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "1rem", position: "sticky", zIndex: 1, paddingTop: "1rem" }}>
                   <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center">
                     <UserPlus className="h-5 w-5 text-teal-400" />
                   </div>
@@ -253,7 +255,9 @@ export default function JoinUsPage() {
                   </li>
                 </ul>
 
-                <div className="border-t border-white/10 pt-4 mt-2">
+                <div
+                  style={{ paddingTop: "1rem", paddingBottom: "1rem" }}
+                  className="border-t border-white/10 pt-4 mt-2">
                   <p className="font-body text-xxs text-zinc-400 italic">
                     {t(
                       "* All applications are reviewed by the district executive committee before final approval.",
@@ -264,7 +268,9 @@ export default function JoinUsPage() {
               </div>
 
               {/* Emergency / Help Card */}
-              <div className="p-6 rounded-2xl border border-zinc-100 bg-white dark:bg-zinc-950/20 dark:border-zinc-900 shadow-sm flex flex-col gap-3 text-left">
+              <div
+                style={{ marginBottom: "4rem" }}
+                className="p-6 rounded-2xl border border-zinc-100 bg-white dark:bg-zinc-950/20 dark:border-zinc-900 shadow-sm flex flex-col gap-3 text-left">
                 <h4 className="font-heading text-xs font-black text-zinc-900 dark:text-white uppercase tracking-wider">
                   {t("Need help with application?", "আবেদন করতে সমস্যা হচ্ছে?")}
                 </h4>
@@ -275,12 +281,13 @@ export default function JoinUsPage() {
                   )}
                 </p>
               </div>
-
             </div>
 
             {/* Right Side: Membership Application Form Card */}
-            <div className="lg:col-span-8">
-              <div className="rounded-3xl bg-white border border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 shadow-md p-4 sm:p-8 md:p-10" style={{ textAlign: "left" }}>
+            <div
+              style={{ paddingTop: "2rem" }}
+              className="lg:col-span-8">
+              <div className="rounded-3xl bg-white border border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 shadow-md p-4 sm:p-8 md:p-10" style={{ textAlign: "center" }}>
 
                 {isSuccess ? (
                   <div className="flex flex-col items-center justify-center text-center py-16 gap-4 animate-fade-in">
@@ -306,7 +313,9 @@ export default function JoinUsPage() {
                   </div>
                 ) : (
                   <>
-                    <h3 className="font-heading text-lg sm:text-xl font-black text-zinc-900 dark:text-white mb-1">
+                    <h3
+                      style={{ paddingTop: "1rem", paddingBottom: "1rem" }}
+                      className="font-heading text-lg sm:text-xl font-black text-zinc-900 dark:text-white mb-1">
                       {t("Membership Application Form", "সদস্যপদের আবেদনপত্র")}
                     </h3>
                     <p className="font-body text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mb-8">
@@ -325,7 +334,9 @@ export default function JoinUsPage() {
                             {t("1. Personal Details", "১. ব্যক্তিগত বিবরণ")}
                           </h4>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                          <div
+                            style={{ paddingLeft: "2rem", paddingRight: "2rem" }}
+                            className="grid grid-cols-1 sm:grid-cols-3 gap-6">
 
                             {/* Full Name */}
                             <div className="sm:col-span-2">
@@ -455,7 +466,9 @@ export default function JoinUsPage() {
                             {t("2. Contact & Address Details", "২. যোগাযোগের ঠিকানা ও বিবরণ")}
                           </h4>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          <div
+                            style={{ paddingLeft: "2rem", paddingRight: "2rem" }}
+                            className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
                             {/* Email */}
                             <FormField
@@ -579,7 +592,9 @@ export default function JoinUsPage() {
                           </h4>
 
                           {/* Checkbox Grid */}
-                          <div className="space-y-3">
+                          <div
+                            style={{ paddingLeft: "2rem", paddingRight: "2rem" }}
+                            className="space-y-3">
                             <FormLabel
                               style={{ paddingBottom: "1rem" }}
                               className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">
@@ -656,6 +671,7 @@ export default function JoinUsPage() {
 
                         {/* Submit Application Button */}
                         <Button
+                          style={{ marginBottom: "4rem" }}
                           type="submit"
                           disabled={isSubmitting}
                           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl h-12 flex items-center justify-center gap-2 mt-8 text-sm sm:text-base shadow-md"
