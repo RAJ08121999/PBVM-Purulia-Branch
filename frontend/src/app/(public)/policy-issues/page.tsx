@@ -101,32 +101,13 @@ export default function PolicyIssuesPage() {
 
       {/* Topic Tag Filter Bar */}
       <section style={{ width: "100%", padding: "1.5rem 0", background: "#ffffff", borderBottom: "1px solid #e2e8f0", position: "sticky", top: "64px", zIndex: 20 }}>
-        <div className="page-container" style={{ display: "flex", flexWrap: "nowrap", justifyContent: "center", gap: "0.5rem" }}>
+        <div style={{ width: "100%", maxWidth: "1400px", margin: "0 auto", padding: "0 2rem", overflowX: "auto" }} className="no-scrollbar">
+          <div style={{ display: "flex", flexWrap: "nowrap", alignItems: "center", justifyContent: "center", gap: "0.65rem", padding: "0.25rem 0", minWidth: "max-content", margin: "0 auto" }}>
 
-          <Button
-            variant={selectedTag === "All" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setSelectedTag("All")}
-            style={{
-              borderRadius: "9999px",
-              padding: "0.5rem 1.25rem",
-              fontSize: "0.85rem",
-              fontWeight: 700,
-              height: "auto",
-              cursor: "pointer",
-              boxSizing: "border-box",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {t("All Topics", "সব বিষয়")}
-          </Button>
-
-          {POLICY_TAGS.map((tag) => (
             <Button
-              key={tag}
-              variant={selectedTag === tag ? "default" : "outline"}
+              variant={selectedTag === "All" ? "default" : "outline"}
               size="sm"
-              onClick={() => setSelectedTag(tag)}
+              onClick={() => setSelectedTag("All")}
               style={{
                 borderRadius: "9999px",
                 padding: "0.5rem 1.25rem",
@@ -138,10 +119,31 @@ export default function PolicyIssuesPage() {
                 whiteSpace: "nowrap",
               }}
             >
-              {t(tag, tag === "Environment" ? "পরিবেশ" : tag === "Public Health" ? "জনস্বাস্থ্য" : tag === "Education" ? "শিক্ষা" : tag === "Science Policy" ? "বিজ্ঞান নীতি" : tag === "Technology Policy" ? "প্রযুক্তি নীতি" : tag === "Climate Change" ? "জলবায়ু পরিবর্তন" : "কুসংস্কার বিরোধী")}
+              {t("All Topics", "সব বিষয়")}
             </Button>
-          ))}
 
+            {POLICY_TAGS.map((tag) => (
+              <Button
+                key={tag}
+                variant={selectedTag === tag ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedTag(tag)}
+                style={{
+                  borderRadius: "9999px",
+                  padding: "0.5rem 1.25rem",
+                  fontSize: "0.85rem",
+                  fontWeight: 700,
+                  height: "auto",
+                  cursor: "pointer",
+                  boxSizing: "border-box",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {t(tag, tag === "Environment" ? "পরিবেশ" : tag === "Public Health" ? "জনস্বাস্থ্য" : tag === "Education" ? "শিক্ষা" : tag === "Science Policy" ? "বিজ্ঞান নীতি" : tag === "Technology Policy" ? "প্রযুক্তি নীতি" : tag === "Climate Change" ? "জলবায়ু পরিবর্তন" : "কুসংস্কার বিরোধী")}
+              </Button>
+            ))}
+
+          </div>
         </div>
       </section>
 

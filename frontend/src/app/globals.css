@@ -678,3 +678,134 @@ img, video {
     @apply font-sans;
   }
 }
+
+/* ─── Collapsible Admin Sidebar Layout ─────────────────────── */
+.admin-sidebar {
+  width: 260px;
+  transition: width 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sidebar-text {
+  display: inline;
+}
+
+.sidebar-header-text {
+  display: block;
+}
+
+.sidebar-hamburger {
+  display: none;
+}
+
+.sidebar-logo {
+  margin-left: 0;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  transition: all 0.2s;
+}
+
+.sidebar-footer {
+  padding: 1.25rem 1.5rem;
+}
+
+.sidebar-footer-profile {
+  margin-bottom: 0.75rem;
+}
+
+.sidebar-footer-buttons {
+  flex-direction: row;
+}
+
+.sidebar-logout-btn {
+  padding: 0.4rem 0.6rem;
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .admin-sidebar {
+    width: 70px;
+  }
+
+  .admin-sidebar.expanded {
+    width: 260px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  }
+
+  .sidebar-text {
+    display: none;
+  }
+
+  .admin-sidebar.expanded .sidebar-text {
+    display: inline;
+  }
+
+  .sidebar-header-text {
+    display: none;
+  }
+
+  .admin-sidebar.expanded .sidebar-header-text {
+    display: block;
+  }
+
+  .sidebar-hamburger {
+    display: flex;
+  }
+
+  .sidebar-link {
+    justify-content: center;
+    padding: 0.75rem;
+    gap: 0;
+  }
+
+  .admin-sidebar.expanded .sidebar-link {
+    justify-content: flex-start;
+    padding: 0.75rem 1rem;
+    gap: 0.75rem;
+  }
+
+  .sidebar-footer {
+    padding: 1rem 0.5rem;
+  }
+
+  .admin-sidebar.expanded .sidebar-footer {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .sidebar-footer-profile {
+    justify-content: center;
+    margin-bottom: 0;
+  }
+
+  .admin-sidebar.expanded .sidebar-footer-profile {
+    justify-content: flex-start;
+    margin-bottom: 0.75rem;
+  }
+
+  .sidebar-footer-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .admin-sidebar.expanded .sidebar-footer-buttons {
+    flex-direction: row;
+    margin-top: 0;
+  }
+
+  .sidebar-logout-btn {
+    padding: 0.4rem 0.6rem;
+    width: 100%;
+  }
+
+  .admin-main {
+    margin-left: 70px !important;
+    padding: 1.5rem !important;
+  }
+}

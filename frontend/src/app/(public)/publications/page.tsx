@@ -35,17 +35,17 @@ export default function PublicationsPage() {
   const [publications, setPublications] = useState<Publication[]>([]);
   const [loading, setLoading] = useState(true);
 
-  
+
 
   useEffect(() => {
     const fetchPublications = async () => {
       try {
         setLoading(true);
-  
+
         const res = await publicApi.getPublications({
           limit: 100,
         });
-  
+
         if (res.data.success) {
           setPublications(res.data.publications ?? []);
         }
@@ -56,17 +56,17 @@ export default function PublicationsPage() {
         setLoading(false);
       }
     };
-  
+
     fetchPublications();
   }, []);
 
   if (loading) {
     return (
-        <div className="page-container py-20 text-center">
-            Loading publications...
-        </div>
+      <div className="page-container py-20 text-center">
+        Loading publications...
+      </div>
     );
-}
+  }
 
   // Filter & Search Logic
   const filteredPublications = publications.filter((pub) => {
@@ -85,7 +85,7 @@ export default function PublicationsPage() {
         year: "numeric",
       }
     );
-  
+
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#F8FAFC" }}>
@@ -116,24 +116,52 @@ export default function PublicationsPage() {
       </section>
 
       {/* Filter and Search Bar */}
-      <section style={{ width: "100%", padding: "1.5rem 0", background: "#ffffff", borderBottom: "1px solid #e2e8f0", position: "sticky", top: "64px", zIndex: 20 }}>
+      {/* Filter and Search Bar */}
+      <section
+        style={{
+          width: "100%",
+          padding: "1.5rem 0",
+          background: "#ffffff",
+          borderBottom: "1px solid #e2e8f0",
+          position: "sticky",
+          top: "64px",
+          zIndex: 20,
+        }}
+      >
         <div className="page-container" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}>
 
-            {/* Search Box */}
-            <div className="relative w-full md:max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-              <Input
-                type="text"
-                placeholder={t("Search by title...", "নাম দিয়ে খুঁজুন...")}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 rounded-full bg-zinc-50 border-zinc-200 text-sm focus:bg-white dark:bg-zinc-900 dark:border-zinc-800"
-              />
-            </div>
+          {/* Search Box */}
+          <div className="relative w-full md:max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+            <Input
+              type="text"
+              placeholder={t("Search by title...", "নাম দিয়ে খুঁজুন...")}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 rounded-full bg-zinc-50 border-zinc-200 text-sm focus:bg-white dark:bg-zinc-900 dark:border-zinc-800"
+            />
+          </div>
 
-            {/* Category Dropdown or Filters */}
-            <div className="flex flex-wrap gap-2 w-full md:w-auto justify-center md:justify-end">
+          {/* Horizontally Scrollable Category Filters */}
+          <div
+            style={{
+              width: "100%",
+              overflowX: "auto",
+            }}
+            className="no-scrollbar"
+          >
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "nowrap",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.65rem",
+                padding: "0.25rem 0",
+                minWidth: "max-content",
+                margin: "0 auto",
+              }}
+            >
               <Button
                 variant={selectedCategory === "All" ? "default" : "outline"}
                 size="sm"
@@ -151,6 +179,7 @@ export default function PublicationsPage() {
               >
                 {t("All", "সব")}
               </Button>
+
               {PUBLICATION_CATEGORIES.map((cat) => (
                 <Button
                   key={cat}
@@ -168,11 +197,23 @@ export default function PublicationsPage() {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  {t(cat, cat === "Magazine" ? "পত্রিকা" : cat === "Booklet" ? "পুস্তিকা" : cat === "Report" ? "রিপোর্ট" : cat === "Awareness Material" ? "সচেতনতা লিপি" : "নিউজলেটার")}
+                  {t(
+                    cat,
+                    cat === "Magazine"
+                      ? "পত্রিকা"
+                      : cat === "Booklet"
+                        ? "পুস্তিকা"
+                        : cat === "Report"
+                          ? "রিপোর্ট"
+                          : cat === "Awareness Material"
+                            ? "সচেতনতা লিপি"
+                            : "নিউজলেটার"
+                  )}
                 </Button>
               ))}
             </div>
           </div>
+
         </div>
       </section>
 
@@ -222,7 +263,7 @@ export default function PublicationsPage() {
                         {t(pub.category, pub.category === "Magazine" ? "পত্রিকা" : pub.category === "Booklet" ? "পুস্তিকা" : pub.category === "Report" ? "রিপোর্ট" : pub.category === "Awareness Material" ? "সচেতনতা লিপি" : "নিউজলেটার")}
                       </span>
                       <span className="font-body text-xs text-zinc-400 dark:text-zinc-500">
-                      {formatDate(pub.publishDate)}
+                        {formatDate(pub.publishDate)}
                       </span>
                     </div>
 
@@ -232,8 +273,8 @@ export default function PublicationsPage() {
 
                     <p className="font-body text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
                       {t(
-                          pub.description?.en ?? "",
-                          pub.description?.bn ?? ""
+                        pub.description?.en ?? "",
+                        pub.description?.bn ?? ""
                       )}
                     </p>
                     <p className="text-xs text-zinc-400 truncate font-medium">

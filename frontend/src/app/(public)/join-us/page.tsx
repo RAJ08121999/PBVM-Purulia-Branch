@@ -166,13 +166,13 @@ export default function JoinUsPage() {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#F8FAFC", padding: "1rem", textAlign: "center", alignItems: "center" }}>
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#F8FAFC" }}>
 
       {/* Header Banner */}
       <section
+        className="py-12 sm:py-16 md:py-20 px-4"
         style={{
           width: "100%",
-          padding: "5rem 0 4rem",
           background: "linear-gradient(135deg, #0B1F4A 0%, #0B3D91 60%, #0A3D32 100%)",
           color: "#ffffff",
           position: "relative",
@@ -180,7 +180,7 @@ export default function JoinUsPage() {
         }}
       >
         <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(to right,rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.04) 1px,transparent 1px)", backgroundSize: "40px 40px", pointerEvents: "none" }} />
-        <div className="page-container" style={{ position: "relative", zIndex: 1, textAlign: "center", padding: "1rem", display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div className="page-container" style={{ position: "relative", zIndex: 1, textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
           <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(1.8rem,4.5vw,3rem)", fontWeight: 800, color: "#ffffff", marginBottom: "1rem", lineHeight: 1.2 }}>
             {t("Join as a Member", "বিজ্ঞান মঞ্চের সদস্য হন")}
           </h1>
@@ -194,16 +194,15 @@ export default function JoinUsPage() {
       </section>
 
       {/* Main Form Grid */}
-      <section style={{ width: "100%", padding: "4rem 1rem", textAlign: "center", display: "flex", justifyContent: "center" }}>
-        <div className="page-container" style={{ padding: "1rem", textAlign: "center" }}>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      <section className="py-8 sm:py-12 md:py-16 px-4" style={{ width: "100%" }}>
+        <div className="page-container">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start">
 
             {/* Left Side: Why Join Column */}
             <div
-              style={{ display: "flex", flexDirection: "column", padding: "1rem", position: "sticky", zIndex: 1 }}
               className="lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-24">
 
-              <div className="p-8 rounded-3xl bg-linear-to-br from-blue-950 to-indigo-900 text-white shadow-md flex flex-col gap-6 relative overflow-hidden">
+              <div className="p-6 sm:p-8 rounded-3xl bg-linear-to-br from-blue-950 to-indigo-900 text-white shadow-md flex flex-col gap-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 h-40 w-40 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
 
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "1rem", position: "sticky", zIndex: 1 , paddingTop:"1rem"}}>
@@ -216,7 +215,7 @@ export default function JoinUsPage() {
                 </div>
 
                 <ul className="flex flex-col gap-4 font-body text-xs sm:text-sm text-zinc-300">
-                  <li className="flex gap-2.5 items-start">
+                  <li className="flex gap-2.5 items-start text-left">
                     <Check className="h-5 w-5 text-teal-400 shrink-0" />
                     <span>
                       {t(
@@ -225,7 +224,7 @@ export default function JoinUsPage() {
                       )}
                     </span>
                   </li>
-                  <li className="flex gap-2.5 items-start">
+                  <li className="flex gap-2.5 items-start text-left">
                     <Check className="h-5 w-5 text-teal-400 shrink-0" />
                     <span>
                       {t(
@@ -234,7 +233,7 @@ export default function JoinUsPage() {
                       )}
                     </span>
                   </li>
-                  <li className="flex gap-2.5 items-start">
+                  <li className="flex gap-2.5 items-start text-left">
                     <Check className="h-5 w-5 text-teal-400 shrink-0" />
                     <span>
                       {t(
@@ -243,7 +242,7 @@ export default function JoinUsPage() {
                       )}
                     </span>
                   </li>
-                  <li className="flex gap-2.5 items-start">
+                  <li className="flex gap-2.5 items-start text-left">
                     <Check className="h-5 w-5 text-teal-400 shrink-0" />
                     <span>
                       {t(
@@ -265,7 +264,7 @@ export default function JoinUsPage() {
               </div>
 
               {/* Emergency / Help Card */}
-              <div className="p-6 rounded-2xl border border-zinc-100 bg-white dark:bg-zinc-950/20 dark:border-zinc-900 shadow-sm flex flex-col gap-3">
+              <div className="p-6 rounded-2xl border border-zinc-100 bg-white dark:bg-zinc-950/20 dark:border-zinc-900 shadow-sm flex flex-col gap-3 text-left">
                 <h4 className="font-heading text-xs font-black text-zinc-900 dark:text-white uppercase tracking-wider">
                   {t("Need help with application?", "আবেদন করতে সমস্যা হচ্ছে?")}
                 </h4>
@@ -281,7 +280,7 @@ export default function JoinUsPage() {
 
             {/* Right Side: Membership Application Form Card */}
             <div className="lg:col-span-8">
-              <div className="rounded-3xl bg-white border border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 shadow-md" style={{ padding: "1rem", textAlign: "center" }}>
+              <div className="rounded-3xl bg-white border border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 shadow-md p-4 sm:p-8 md:p-10" style={{ textAlign: "left" }}>
 
                 {isSuccess ? (
                   <div className="flex flex-col items-center justify-center text-center py-16 gap-4 animate-fade-in">

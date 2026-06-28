@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Cookies from "js-cookie";
@@ -19,6 +19,8 @@ import {
   LogOut,
   CreditCard,
   User,
+  Menu,
+  X,
 } from "lucide-react";
 
 interface AdminSidebarProps {
@@ -29,6 +31,7 @@ interface AdminSidebarProps {
 export default function AdminSidebar({ admin, onOpenProfile }: AdminSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [isMobileExpanded, setIsMobileExpanded] = useState(false);
 
   const handleLogout = () => {
     Cookies.remove("pbvm_token");
@@ -54,7 +57,6 @@ export default function AdminSidebar({ admin, onOpenProfile }: AdminSidebarProps
   return (
     <div
       style={{
-        width: "260px",
         background: "var(--gradient-brand)",
         color: "#ffffff",
         minHeight: "100vh",
@@ -66,39 +68,63 @@ export default function AdminSidebar({ admin, onOpenProfile }: AdminSidebarProps
         bottom: 0,
         zIndex: 50,
       }}
-      className="no-print"
+      className={`no-print admin-sidebar ${isMobileExpanded ? "expanded" : ""}`}
     >
       {/* Sidebar Header */}
       <div
         style={{
-          padding: "1.5rem",
+          padding: "1.5rem 1rem",
           borderBottom: "1px solid rgba(255,255,255,0.1)",
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between",
           gap: "0.75rem",
         }}
+        className="sidebar-header"
       >
-        <div
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div
+            className="sidebar-logo"
+            style={{
+              width: "40px",
+              height: "40px",
+              background: "white",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: "bold",
+              color: "#fff",
+              flexShrink: 0,
+            }}
+          >
+            <img src="/logo.png" alt="PBVM Purulia Logo" width={32} height={32} style={{ objectFit: "contain" }} />
+          </div>
+          <div className="sidebar-header-text">
+            <h2 style={{ fontSize: "1.1rem", fontWeight: 700, margin: 0, lineHeight: 1, whiteSpace: "nowrap" }}>PBVM Purulia</h2>
+            <span style={{ fontSize: "0.7rem", opacity: 0.8, textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
+              Admin Panel
+            </span>
+          </div>
+        </div>
+        
+        {/* Toggle Button */}
+        <button
+          onClick={() => setIsMobileExpanded(!isMobileExpanded)}
+          className="sidebar-hamburger"
           style={{
-            width: "50px",
-            height: "50px",
-            background: "white",
-            borderRadius: "50%",
-            display: "flex",
+            background: "transparent",
+            border: "none",
+            color: "#ffffff",
+            cursor: "pointer",
+            padding: "0.25rem",
             alignItems: "center",
             justifyContent: "center",
-            fontWeight: "bold",
-            color: "#fff",
           }}
+          title={isMobileExpanded ? "Collapse Menu" : "Expand Menu"}
         >
-          <img src="/logo.png" alt="PBVM Purulia Logo" width={50} height={50} />
-        </div>
-        <div>
-          <h2 style={{ fontSize: "1.15rem", fontWeight: 700, margin: 0, lineHeight: 1 }}>PBVM Purulia</h2>
-          <span style={{ fontSize: "0.7rem", opacity: 0.8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            Admin Panel
-          </span>
-        </div>
+          {isMobileExpanded ? <X size={20} /> : <Menu size={20} />}
+        </button>
       </div>
 
       {/* Navigation Items */}
@@ -112,7 +138,7 @@ export default function AdminSidebar({ admin, onOpenProfile }: AdminSidebarProps
         scrollbarWidth: "none",
         msOverflowStyle: "none"
       }}
-      className="no-scrollbar"
+      className="no-scrollbar sidebar-nav-items"
       >
         {navItems.map((item) => {
           // If item is restricted to Super Admin, hide it for standard Admin
@@ -127,23 +153,19 @@ export default function AdminSidebar({ admin, onOpenProfile }: AdminSidebarProps
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setIsMobileExpanded(false)} // Auto-close sidebar on item selection
               style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.75rem",
-                padding: "0.75rem 1rem",
-                borderRadius: "var(--radius-md)",
                 color: isActive ? "#ffffff" : "rgba(255,255,255,0.85)",
                 background: isActive ? "rgba(255,255,255,0.15)" : "transparent",
                 fontWeight: isActive ? 600 : 500,
                 fontSize: "0.925rem",
                 textDecoration: "none",
-                transition: "all 0.2s",
               }}
-              className="hover:bg-white/10"
+              className="sidebar-link hover:bg-white/10"
+              title={item.name}
             >
-              <Icon size={18} style={{ opacity: isActive ? 1 : 0.8 }} />
-              {item.name}
+              <Icon size={18} className="sidebar-link-icon" style={{ opacity: isActive ? 1 : 0.8, flexShrink: 0 }} />
+              <span className="sidebar-text">{item.name}</span>
             </Link>
           );
         })}
@@ -153,12 +175,12 @@ export default function AdminSidebar({ admin, onOpenProfile }: AdminSidebarProps
       {admin && (
         <div
           style={{
-            padding: "1.25rem 1.5rem",
             borderTop: "1px solid rgba(255,255,255,0.1)",
             background: "rgba(0, 0, 0, 0.15)",
           }}
+          className="sidebar-footer"
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }} className="sidebar-footer-profile">
             <div
               style={{
                 width: "36px",
@@ -168,11 +190,12 @@ export default function AdminSidebar({ admin, onOpenProfile }: AdminSidebarProps
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                flexShrink: 0,
               }}
             >
               <User size={18} />
             </div>
-            <div style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+            <div className="sidebar-text" style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
               <div style={{ fontWeight: 600, fontSize: "0.875rem", whiteSpace: "nowrap" }}>{admin.name}</div>
               <div style={{ fontSize: "0.725rem", opacity: 0.8, whiteSpace: "nowrap" }}>
                 {admin.role === "SuperAdministrator" ? "Super Admin" : "Admin"}
@@ -180,7 +203,7 @@ export default function AdminSidebar({ admin, onOpenProfile }: AdminSidebarProps
             </div>
           </div>
 
-          <div style={{ display: "flex", gap: "0.5rem" }}>
+          <div className="sidebar-footer-buttons" style={{ display: "flex", gap: "0.5rem" }}>
             <button
               onClick={onOpenProfile}
               style={{
@@ -194,14 +217,13 @@ export default function AdminSidebar({ admin, onOpenProfile }: AdminSidebarProps
                 cursor: "pointer",
                 transition: "all 0.2s",
               }}
-              className="hover:bg-white/10"
+              className="hover:bg-white/10 sidebar-text"
             >
               Profile
             </button>
             <button
               onClick={handleLogout}
               style={{
-                padding: "0.4rem 0.6rem",
                 fontSize: "0.75rem",
                 borderRadius: "var(--radius-sm)",
                 color: "#ffffff",
@@ -213,10 +235,11 @@ export default function AdminSidebar({ admin, onOpenProfile }: AdminSidebarProps
                 justifyContent: "center",
                 transition: "all 0.2s",
               }}
-              className="hover:bg-red-600"
+              className="hover:bg-red-600 sidebar-logout-btn"
               title="Log Out"
             >
-              <LogOut size={14} />
+              <LogOut size={14} style={{ flexShrink: 0 }} />
+              <span className="sidebar-text" style={{ marginLeft: "0.35rem" }}>Log Out</span>
             </button>
           </div>
         </div>

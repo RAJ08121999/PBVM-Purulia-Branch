@@ -113,32 +113,13 @@ export default function DownloadsPage() {
 
       {/* Category Selection Filter */}
       <section style={{ width: "100%", padding: "1.5rem 0", background: "#ffffff", borderBottom: "1px solid #e2e8f0", position: "sticky", top: "64px", zIndex: 20 }}>
-        <div className="page-container" style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "0.5rem" }}>
+        <div style={{ width: "100%", maxWidth: "1400px", margin: "0 auto", padding: "0 2rem", overflowX: "auto" }} className="no-scrollbar">
+          <div style={{ display: "flex", flexWrap: "nowrap", alignItems: "center", justifyContent: "center", gap: "0.65rem", padding: "0.25rem 0", minWidth: "max-content", margin: "0 auto" }}>
 
-          <Button
-            variant={selectedCategory === "All" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setSelectedCategory("All")}
-            style={{
-              borderRadius: "9999px",
-              padding: "0.5rem 1.25rem",
-              fontSize: "0.85rem",
-              fontWeight: 700,
-              height: "auto",
-              cursor: "pointer",
-              boxSizing: "border-box",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {t("All Resources", "সব ফাইল")}
-          </Button>
-
-          {DOWNLOAD_CATEGORIES.map((cat) => (
             <Button
-              key={cat}
-              variant={selectedCategory === cat ? "default" : "outline"}
+              variant={selectedCategory === "All" ? "default" : "outline"}
               size="sm"
-              onClick={() => setSelectedCategory(cat)}
+              onClick={() => setSelectedCategory("All")}
               style={{
                 borderRadius: "9999px",
                 padding: "0.5rem 1.25rem",
@@ -150,10 +131,31 @@ export default function DownloadsPage() {
                 whiteSpace: "nowrap",
               }}
             >
-              {t(cat, cat === "Membership Forms" ? "সদস্যপদ ফর্ম" : cat === "Event Brochures" ? "ইভেন্ট লিফলেট" : cat === "Awareness Materials" ? "সচেতনতা লিপি" : cat === "Posters" ? "পোস্টার" : cat === "Reports" ? "রিপোর্ট" : "প্রকাশনা")}
+              {t("All Resources", "সব ফাইল")}
             </Button>
-          ))}
 
+            {DOWNLOAD_CATEGORIES.map((cat) => (
+              <Button
+                key={cat}
+                variant={selectedCategory === cat ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedCategory(cat)}
+                style={{
+                  borderRadius: "9999px",
+                  padding: "0.5rem 1.25rem",
+                  fontSize: "0.85rem",
+                  fontWeight: 700,
+                  height: "auto",
+                  cursor: "pointer",
+                  boxSizing: "border-box",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {t(cat, cat === "Membership Forms" ? "সদস্যপদ ফর্ম" : cat === "Event Brochures" ? "ইভেন্ট লিফলেট" : cat === "Awareness Materials" ? "সচেতনতা লিপি" : cat === "Posters" ? "পোস্টার" : cat === "Reports" ? "রিপোর্ট" : "প্রকাশনা")}
+              </Button>
+            ))}
+
+          </div>
         </div>
       </section>
 
