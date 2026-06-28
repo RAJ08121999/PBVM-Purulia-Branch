@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { toast } from "sonner"
-import { CheckCircle2, UserPlus, Heart, BookOpen, ShieldAlert, Check } from "lucide-react"
+import { CheckCircle2, UserPlus, Check } from "lucide-react"
 
 // Areas of Interest options
 const interestOptions = [
@@ -85,7 +85,7 @@ const createMembershipSchema = (t: (en: string, bn: string) => string) =>
   })
 
 export default function JoinUsPage() {
-  const { language, t } = useLanguage()
+  const { t } = useLanguage()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
 
@@ -203,10 +203,10 @@ export default function JoinUsPage() {
               style={{ display: "flex", flexDirection: "column", padding: "1rem", position: "sticky", zIndex: 1 }}
               className="lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-24">
 
-              <div className="p-8 rounded-3xl bg-gradient-to-br from-blue-950 to-indigo-900 text-white shadow-md flex flex-col gap-6 relative overflow-hidden">
+              <div className="p-8 rounded-3xl bg-linear-to-br from-blue-950 to-indigo-900 text-white shadow-md flex flex-col gap-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 h-40 w-40 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
 
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "1rem", position: "sticky", zIndex: 1 }}>
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "1rem", position: "sticky", zIndex: 1 , paddingTop:"1rem"}}>
                   <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center">
                     <UserPlus className="h-5 w-5 text-teal-400" />
                   </div>
