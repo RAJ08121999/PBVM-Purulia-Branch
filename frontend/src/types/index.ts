@@ -201,6 +201,21 @@ export interface MembershipApplication {
   motivation: string;
   status: MembershipStatus;
   submittedAt: string;
+  
+  // New volunteer fields
+  membershipType: "member" | "volunteer";
+  photo?: string;
+  availability?: string;
+  timeContribution?: string;
+  skills?: string[];
+  previousExperienceNGO?: string;
+  previousExperienceDetails?: string;
+  canTravel?: string;
+  emergencyContact?: {
+    name: string;
+    relation: string;
+    phone: string;
+  };
 }
 
 // ─── API Response Helpers ─────────────────────────────────

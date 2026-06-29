@@ -15,6 +15,21 @@ export interface IMembership extends Document {
   motivation: string;
   status: "pending" | "approved" | "rejected";
   submittedAt: Date;
+  
+  // New Fields
+  membershipType: "member" | "volunteer";
+  photo?: string;
+  availability?: "Weekdays" | "Weekends" | "Any Time" | "Occasionally";
+  timeContribution?: "2-4 hrs/week" | "5-10 hrs/week" | "10+ hrs/week";
+  skills?: string[];
+  previousExperienceNGO?: "Yes" | "No";
+  previousExperienceDetails?: string;
+  canTravel?: "Within my block" | "Anywhere in Purulia" | "Anywhere in West Bengal" | "No";
+  emergencyContact?: {
+    name: string;
+    relation: string;
+    phone: string;
+  };
 }
 
 const MembershipSchema = new Schema<IMembership>(
@@ -33,6 +48,21 @@ const MembershipSchema = new Schema<IMembership>(
     motivation: { type: String, required: true },
     status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
     submittedAt: { type: Date, default: Date.now },
+    
+    // New Fields
+    membershipType: { type: String, enum: ["member", "volunteer"], default: "member", required: true },
+    photo: { type: String },
+    availability: { type: String, enum: ["Weekdays", "Weekends", "Any Time", "Occasionally"] },
+    timeContribution: { type: String, enum: ["2-4 hrs/week", "5-10 hrs/week", "10+ hrs/week"] },
+    skills: [{ type: String }],
+    previousExperienceNGO: { type: String, enum: ["Yes", "No"] },
+    previousExperienceDetails: { type: String },
+    canTravel: { type: String, enum: ["Within my block", "Anywhere in Purulia", "Anywhere in West Bengal", "No"] },
+    emergencyContact: {
+      name: { type: String },
+      relation: { type: String },
+      phone: { type: String },
+    },
   },
   { timestamps: true }
 );

@@ -79,7 +79,10 @@ export const publicApi = {
   }) => api.post("/contact", data),
 
   // Membership
-  submitMembership: (data: object) => api.post("/membership", data),
+  submitMembership: (data: FormData | object) =>
+    api.post("/membership", data, {
+      headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : undefined,
+    }),
 };
 
 // ─── Admin API helpers ────────────────────────────────────

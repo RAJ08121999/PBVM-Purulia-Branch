@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useRef } from "react"
 import { useLanguage } from "@/context/LanguageContext"
 import { publicApi } from "@/lib/api"
 import { useForm } from "react-hook-form"
@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { toast } from "sonner"
-import { CheckCircle2, UserPlus, Check } from "lucide-react"
+import { CheckCircle2, UserPlus, Check, Image as ImageIcon, Upload, X } from "lucide-react"
 
 // Areas of Interest options
 const interestOptions = [
@@ -40,9 +40,26 @@ const interestOptions = [
   { id: "translation", labelEn: "Santali/Regional Language Translation", labelBn: "সাঁওতালি বা স্থানীয় ভাষায় অনুবাদ" },
 ]
 
-// Create bilingual membership schema
+// Volunteer Skills options
+const volunteerSkillsOptions = [
+  { id: "Teaching", labelEn: "Teaching", labelBn: "শিক্ষাদান" },
+  { id: "Event Management", labelEn: "Event Management", labelBn: "অনুষ্ঠান পরিচালনা" },
+  { id: "Photography", labelEn: "Photography", labelBn: "ফটোগ্রাফি" },
+  { id: "Social Media", labelEn: "Social Media", labelBn: "সোশ্যাল মিডিয়া" },
+  { id: "Graphic Design", labelEn: "Graphic Design", labelBn: "গ্রাফিক ডিজাইন" },
+  { id: "Writing", labelEn: "Writing", labelBn: "লেখালেখি" },
+  { id: "Public Speaking", labelEn: "Public Speaking", labelBn: "বক্তৃতা ও উপস্থাপনা" },
+  { id: "Science Demonstration", labelEn: "Science Demonstration", labelBn: "বিজ্ঞান প্রদর্শনী" },
+  { id: "Technical Support", labelEn: "Technical Support", labelBn: "প্রযুক্তিগত সহায়তা" },
+  { id: "Translation", labelEn: "Translation", labelBn: "অনুবাদ" },
+  { id: "Fundraising", labelEn: "Fundraising", labelBn: "তহবিল সংগ্রহ" },
+  { id: "Other", labelEn: "Other", labelBn: "অন্যান্য" },
+]
+
+// Create bilingual membership schema with conditional volunteer fields
 const createMembershipSchema = (t: (en: string, bn: string) => string) =>
   z.object({
+    membershipType: z.enum(["member", "volunteer"]),
     fullName: z.string().min(2, {
       message: t("Name must be at least 2 characters.", "নাম কমপক্ষে ২ টি অক্ষরের হতে হবে।"),
     }),
@@ -82,12 +99,83 @@ const createMembershipSchema = (t: (en: string, bn: string) => string) =>
         "সংগঠনে যোগদানের উদ্দেশ্য কমপক্ষে ১৫ টি অক্ষরের হতে হবে।"
       ),
     }),
+
+    // Photo field
+    photo: z.any().optional(),
+
+    // Volunteer fields (conditionally validated below)
+    availability: z.string().optional(),
+    timeContribution: z.string().optional(),
+    skills: z.array(z.string()).optional(),
+    previousExperienceNGO: z.enum(["Yes", "No"]).optional(),
+    previousExperienceDetails: z.string().optional(),
+    canTravel: z.string().optional(),
+    emergencyContactName: z.string().optional(),
+    emergencyContactRelation: z.string().optional(),
+    emergencyContactPhone: z.string().optional(),
+  }).superRefine((data, ctx) => {
+    if (data.membershipType === "volunteer") {
+      if (!data.availability) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["availability"],
+          message: t("Availability is required for volunteers.", "স্বেচ্ছাসেবকদের কাজের সময় নির্বাচন করা আবশ্যক।")
+        })
+      }
+      if (!data.timeContribution) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["timeContribution"],
+          message: t("Time contribution is required for volunteers.", "সাপ্তাহিক সময় অবদান উল্লেখ করা আবশ্যক।")
+        })
+      }
+      if (!data.canTravel) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["canTravel"],
+          message: t("Travel preference is required for volunteers.", "ভ্রমণের অনুমতি উল্লেখ করা আবশ্যক।")
+        })
+      }
+      if (!data.emergencyContactName) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["emergencyContactName"],
+          message: t("Emergency contact name is required.", "জরুরী যোগাযোগের নাম আবশ্যক।")
+        })
+      }
+      if (!data.emergencyContactRelation) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["emergencyContactRelation"],
+          message: t("Emergency contact relation is required.", "সম্পর্ক উল্লেখ করা আবশ্যক।")
+        })
+      }
+      if (!data.emergencyContactPhone || !/^[0-9]{10}$/.test(data.emergencyContactPhone)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["emergencyContactPhone"],
+          message: t("Emergency contact phone must be 10 digits.", "জরুরী যোগাযোগ ফোন নম্বরটি ১০ সংখ্যার হতে হবে।")
+        })
+      }
+      if (data.previousExperienceNGO === "Yes" && (!data.previousExperienceDetails || data.previousExperienceDetails.length < 5)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["previousExperienceDetails"],
+          message: t("Please describe your previous experience.", "অনুগ্রহ করে আপনার পূর্ব অভিজ্ঞতা সংক্ষেপে লিখুন।")
+        })
+      }
+    }
   })
 
 export default function JoinUsPage() {
   const { t } = useLanguage()
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+
+  // Photo preview states
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [photoPreview, setPhotoPreview] = useState("")
 
   const membershipSchema = createMembershipSchema(t)
   type MembershipFormValues = z.infer<typeof membershipSchema>
@@ -95,6 +183,7 @@ export default function JoinUsPage() {
   const form = useForm<MembershipFormValues>({
     resolver: zodResolver(membershipSchema),
     defaultValues: {
+      membershipType: "member",
       fullName: "",
       dateOfBirth: "",
       gender: "",
@@ -107,58 +196,112 @@ export default function JoinUsPage() {
       email: "",
       areasOfInterest: [],
       motivation: "",
+      photo: undefined,
+      availability: "",
+      timeContribution: "",
+      skills: [],
+      previousExperienceNGO: "No",
+      previousExperienceDetails: "",
+      canTravel: "",
+      emergencyContactName: "",
+      emergencyContactRelation: "",
+      emergencyContactPhone: "",
     },
   })
+
+  // Watch membershipType to show/hide conditional sections
+  const watchedMembershipType = form.watch("membershipType")
+  const watchedExperienceNGO = form.watch("previousExperienceNGO")
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error(t("Photo size should be less than 2MB", "ছবির সাইজ ২ এমবি-র কম হতে হবে"));
+        return;
+      }
+      setPhotoFile(file);
+      setPhotoPreview(URL.createObjectURL(file));
+      form.setValue("photo", file);
+    }
+  };
+
+  const removePhoto = () => {
+    setPhotoFile(null);
+    setPhotoPreview("");
+    form.setValue("photo", undefined);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const onSubmit = async (values: MembershipFormValues) => {
     setIsSubmitting(true)
     try {
-      // API payload requires Date object for dateOfBirth
-      const payload = {
-        ...values,
-        dateOfBirth: new Date(values.dateOfBirth),
+      const formData = new FormData();
+      formData.append("membershipType", values.membershipType);
+      formData.append("fullName", values.fullName);
+      formData.append("dateOfBirth", values.dateOfBirth);
+      formData.append("gender", values.gender);
+      formData.append("occupation", values.occupation);
+      formData.append("educationalQualification", values.educationalQualification);
+      formData.append("address", values.address);
+      formData.append("district", values.district);
+      formData.append("state", values.state);
+      formData.append("phoneNumber", values.phoneNumber);
+      formData.append("email", values.email);
+      formData.append("areasOfInterest", JSON.stringify(values.areasOfInterest));
+      formData.append("motivation", values.motivation);
+
+      if (photoFile) {
+        formData.append("photo", photoFile);
       }
-      await publicApi.submitMembership(payload)
+
+      if (values.membershipType === "volunteer") {
+        formData.append("availability", values.availability || "");
+        formData.append("timeContribution", values.timeContribution || "");
+        formData.append("skills", JSON.stringify(values.skills || []));
+        formData.append("previousExperienceNGO", values.previousExperienceNGO || "No");
+        formData.append("previousExperienceDetails", values.previousExperienceDetails || "");
+        formData.append("canTravel", values.canTravel || "");
+
+        formData.append("emergencyContact", JSON.stringify({
+          name: values.emergencyContactName || "",
+          relation: values.emergencyContactRelation || "",
+          phone: values.emergencyContactPhone || "",
+        }));
+      }
+
+      await publicApi.submitMembership(formData)
       toast.success(
         t(
-          "Success! Your membership application has been submitted.",
-          "ধন্যবাদ! আপনার সদস্যপদের আবেদনটি সফলভাবে জমা নেওয়া হয়েছে।"
+          "Success! Your application has been submitted.",
+          "ধন্যবাদ! আপনার আবেদনটি সফলভাবে জমা নেওয়া হয়েছে।"
         )
       )
       setIsSuccess(true)
       form.reset()
+      removePhoto()
     } catch (error: any) {
-      console.error("Failed to submit membership application", error)
-      toast.info(
+      console.error("Failed to submit application", error)
+      toast.error(
         t(
-          "Simulating offline membership submission...",
-          "অফলাইন সদস্যপদ আবেদন প্রক্রিয়া চালানো হচ্ছে..."
+          "Submission failed. Please check your network and try again.",
+          "আবেদন জমা দিতে সমস্যা হয়েছে। অনুগ্রহ করে ইন্টারনেট কানেকশন যাচাই করে পুনরায় চেষ্টা করুন।"
         )
       )
-      // Fallback/Mock
-      setTimeout(() => {
-        toast.success(
-          t(
-            "Application submitted (Offline Mode). We will contact you soon.",
-            "আবেদনপত্র জমা হয়েছে (অফলাইন মোড)। আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।"
-          )
-        )
-        setIsSuccess(true)
-        form.reset()
-        setIsSubmitting(false)
-      }, 1500)
-      return
+    } finally {
+      setIsSubmitting(false)
     }
-    setIsSubmitting(false)
   }
 
   // Handle Checkbox Toggles
-  const handleCheckboxChange = (id: string, checked: boolean, currentFields: string[]) => {
+  const handleCheckboxChange = (id: string, checked: boolean, currentFields: string[], fieldName: "areasOfInterest" | "skills") => {
     if (checked) {
-      form.setValue("areasOfInterest", [...currentFields, id], { shouldValidate: true })
+      form.setValue(fieldName, [...currentFields, id], { shouldValidate: true })
     } else {
       form.setValue(
-        "areasOfInterest",
+        fieldName,
         currentFields.filter((item) => item !== id),
         { shouldValidate: true }
       )
@@ -177,18 +320,18 @@ export default function JoinUsPage() {
           color: "#ffffff",
           position: "relative",
           overflow: "hidden",
-          padding: "4rem"
+          padding: "4rem",
         }}
       >
         <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(to right,rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.04) 1px,transparent 1px)", backgroundSize: "40px 40px", pointerEvents: "none" }} />
         <div className="page-container" style={{ position: "relative", zIndex: 1, textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
           <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(1.8rem,4.5vw,3rem)", fontWeight: 800, color: "#ffffff", marginBottom: "1rem", lineHeight: 1.2 }}>
-            {t("Join as a Member", "বিজ্ঞান মঞ্চের সদস্য হন")}
+            {t("Join Paschim Banga Vigyan Mancha", "বিজ্ঞান মঞ্চে যোগদান করুন")}
           </h1>
           <p style={{ fontFamily: "var(--font-body)", fontSize: "1rem", color: "rgba(255,255,255,0.78)", maxWidth: "600px", margin: "0 auto", lineHeight: 1.75 }}>
             {t(
-              "Become a part of Paschim Banga Vigyan Mancha, Purulia District Branch. Join us in building a rational, scientific, and superstitious-free society.",
-              "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ, পুরুলিয়া জেলা শাখার সাথে যুক্ত হোন। কুসংস্কারমুক্ত, যুক্তিবাদী ও বিজ্ঞানমনস্ক সমাজ গঠনে আমাদের সাথে কাঁধে কাঁধ মিলিয়ে কাজ করুন।"
+              "Become a part of the Purulia District Branch. Join us either as a General Member or commit your valuable skills as a Volunteer.",
+              "পুরুলিয়া জেলা শাখার সাথে যুক্ত হোন। একজন সাধারণ সদস্য হিসেবে যোগ দিন অথবা আপনার মূল্যবান দক্ষতা নিয়ে স্বেচ্ছাসেবক হিসেবে অবদান রাখুন।"
             )}
           </p>
         </div>
@@ -197,77 +340,83 @@ export default function JoinUsPage() {
       {/* Main Form Grid */}
       <section className="py-8 sm:py-12 md:py-16 px-4" style={{ width: "100%" }}>
         <div className="page-container">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
 
             {/* Left Side: Why Join Column */}
             <div
               style={{ paddingTop: "2rem" }}
-              className="lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-24">
+              className="lg:col-span-5 flex flex-col gap-6 lg:sticky lg:top-24">
 
-              <div className="p-6 sm:p-8 rounded-3xl bg-linear-to-br from-blue-950 to-indigo-900 text-white shadow-md flex flex-col gap-6 relative overflow-hidden">
-                <div className="absolute top-0 right-0 h-40 w-40 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+              {/* Benefits of Joining Card */}
+              <div className="rounded-3xl overflow-hidden shadow-lg relative" style={{ background: "linear-gradient(160deg, #0b2259 0%, #0B3D91 55%, #0a3d32 100%)", padding: "1rem" }}>
+                <div className="absolute top-0 right-0 h-56 w-56 bg-white/5 rounded-full blur-3xl -translate-y-1/3 translate-x-1/3 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 h-40 w-40 bg-teal-500/10 rounded-full blur-2xl translate-y-1/3 -translate-x-1/3 pointer-events-none" />
 
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "1rem", position: "sticky", zIndex: 1, paddingTop: "1rem" }}>
-                  <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center">
-                    <UserPlus className="h-5 w-5 text-teal-400" />
+                <div className="relative z-10 p-7 sm:p-8">
+                  {/* Header */}
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                      <UserPlus className="h-5 w-5 text-teal-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-heading text-base font-black text-white leading-tight" style={{ color: "white", }}>
+                        {t("Why Join PBVM?", "কেন বিজ্ঞান মঞ্চে যোগ দেবেন?")}
+                      </h3>
+                      <p className="font-body text-xs text-white/60 mt-0.5" style={{ marginBottom: "1rem" }}>
+                        {t("Purulia District Branch", "পুরুলিয়া জেলা শাখা")}
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="font-heading text-lg font-black tracking-tight" style={{ color: "#f1f5f9" }}>
-                    {t("Why Join Us?", "কেন যোগদান করবেন?")}
-                  </h3>
-                </div>
 
-                <ul className="flex flex-col gap-4 font-body text-xs sm:text-sm text-zinc-300">
-                  <li className="flex gap-2.5 items-start text-left">
-                    <Check className="h-5 w-5 text-teal-400 shrink-0" />
-                    <span>
-                      {t(
-                        "Participate in science exhibitions, camps, and workshops across Purulia.",
-                        "পুরুলিয়ার বিভিন্ন ব্লকে আয়োজিত বিজ্ঞান প্রদর্শনী, শিবির ও কর্মশালায় অংশ নেওয়ার সুযোগ।"
-                      )}
-                    </span>
-                  </li>
-                  <li className="flex gap-2.5 items-start text-left">
-                    <Check className="h-5 w-5 text-teal-400 shrink-0" />
-                    <span>
-                      {t(
-                        "Contribute to local water conservation surveys and climate change research.",
-                        "স্থানীয় জলসম্পদ সমীক্ষা এবং জলবায়ু পরিবর্তন বিষয়ক বৈজ্ঞানিক গবেষণায় অবদান রাখুন।"
-                      )}
-                    </span>
-                  </li>
-                  <li className="flex gap-2.5 items-start text-left">
-                    <Check className="h-5 w-5 text-teal-400 shrink-0" />
-                    <span>
-                      {t(
-                        "Help spread awareness and expose rural blind faiths and witch-hunting.",
-                        "গ্রামীণ এলাকায় কুসংস্কার ও ডাইনি প্রথার বিরুদ্ধে বিজ্ঞানসম্মত উপায়ে সচেতনতা গড়ে তুলুন।"
-                      )}
-                    </span>
-                  </li>
-                  <li className="flex gap-2.5 items-start text-left">
-                    <Check className="h-5 w-5 text-teal-400 shrink-0" />
-                    <span>
-                      {t(
-                        "Receive our publications, newsletter updates, and local branch bulletins.",
-                        "সংগঠনের বিজ্ঞান প্রকাশনা, নিয়মিত নিউজলেটার ও বার্ষিক রিপোর্ট সংগ্রহ করুন।"
-                      )}
-                    </span>
-                  </li>
-                </ul>
+                  {/* Benefits List */}
+                  <ul className="flex flex-col gap-3 mb-6">
+                    {[
+                      { en: "Be part of India's largest grassroots science movement", bn: "ভারতের বৃহত্তম বিজ্ঞান আন্দোলনের অংশ হোন" },
+                      { en: "Fight superstition & spread rational thinking in Purulia", bn: "পুরুলিয়ায় কুসংস্কার দূর করুন ও যুক্তিবাদ প্রসার করুন" },
+                      { en: "Access science camps, workshops & training programs", bn: "বিজ্ঞান শিবির, কর্মশালা ও প্রশিক্ষণ কার্যক্রমে অংশ নিন" },
+                      { en: "Receive PBVM's journal, newsletters & publications free", bn: "বিজ্ঞান মঞ্চের পত্রিকা, নিউজলেটার ও প্রকাশনা বিনামূল্যে পান" },
+                      { en: "Work with students, teachers & community leaders", bn: "শিক্ষার্থী, শিক্ষক ও সমাজের নেতৃস্থানীয়দের সাথে কাজ করুন" },
+                      { en: "Contribute to environmental & public health campaigns", bn: "পরিবেশ ও জন-স্বাস্থ্য কার্যক্রমে অবদান রাখুন" },
+                      { en: "Build a scientific and superstition-free society", bn: "কুসংস্কারমুক্ত ও বিজ্ঞানমনস্ক সমাজ গঠনে সহায়তা করুন" },
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <span className="h-5 w-5 rounded-full bg-teal-400/20 border border-teal-400/40 flex items-center justify-center shrink-0 mt-0.5">
+                          <Check className="h-3 w-3 text-teal-400" />
+                        </span>
+                        <span className="font-body text-xs sm:text-sm text-white/85 leading-relaxed">
+                          {t(item.en, item.bn)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
 
-                <div
-                  style={{ paddingTop: "1rem", paddingBottom: "1rem" }}
-                  className="border-t border-white/10 pt-4 mt-2">
-                  <p className="font-body text-xxs text-zinc-400 italic">
+                  {/* Divider */}
+                  <div style={{ paddingTop: "1rem" }} className="border-t border-white/10 pt-5 mb-5">
+                    <p className="font-heading text-xs font-black text-white/70 uppercase tracking-wider mb-3">{t("Choose Your Role", "আপনার ভূমিকা চয়ন করুন")}</p>
+                    <div className="flex flex-col gap-3">
+                      <div style={{ padding: "1rem" }} className="p-4 rounded-xl bg-white/5 border border-white/10">
+                        <h5 className="font-heading text-sm font-black text-teal-400 mb-1">{t("General Member", "সাধারণ সদস্য")}</h5>
+                        <p className="font-body text-xs text-white/70 leading-relaxed">{t("Receive publications, attend meetings, and support local campaigns at your own pace.", "প্রকাশনা সংগ্রহ করুন, সভায় যোগ দিন এবং নিজের গতিতে স্থানীয় প্রচারণায় সহায়তা করুন।")}</p>
+                      </div>
+                      <div style={{ padding: "1rem" }} className="p-4 rounded-xl bg-white/5 border border-white/10">
+                        <h5 className="font-heading text-sm font-black text-orange-400 mb-1">{t("Volunteer", "স্বেচ্ছাসেবক")}</h5>
+                        <p className="font-body text-xs text-white/70 leading-relaxed">{t("Commit your time and skills to coordinate camps, conduct programmes, and drive field activities.", "সময় ও দক্ষতা নিয়ে শিবির পরিচালনা, কার্যক্রম পরিচালনা ও মাঠ কাজে সক্রিয়ভাবে অংশ নিন।")}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p
+                    style={{ padding: "1rem" }}
+                    className="font-body text-xxs text-white/40 italic">
                     {t(
                       "* All applications are reviewed by the district executive committee before final approval.",
-                      "* সমস্ত আবেদনপত্র চূড়ান্ত অনুমোদনের জন্য জেলা কার্যনির্বাহী কমিটির দ্বারা পর্যালোচনা করা হয়।"
+                      "* সমস্ত আবেদনপত্র জেলা কার্যনির্বাহী কমিটির দ্বারা পর্যালোচনা করার পর চূড়ান্ত অনুমোদন করা হয়।"
                     )}
                   </p>
                 </div>
               </div>
 
-              {/* Emergency / Help Card */}
+              {/* Help Card */}
               <div
                 style={{ marginBottom: "4rem" }}
                 className="p-6 rounded-2xl border border-zinc-100 bg-white dark:bg-zinc-950/20 dark:border-zinc-900 shadow-sm flex flex-col gap-3 text-left">
@@ -277,7 +426,7 @@ export default function JoinUsPage() {
                 <p className="font-body text-xs text-zinc-500 dark:text-zinc-400">
                   {t(
                     "You can also download the physical membership form from our Downloads page, fill it, and submit it directly to our Purulia district office.",
-                    "আপনি ডাউনলোড পেজ থেকে শারীরিক সদস্যপদ ফর্মটি পিডিএফ ডাউনলোড করে প্রিন্ট করতে পারেন, এবং পূরণ করে আমাদের জেলা দপ্তরে জমা দিতে পারেন।"
+                    "আপনি ডাউনলোড পেজ থেকে শারীরিক ফর্মটি পিডিএফ ডাউনলোড করে প্রিন্ট করতে পারেন, এবং পূরণ করে আমাদের জেলা দপ্তরে জমা দিতে পারেন।"
                   )}
                 </p>
               </div>
@@ -286,8 +435,15 @@ export default function JoinUsPage() {
             {/* Right Side: Membership Application Form Card */}
             <div
               style={{ paddingTop: "2rem" }}
-              className="lg:col-span-8">
-              <div className="rounded-3xl bg-white border border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 shadow-md p-4 sm:p-8 md:p-10" style={{ textAlign: "center" }}>
+              className="lg:col-span-7">
+              <div
+                className="rounded-3xl bg-white border border-zinc-100 dark:bg-zinc-950/20 dark:border-zinc-900 shadow-md"
+                style={{
+                  textAlign: "center",
+                  padding: "2.5rem",
+                  marginBottom: "4rem"
+                }}
+              >
 
                 {isSuccess ? (
                   <div className="flex flex-col items-center justify-center text-center py-16 gap-4 animate-fade-in">
@@ -299,8 +455,8 @@ export default function JoinUsPage() {
                     </h3>
                     <p className="font-body text-sm text-zinc-500 dark:text-zinc-400 max-w-sm leading-relaxed">
                       {t(
-                        "Your application has been registered successfully. Our district organizers will verify your details and connect with you via email or phone.",
-                        "আপনার আবেদনপত্রটি সফলভাবে নথিভুক্ত করা হয়েছে। আমাদের জেলা আয়োজকরা আপনার বিবরণ যাচাই করে শীঘ্রই আপনার সাথে যোগাযোগ করবেন।"
+                        "Your application has been registered successfully. Our organizers will verify your details and connect with you via email or phone.",
+                        "আপনার আবেদনপত্রটি সফলভাবে নথিভুক্ত করা হয়েছে। আমাদের আয়োজকরা বিবরণ যাচাই করে শীঘ্রই আপনার সাথে যোগাযোগ করবেন।"
                       )}
                     </p>
                     <Button
@@ -316,27 +472,99 @@ export default function JoinUsPage() {
                     <h3
                       style={{ paddingTop: "1rem", paddingBottom: "1rem" }}
                       className="font-heading text-lg sm:text-xl font-black text-zinc-900 dark:text-white mb-1">
-                      {t("Membership Application Form", "সদস্যপদের আবেদনপত্র")}
+                      {t("Join Us Form", "যোগদান ফর্ম")}
                     </h3>
                     <p className="font-body text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mb-8">
                       {t(
-                        "Please fill in your details accurately to register your interest in the Purulia Branch.",
-                        "পুরুলিয়া শাখায় সদস্যপদের জন্য অনুগ্রহ করে আপনার সঠিক তথ্য দিয়ে ফর্মটি পূরণ করুন।"
+                        "Please fill in your details accurately to register your application in the Purulia Branch.",
+                        "অনুগ্রহ করে আপনার সঠিক তথ্য দিয়ে ফর্মটি পূরণ করুন।"
                       )}
                     </p>
 
                     <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 text-left">
 
-                        {/* Section 1: Personal Details */}
-                        <div className="space-y-4" style={{ paddingBottom: "2rem" }}>
-                          <h4 className="font-heading text-xs font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider border-b border-zinc-100 dark:border-zinc-900 pb-2" style={{ paddingBottom: "1rem" }}>
+                        {/* STEP 1: Membership Type Selection */}
+                        <div
+                          style={{ padding: "1rem" }}
+                          className="p-6 rounded-2xl bg-zinc-50 border border-zinc-100 dark:bg-zinc-900/10 dark:border-zinc-900 space-y-4">
+                          <FormField
+                            control={form.control}
+                            name="membershipType"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="font-heading text-xs font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider">
+                                  {t("I Want to Join As (Required)", "আমি হিসেবে যোগদান করতে চাই (আবশ্যক)")}
+                                </FormLabel>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                                  <label
+                                    className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all hover:bg-white select-none ${field.value === "member"
+                                      ? "border-blue-600 bg-white shadow-sm ring-1 ring-blue-600"
+                                      : "border-zinc-200"
+                                      }`}
+                                  >
+                                    <input
+                                      type="radio"
+                                      name="membershipType"
+                                      value="member"
+                                      checked={field.value === "member"}
+                                      onChange={() => form.setValue("membershipType", "member")}
+                                      className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                                    />
+                                    <div>
+                                      <span className="font-heading text-sm font-bold text-zinc-900 block">
+                                        {t("General Member", "সাধারণ সদস্য")}
+                                      </span>
+                                      <span className="font-body text-xxs text-zinc-400">
+                                        {t("Receive publications & updates", "পত্রিকা ও সংবাদ আপডেট পেতে")}
+                                      </span>
+                                    </div>
+                                  </label>
+
+                                  <label
+                                    className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all hover:bg-white select-none ${field.value === "volunteer"
+                                      ? "border-blue-600 bg-white shadow-sm ring-1 ring-blue-600"
+                                      : "border-zinc-200"
+                                      }`}
+                                  >
+                                    <input
+                                      type="radio"
+                                      name="membershipType"
+                                      value="volunteer"
+                                      checked={field.value === "volunteer"}
+                                      onChange={() => form.setValue("membershipType", "volunteer")}
+                                      className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                                    />
+                                    <div>
+                                      <span className="font-heading text-sm font-bold text-zinc-900 block">
+                                        {t("Volunteer", "স্বেচ্ছাসেবক")}
+                                      </span>
+                                      <span className="font-body text-xxs text-zinc-400">
+                                        {t("Commit time & work in Purulia", "সময় ও শ্রম অবদান দিতে")}
+                                      </span>
+                                    </div>
+                                  </label>
+                                </div>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        {/* Section 1: Common / Personal Details */}
+                        <div
+                          className="border-b border-zinc-100 dark:border-zinc-800"
+                          style={{
+                            paddingTop: "1rem",
+                          }}
+                        >
+                          <h4 className="font-heading text-xs font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider pb-2 border-b border-zinc-100 dark:border-zinc-900">
                             {t("1. Personal Details", "১. ব্যক্তিগত বিবরণ")}
                           </h4>
 
                           <div
-                            style={{ paddingLeft: "2rem", paddingRight: "2rem" }}
-                            className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                            style={{ padding: "1rem" }}
+                            className="grid grid-cols-1 sm:grid-cols-3 gap-5">
 
                             {/* Full Name */}
                             <div className="sm:col-span-2">
@@ -457,17 +685,64 @@ export default function JoinUsPage() {
                               )}
                             />
 
+                            {/* Photo Upload Field */}
+                            <div
+                              className="sm:col-span-3">
+                              <FormLabel className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300 block mb-2">
+                                {t("Upload Passport Photo", "পাসপোর্ট ছবি আপলোড")}
+                              </FormLabel>
+                              <div
+                                style={{ paddingTop: "1rem" }}
+                                className="flex items-center gap-4">
+                                <button
+                                  type="button"
+                                  onClick={() => fileInputRef.current?.click()}
+                                  className="flex items-center gap-2 px-4 py-2 border-2 border-dashed border-zinc-200 rounded-xl hover:border-zinc-300 transition-colors text-sm font-semibold text-zinc-500"
+                                >
+                                  <Upload size={16} />
+                                  {t("Choose Image File", "ছবি ফাইল নির্বাচন করুন")}
+                                </button>
+                                <input
+                                  type="file"
+                                  ref={fileInputRef}
+                                  onChange={handlePhotoUpload}
+                                  accept="image/*"
+                                  style={{ display: "none" }}
+                                />
+                                {photoPreview && (
+                                  <div className="relative h-12 w-12 rounded-lg overflow-hidden border border-zinc-200">
+                                    <img src={photoPreview} alt="Preview" className="h-full w-full object-cover" />
+                                    <button
+                                      type="button"
+                                      onClick={removePhoto}
+                                      className="absolute top-0 right-0 p-0.5 bg-black/70 text-white rounded-bl-lg hover:bg-black"
+                                    >
+                                      <X size={10} />
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                              <span className="text-xxs text-zinc-400 mt-1 block">Max size: 2MB (.jpg, .png, .webp)</span>
+                            </div>
+
                           </div>
                         </div>
 
                         {/* Section 2: Contact Details */}
-                        <div className="space-y-6" style={{ paddingBottom: "2rem" }}>
+                        <div
+                          className="border-b border-zinc-100 dark:border-zinc-800"
+                          style={{
+                            paddingTop: "1rem",
+                            paddingBottom: "2.5rem",
+                            marginBottom: "2.5rem",
+                          }}
+                        >
                           <h4 className="font-heading text-xs font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider border-b border-zinc-100 dark:border-zinc-900 pb-2" style={{ paddingBottom: "1rem" }}>
                             {t("2. Contact & Address Details", "২. যোগাযোগের ঠিকানা ও বিবরণ")}
                           </h4>
 
                           <div
-                            style={{ paddingLeft: "2rem", paddingRight: "2rem" }}
+                            style={{ paddingTop: "1rem" }}
                             className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
                             {/* Email */}
@@ -585,18 +860,292 @@ export default function JoinUsPage() {
                           </div>
                         </div>
 
-                        {/* Section 3: Interests & Motivation */}
-                        <div className="space-y-6" style={{ paddingBottom: "2rem" }}>
-                          <h4 className="font-heading text-xs font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider border-b border-zinc-100 dark:border-zinc-900 pb-2" style={{ paddingBottom: "1rem" }}>
-                            {t("3. Areas of Interest & Motivation", "৩. আগ্রহের ক্ষেত্র ও উদ্দেশ্য")}
+                        {/* STEP 3: Volunteer-Only Information Section */}
+                        {watchedMembershipType === "volunteer" && (
+                          <div
+                            className="border-b border-zinc-100 dark:border-zinc-800"
+                            style={{
+                              paddingBottom: "2.5rem",
+                              marginBottom: "2.5rem",
+                            }}
+                          >
+                            <h4 className="font-heading text-xs font-black uppercase text-orange-600 dark:text-orange-400 tracking-wider border-b border-orange-100 dark:border-orange-900 pb-2" style={{ paddingBottom: "1rem" }}>
+                              {t("3. Volunteer Commitment Details", "৩. স্বেচ্ছাসেবক প্রতিশ্রুতির বিবরণ")}
+                            </h4>
+
+                            <div
+                              style={{ paddingTop: "1rem" }}
+                              className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+                              {/* Availability */}
+                              <FormField
+                                control={form.control}
+                                name="availability"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">
+                                      {t("Availability", "কাজের সময় প্রাপ্যতা")}
+                                    </FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                      <FormControl>
+                                        <SelectTrigger className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 bg-white focus:bg-white text-sm" style={{ paddingLeft: "1rem" }}>
+                                          <SelectValue placeholder={t("Select Availability", "প্রাপ্যতা নির্বাচন করুন")} />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent className="bg-white border border-zinc-100 rounded-xl">
+                                        <SelectItem value="Weekdays" style={{ padding: "0.5rem 1rem" }}>{t("Weekdays", "কর্মদিবস (সোম - শুক্র)")}</SelectItem>
+                                        <SelectItem value="Weekends" style={{ padding: "0.5rem 1rem" }}>{t("Weekends", "সাপ্তাহিক ছুটি (শনি - রবি)")}</SelectItem>
+                                        <SelectItem value="Any Time" style={{ padding: "0.5rem 1rem" }}>{t("Any Time", "যেকোনো সময়")}</SelectItem>
+                                        <SelectItem value="Occasionally" style={{ padding: "0.5rem 1rem" }}>{t("Occasionally", "মাঝে মাঝে")}</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
+                              {/* How much time can you contribute? */}
+                              <FormField
+                                control={form.control}
+                                name="timeContribution"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">
+                                      {t("How much time can you contribute?", "আপনি কতটা সময় অবদান দিতে পারেন?")}
+                                    </FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                      <FormControl>
+                                        <SelectTrigger className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 bg-white focus:bg-white text-sm" style={{ paddingLeft: "1rem" }}>
+                                          <SelectValue placeholder={t("Select Hours", "সময় নির্বাচন করুন")} />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent className="bg-white border border-zinc-100 rounded-xl">
+                                        <SelectItem value="2-4 hrs/week" style={{ padding: "0.5rem 1rem" }}>2-4 hrs/week</SelectItem>
+                                        <SelectItem value="5-10 hrs/week" style={{ padding: "0.5rem 1rem" }}>5-10 hrs/week</SelectItem>
+                                        <SelectItem value="10+ hrs/week" style={{ padding: "0.5rem 1rem" }}>10+ hrs/week</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
+                              {/* Volunteer Skills */}
+                              <div
+                                style={{ paddingBottom: "1rem" }}
+                                className="sm:col-span-2 space-y-2">
+                                <FormLabel
+                                  style={{ paddingBottom: "1rem" }}
+                                  className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">
+                                  {t("Skills (Select all that apply)", "দক্ষতা (সব প্রযোজ্য নির্বাচন করুন)")}
+                                </FormLabel>
+                                <FormField
+                                  control={form.control}
+                                  name="skills"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-1">
+                                        {volunteerSkillsOptions.map((opt) => {
+                                          const isChecked = (field.value || []).includes(opt.id);
+                                          return (
+                                            <label
+                                              key={opt.id}
+                                              className={`flex items-center gap-2 p-3 rounded-lg border cursor-pointer bg-white transition-all select-none text-xs ${isChecked
+                                                ? "border-orange-500 bg-orange-50/10"
+                                                : "border-zinc-100"
+                                                }`}
+                                            >
+                                              <input
+                                                type="checkbox"
+                                                checked={isChecked}
+                                                onChange={(e) =>
+                                                  handleCheckboxChange(opt.id, e.target.checked, field.value || [], "skills")
+                                                }
+                                                className="h-3.5 w-3.5 rounded text-orange-600 focus:ring-orange-500 accent-orange-600 shrink-0"
+                                              />
+                                              <span className="text-zinc-700 font-semibold">
+                                                {t(opt.labelEn, opt.labelBn)}
+                                              </span>
+                                            </label>
+                                          );
+                                        })}
+                                      </div>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              </div>
+
+                              {/* Previous Experience NGO */}
+                              <FormField
+                                control={form.control}
+                                name="previousExperienceNGO"
+                                render={({ field }) => (
+                                  <FormItem className="sm:col-span-1">
+                                    <FormLabel className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">
+                                      {t("NGO Experience?", "এনজিও-র সাথে কাজের অভিজ্ঞতা?")}
+                                    </FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                      <FormControl>
+                                        <SelectTrigger className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 bg-white focus:bg-white text-sm" style={{ paddingLeft: "1rem" }}>
+                                          <SelectValue placeholder={t("Select Option", "বিকল্প নির্বাচন করুন")} />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent className="bg-white border border-zinc-100 rounded-xl">
+                                        <SelectItem value="Yes" style={{ padding: "0.5rem 1rem" }}>{t("Yes", "হ্যাঁ")}</SelectItem>
+                                        <SelectItem value="No" style={{ padding: "0.5rem 1rem" }}>{t("No", "না")}</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
+                              {/* Can you travel? */}
+                              <FormField
+                                control={form.control}
+                                name="canTravel"
+                                render={({ field }) => (
+                                  <FormItem className="sm:col-span-1">
+                                    <FormLabel className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">
+                                      {t("Can you travel?", "আপনি কি ভ্রমণ করতে পারবেন?")}
+                                    </FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                      <FormControl>
+                                        <SelectTrigger className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 bg-white focus:bg-white text-sm" style={{ paddingLeft: "1rem" }}>
+                                          <SelectValue placeholder={t("Select Travel preference", "ভ্রমণ বিকল্প নির্বাচন করুন")} />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent className="bg-white border border-zinc-100 rounded-xl">
+                                        <SelectItem value="Within my block" style={{ padding: "0.5rem 1rem" }}>{t("Within my block", "আমার ব্লকের মধ্যে")}</SelectItem>
+                                        <SelectItem value="Anywhere in Purulia" style={{ padding: "0.5rem 1rem" }}>{t("Anywhere in Purulia", "পুরুলিয়া জেলার যেকোনো স্থানে")}</SelectItem>
+                                        <SelectItem value="Anywhere in West Bengal" style={{ padding: "0.5rem 1rem" }}>{t("Anywhere in West Bengal", "পশ্চিমবঙ্গের যেকোনো স্থানে")}</SelectItem>
+                                        <SelectItem value="No" style={{ padding: "0.5rem 1rem" }}>{t("No", "না")}</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
+                              {/* If YES: Experience details */}
+                              {watchedExperienceNGO === "Yes" && (
+                                <div className="sm:col-span-2">
+                                  <FormField
+                                    control={form.control}
+                                    name="previousExperienceDetails"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">
+                                          {t("Describe Previous Experience", "পূর্ব অভিজ্ঞতার বিবরণ দিন")}
+                                        </FormLabel>
+                                        <FormControl>
+                                          <Textarea
+                                            rows={2}
+                                            placeholder={t("Briefly describe which NGO and the work you did...", "কোন সংগঠনে এবং কী কাজ করেছেন তা সংক্ষেপে লিখুন...")}
+                                            className="rounded-xl border-zinc-200 dark:border-zinc-800 focus:bg-white text-sm bg-white"
+                                            style={{ paddingLeft: "1rem", paddingTop: "0.5rem" }}
+                                            {...field}
+                                          />
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                </div>
+                              )}
+
+                              {/* Emergency Contact Header */}
+                              <div
+                                style={{ paddingTop: "1rem" }}
+                                className="sm:col-span-2 pt-2 border-t border-orange-100">
+                                <h5 className="font-heading text-xs font-black uppercase text-orange-600">{t("Emergency Contact Details", "জরুরী যোগাযোগ বিবরণ")}</h5>
+                              </div>
+
+                              {/* Emergency Contact Name */}
+                              <FormField
+                                control={form.control}
+                                name="emergencyContactName"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">
+                                      {t("Contact Person Name", "যোগাযোগের ব্যক্তির নাম")}
+                                    </FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder={t("e.g. Ramesh Mahato", "উদাঃ রমেশ মাহাতো")}
+                                        className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 bg-white focus:bg-white text-sm"
+                                        style={{ paddingLeft: "1rem" }}
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
+                              {/* Emergency Relation */}
+                              <FormField
+                                control={form.control}
+                                name="emergencyContactRelation"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">
+                                      {t("Relation", "সম্পর্ক")}
+                                    </FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder={t("e.g. Father / Mother / Spouse", "উদাঃ পিতা / মাতা / স্ত্রী")}
+                                        className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 bg-white focus:bg-white text-sm"
+                                        style={{ paddingLeft: "1rem" }}
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
+                              {/* Emergency Contact Phone */}
+                              <FormField
+                                control={form.control}
+                                name="emergencyContactPhone"
+                                render={({ field }) => (
+                                  <FormItem className="sm:col-span-2">
+                                    <FormLabel className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">
+                                      {t("Emergency Phone Number (10 digits)", "জরুরী ফোন নম্বর (১০ টি সংখ্যা)")}
+                                    </FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="9876543210"
+                                        className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 bg-white focus:bg-white text-sm"
+                                        style={{ paddingLeft: "1rem" }}
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Section 4: Interests & Motivation */}
+                        <div
+                          className="border-b border-zinc-100 dark:border-zinc-800"
+                          style={{
+                            paddingBottom: "2.5rem",
+                          }}
+                        >  <h4 className="font-heading text-xs font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider border-b border-zinc-100 dark:border-zinc-900 pb-2" style={{ paddingBottom: "1rem" }}>
+                            {watchedMembershipType === "volunteer" ? t("4. Areas of Interest & Motivation", "৪. আগ্রহের ক্ষেত্র ও উদ্দেশ্য") : t("3. Areas of Interest & Motivation", "৩. আগ্রহের ক্ষেত্র ও উদ্দেশ্য")}
                           </h4>
 
                           {/* Checkbox Grid */}
-                          <div
-                            style={{ paddingLeft: "2rem", paddingRight: "2rem" }}
-                            className="space-y-3">
+                          <div className="space-y-3">
                             <FormLabel
-                              style={{ paddingBottom: "1rem" }}
+                              style={{ paddingBottom: "1rem", paddingTop: "1rem" }}
                               className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">
                               {t("Select areas you want to contribute to (Select at least one):", "যে সব ক্ষেত্রে আপনি যুক্ত হতে চান (অন্তত একটি নির্বাচন করুন):")}
                             </FormLabel>
@@ -621,7 +1170,7 @@ export default function JoinUsPage() {
                                             type="checkbox"
                                             checked={isChecked}
                                             onChange={(e) =>
-                                              handleCheckboxChange(opt.id, e.target.checked, field.value)
+                                              handleCheckboxChange(opt.id, e.target.checked, field.value, "areasOfInterest")
                                             }
                                             className="mt-1 h-4 w-4 rounded border-zinc-300 text-teal-600 focus:ring-teal-500 accent-teal-600 shrink-0"
                                           />
@@ -644,7 +1193,7 @@ export default function JoinUsPage() {
                             name="motivation"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300" style={{ paddingTop: "1rem", display: "inline-block" }}>
+                                <FormLabel className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300" style={{ paddingTop: "1.5rem", display: "inline-block" }}>
                                   {t("Why do you want to join Paschim Banga Vigyan Mancha?", "আপনি কেন পশ্চিমবঙ্গ বিজ্ঞান মঞ্চে যোগ দিতে চান?")}
                                 </FormLabel>
                                 <FormDescription className="font-body text-xxs text-zinc-400">
@@ -671,7 +1220,6 @@ export default function JoinUsPage() {
 
                         {/* Submit Application Button */}
                         <Button
-                          style={{ marginBottom: "4rem" }}
                           type="submit"
                           disabled={isSubmitting}
                           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl h-12 flex items-center justify-center gap-2 mt-8 text-sm sm:text-base shadow-md"
@@ -693,7 +1241,6 @@ export default function JoinUsPage() {
           </div>
         </div>
       </section>
-
     </div>
   )
 }

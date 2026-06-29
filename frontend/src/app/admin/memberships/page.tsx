@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
-import { Users, Trash2, ArrowLeft, Download, Eye, X, Check, XCircle } from "lucide-react";
+import { Users, Trash2, ArrowLeft, Download, Eye, X, Check, XCircle, UserCircle, Award } from "lucide-react";
 import Link from "next/link";
 import { adminApi } from "@/lib/api";
 import type { MembershipApplication, MembershipStatus } from "@/types";
@@ -15,9 +15,27 @@ const statusLabels: Record<MembershipStatus, string> = {
   rejected: "Rejected",
 };
 
+const membershipTypeLabel = (type?: string) => {
+  if (type === "volunteer") return "Volunteer";
+  return "General Member";
+};
+
+// Resolve photo URL: if absolute (Cloudinary), use as-is; if relative, prepend backend base
+const resolvePhotoUrl = (photo: string | undefined, backendBase: string): string => {
+  if (!photo) return "";
+  if (photo.startsWith("http://") || photo.startsWith("https://")) return photo;
+  return `${backendBase}${photo}`;
+};
+
+const membershipTypeBadgeStyle = (type?: string) => {
+  if (type === "volunteer") return { background: "#fff3e0", color: "#f57c00", border: "1px solid #ffe0b2" };
+  return { background: "#e3f2fd", color: "#1565c0", border: "1px solid #bbdefb" };
+};
+
 export default function AdminMemberships() {
   const [memberships, setMemberships] = useState<Membership[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filterType, setFilterType] = useState<"all" | "member" | "volunteer">("all");
   
   // View Modal State
   const [selectedMembership, setSelectedMembership] = useState<Membership | null>(null);
@@ -48,9 +66,8 @@ export default function AdminMemberships() {
     try {
       const res = await adminApi.updateMembershipStatus(id, newStatus);
       if (res.data.success) {
-        toast.success(`Membership status updated to ${statusLabels[newStatus]}`);
+        toast.success(`Status updated to ${statusLabels[newStatus]}`);
         
-        // Update local state
         setMemberships(prev => prev.map(m => 
           m._id === id ? { ...m, status: newStatus } : m
         ));
@@ -89,21 +106,67 @@ export default function AdminMemberships() {
       return;
     }
 
-    const headers = ["Full Name", "Email", "Phone", "Type", "Status", "DOB", "Occupation", "Address", "Date Applied"];
-    const csvContent = [
-      headers.join(","),
-      ...memberships.map(m => [
-        `"${m.fullName.replace(/"/g, '""')}"`,
-        `"${m.email.replace(/"/g, '""')}"`,
-        `"${m.phoneNumber.replace(/"/g, '""')}"`,
-        `"Applicant"`,
-        `"${statusLabels[m.status]}"`,
-        `"${new Date(m.dateOfBirth).toLocaleDateString()}"`,
-        `"${m.occupation.replace(/"/g, '""')}"`,
-        `"${m.address.replace(/"/g, '""').replace(/\n/g, ' ')}"`,
-        `"${new Date(m.submittedAt).toLocaleDateString()}"`
-      ].join(","))
-    ].join("\n");
+    const escapeCSV = (val: any) => {
+      if (val === null || val === undefined) return '""';
+      const str = String(val).replace(/"/g, '""');
+      return `"${str}"`;
+    };
+
+    const headers = [
+      "Membership Type",
+      "Full Name",
+      "Email",
+      "Phone",
+      "Status",
+      "DOB",
+      "Gender",
+      "Occupation",
+      "Educational Qualification",
+      "Address",
+      "District",
+      "State",
+      "Areas of Interest",
+      "Motivation",
+      "Availability",
+      "Time Contribution",
+      "Skills",
+      "Previous NGO Experience",
+      "Experience Details",
+      "Can Travel",
+      "Emergency Contact Name",
+      "Emergency Contact Relation",
+      "Emergency Contact Phone",
+      "Date Applied",
+    ];
+
+    const rows = memberships.map(m => [
+      escapeCSV(membershipTypeLabel(m.membershipType)),
+      escapeCSV(m.fullName),
+      escapeCSV(m.email),
+      escapeCSV(m.phoneNumber),
+      escapeCSV(statusLabels[m.status]),
+      escapeCSV(m.dateOfBirth ? new Date(m.dateOfBirth).toLocaleDateString() : ""),
+      escapeCSV(m.gender),
+      escapeCSV(m.occupation),
+      escapeCSV(m.educationalQualification),
+      escapeCSV(m.address?.replace(/\n/g, ' ')),
+      escapeCSV(m.district),
+      escapeCSV(m.state),
+      escapeCSV((m.areasOfInterest || []).join(" | ")),
+      escapeCSV(m.motivation),
+      escapeCSV(m.availability || ""),
+      escapeCSV(m.timeContribution || ""),
+      escapeCSV((m.skills || []).join(" | ")),
+      escapeCSV(m.previousExperienceNGO || ""),
+      escapeCSV(m.previousExperienceDetails || ""),
+      escapeCSV(m.canTravel || ""),
+      escapeCSV(m.emergencyContact?.name || ""),
+      escapeCSV(m.emergencyContact?.relation || ""),
+      escapeCSV(m.emergencyContact?.phone || ""),
+      escapeCSV(m.submittedAt ? new Date(m.submittedAt).toLocaleDateString() : ""),
+    ].join(","));
+
+    const csvContent = [headers.join(","), ...rows].join("\n");
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -113,6 +176,7 @@ export default function AdminMemberships() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const getStatusBadgeClass = (status: string) => {
@@ -123,6 +187,14 @@ export default function AdminMemberships() {
       default: return "badge-orange";
     }
   };
+
+  const filteredMemberships = memberships.filter(m => {
+    if (filterType === "all") return true;
+    if (filterType === "volunteer") return m.membershipType === "volunteer";
+    return m.membershipType === "member" || !m.membershipType;
+  });
+
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
@@ -136,7 +208,7 @@ export default function AdminMemberships() {
             </div>
             <h1 style={{ fontSize: "2rem", color: "var(--color-deep-blue)", fontWeight: 800 }}>Membership Applications</h1>
             <p style={{ color: "var(--color-text-muted)", fontSize: "0.95rem" }}>
-              Review and manage new membership requests from the public.
+              Review and manage membership and volunteer applications.
             </p>
           </div>
           <button
@@ -150,6 +222,29 @@ export default function AdminMemberships() {
           </button>
         </div>
 
+        {/* Filter Tabs */}
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          {(["all", "member", "volunteer"] as const).map(type => (
+            <button
+              key={type}
+              onClick={() => setFilterType(type)}
+              className="btn"
+              style={{
+                padding: "0.4rem 1rem",
+                borderRadius: "999px",
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                background: filterType === type ? "var(--color-deep-blue)" : "var(--color-light-gray)",
+                color: filterType === type ? "#fff" : "var(--color-dark-gray)",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              {type === "all" ? `All (${memberships.length})` : type === "volunteer" ? `Volunteers (${memberships.filter(m => m.membershipType === "volunteer").length})` : `General Members (${memberships.filter(m => m.membershipType === "member" || !m.membershipType).length})`}
+            </button>
+          ))}
+        </div>
+
         {/* Memberships Table */}
         {loading ? (
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -157,10 +252,10 @@ export default function AdminMemberships() {
               <div key={i} className="skeleton" style={{ height: "60px", borderRadius: "var(--radius-md)" }} />
             ))}
           </div>
-        ) : memberships.length === 0 ? (
+        ) : filteredMemberships.length === 0 ? (
           <div className="card" style={{ padding: "4rem 2rem", textAlign: "center", color: "var(--color-text-muted)" }}>
             <Users size={48} style={{ margin: "0 auto 1rem", opacity: 0.5 }} />
-            <p>No membership applications found.</p>
+            <p>No {filterType !== "all" ? filterType : ""} applications found.</p>
           </div>
         ) : (
           <div className="card" style={{ padding: 0, overflowX: "auto" }}>
@@ -169,13 +264,13 @@ export default function AdminMemberships() {
                 <tr style={{ borderBottom: "2px solid var(--color-light-gray)", textAlign: "left", color: "var(--color-text-muted)", fontSize: "0.85rem", backgroundColor: "#f8fafc" }}>
                   <th style={{ padding: "1rem 1.5rem" }}>Status</th>
                   <th style={{ padding: "1rem 1.5rem" }}>Applicant</th>
-                  <th style={{ padding: "1rem 1.5rem" }}>Type</th>
+                  <th style={{ padding: "1rem 1.5rem" }}>Role</th>
                   <th style={{ padding: "1rem 1.5rem" }}>Date Applied</th>
                   <th style={{ padding: "1rem 1.5rem", textAlign: "right" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {memberships.map((m) => (
+                {filteredMemberships.map((m) => (
                   <tr key={m._id} style={{ borderBottom: "1px solid var(--color-light-gray)", transition: "background-color 0.2s" }} className="hover-bg">
                     <td style={{ padding: "1rem 1.5rem" }}>
                       <span className={`badge ${getStatusBadgeClass(m.status)}`} style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}>
@@ -183,12 +278,39 @@ export default function AdminMemberships() {
                       </span>
                     </td>
                     <td style={{ padding: "1rem 1.5rem" }}>
-                      <div style={{ fontWeight: 600, color: "var(--color-deep-blue)" }}>{m.fullName}</div>
-                      <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted)" }}>{m.email} • {m.phoneNumber}</div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                        {m.photo ? (
+                          <img
+                            src={resolvePhotoUrl(m.photo, backendUrl)}
+                            alt={m.fullName}
+                            style={{ width: 36, height: 36, borderRadius: "50%", objectFit: "cover", border: "2px solid var(--color-light-gray)", flexShrink: 0 }}
+                          />
+                        ) : (
+                          <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--color-light-gray)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                            <UserCircle size={22} style={{ color: "var(--color-text-muted)" }} />
+                          </div>
+                        )}
+                        <div>
+                          <div style={{ fontWeight: 600, color: "var(--color-deep-blue)" }}>{m.fullName}</div>
+                          <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted)" }}>{m.email} • {m.phoneNumber}</div>
+                        </div>
+                      </div>
                     </td>
                     <td style={{ padding: "1rem 1.5rem" }}>
-                      <span className="badge badge-blue">
-                        Applicant
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.25rem",
+                          padding: "0.2rem 0.6rem",
+                          borderRadius: "999px",
+                          fontSize: "0.75rem",
+                          fontWeight: 700,
+                          ...membershipTypeBadgeStyle(m.membershipType),
+                        }}
+                      >
+                        {m.membershipType === "volunteer" && <Award size={11} />}
+                        {membershipTypeLabel(m.membershipType)}
                       </span>
                     </td>
                     <td style={{ padding: "1rem 1.5rem", color: "var(--color-text-muted)", fontSize: "0.9rem" }}>
@@ -243,13 +365,14 @@ export default function AdminMemberships() {
               alignItems: "center",
               justifyContent: "center",
               zIndex: 100,
+              padding: "1rem",
             }}
           >
             <div
               className="card animate-fade-in"
               style={{
                 width: "100%",
-                maxWidth: "650px",
+                maxWidth: "700px",
                 background: "#ffffff",
                 padding: "2rem",
                 position: "relative",
@@ -264,59 +387,173 @@ export default function AdminMemberships() {
                 <X size={20} />
               </button>
 
-              <h3 style={{ fontSize: "1.35rem", marginBottom: "1.5rem", color: "var(--color-deep-blue)", fontWeight: 700, paddingRight: "2rem" }}>
-                Membership Application
-              </h3>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", paddingBottom: "1rem", borderBottom: "1px solid var(--color-light-gray)" }}>
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: "1.2rem", color: "var(--color-deep-blue)" }}>{selectedMembership.fullName}</h4>
-                    <div style={{ color: "var(--color-text-muted)", fontSize: "0.9rem", marginTop: "0.25rem" }}>
-                      <span className="badge badge-blue" style={{ marginRight: "0.5rem" }}>Applicant</span>
-                      Applied on: {new Date(selectedMembership.submittedAt).toLocaleDateString()}
-                    </div>
+              {/* Modal Header */}
+              <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start", paddingBottom: "1.25rem", borderBottom: "1px solid var(--color-light-gray)", marginBottom: "1.5rem" }}>
+                {selectedMembership.photo ? (
+                  <img
+                    src={resolvePhotoUrl(selectedMembership.photo, backendUrl)}
+                    alt={selectedMembership.fullName}
+                    style={{ width: 72, height: 72, borderRadius: "12px", objectFit: "cover", border: "2px solid var(--color-light-gray)", flexShrink: 0 }}
+                  />
+                ) : (
+                  <div style={{ width: 72, height: 72, borderRadius: "12px", background: "var(--color-light-gray)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <UserCircle size={38} style={{ color: "var(--color-text-muted)" }} />
                   </div>
-                  <div style={{ textAlign: "right" }}>
-                    <select
-                      value={selectedMembership.status}
-                      onChange={(e) => handleStatusUpdate(selectedMembership._id, e.target.value as MembershipStatus)}
-                      className="form-input"
-                      style={{ padding: "0.25rem 0.5rem", fontSize: "0.85rem", height: "auto", minHeight: "0", fontWeight: 600, color: selectedMembership.status === "approved" ? "#16a34a" : selectedMembership.status === "rejected" ? "#ef4444" : "#f59e0b" }}
+                )}
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                    <h3 style={{ fontSize: "1.25rem", color: "var(--color-deep-blue)", fontWeight: 700, margin: 0 }}>
+                      {selectedMembership.fullName}
+                    </h3>
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.25rem",
+                        padding: "0.2rem 0.6rem",
+                        borderRadius: "999px",
+                        fontSize: "0.72rem",
+                        fontWeight: 700,
+                        ...membershipTypeBadgeStyle(selectedMembership.membershipType),
+                      }}
                     >
-                      <option value="pending">Status: Pending</option>
-                      <option value="approved">Status: Approved</option>
-                      <option value="rejected">Status: Rejected</option>
-                    </select>
+                      {selectedMembership.membershipType === "volunteer" && <Award size={10} />}
+                      {membershipTypeLabel(selectedMembership.membershipType)}
+                    </span>
+                  </div>
+                  <div style={{ color: "var(--color-text-muted)", fontSize: "0.85rem", marginTop: "0.4rem" }}>
+                    Applied on: {new Date(selectedMembership.submittedAt).toLocaleDateString()}
                   </div>
                 </div>
+                <div>
+                  <select
+                    value={selectedMembership.status}
+                    onChange={(e) => handleStatusUpdate(selectedMembership._id, e.target.value as MembershipStatus)}
+                    className="form-input"
+                    style={{ padding: "0.25rem 0.5rem", fontSize: "0.85rem", height: "auto", minHeight: "0", fontWeight: 600, color: selectedMembership.status === "approved" ? "#16a34a" : selectedMembership.status === "rejected" ? "#ef4444" : "#f59e0b" }}
+                  >
+                    <option value="pending">Status: Pending</option>
+                    <option value="approved">Status: Approved</option>
+                    <option value="rejected">Status: Rejected</option>
+                  </select>
+                </div>
+              </div>
 
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+
+                {/* Contact & Personal Info */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
                   <div>
-                    <h5 style={{ margin: "0 0 0.5rem 0", fontSize: "0.85rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Contact Info</h5>
-                    <div style={{ fontSize: "0.95rem", color: "var(--color-dark-gray)", lineHeight: 1.6 }}>
+                    <h5 style={{ margin: "0 0 0.5rem 0", fontSize: "0.8rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Contact Info</h5>
+                    <div style={{ fontSize: "0.9rem", color: "var(--color-dark-gray)", lineHeight: 1.7 }}>
                       <div><strong>Email:</strong> <a href={`mailto:${selectedMembership.email}`} style={{ color: "var(--color-deep-blue)" }}>{selectedMembership.email}</a></div>
                       <div><strong>Phone:</strong> <a href={`tel:${selectedMembership.phoneNumber}`} style={{ color: "var(--color-deep-blue)" }}>{selectedMembership.phoneNumber}</a></div>
                     </div>
                   </div>
                   <div>
-                    <h5 style={{ margin: "0 0 0.5rem 0", fontSize: "0.85rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Personal Info</h5>
-                    <div style={{ fontSize: "0.95rem", color: "var(--color-dark-gray)", lineHeight: 1.6 }}>
+                    <h5 style={{ margin: "0 0 0.5rem 0", fontSize: "0.8rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Personal Info</h5>
+                    <div style={{ fontSize: "0.9rem", color: "var(--color-dark-gray)", lineHeight: 1.7 }}>
                       <div><strong>DOB:</strong> {new Date(selectedMembership.dateOfBirth).toLocaleDateString()}</div>
+                      <div><strong>Gender:</strong> {selectedMembership.gender}</div>
                       <div><strong>Occupation:</strong> {selectedMembership.occupation}</div>
+                      <div><strong>Qualification:</strong> {selectedMembership.educationalQualification}</div>
                     </div>
                   </div>
                 </div>
 
+                {/* Address */}
                 <div>
-                  <h5 style={{ margin: "0 0 0.5rem 0", fontSize: "0.85rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Full Address</h5>
-                  <div style={{ background: "var(--color-light-gray)", padding: "1rem", borderRadius: "var(--radius-md)", fontSize: "0.95rem", color: "var(--color-dark-gray)", whiteSpace: "pre-wrap", lineHeight: 1.6 }}>
-                    {selectedMembership.address}
+                  <h5 style={{ margin: "0 0 0.5rem 0", fontSize: "0.8rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Address</h5>
+                  <div style={{ background: "var(--color-light-gray)", padding: "0.75rem 1rem", borderRadius: "var(--radius-md)", fontSize: "0.9rem", color: "var(--color-dark-gray)", whiteSpace: "pre-wrap", lineHeight: 1.6 }}>
+                    {selectedMembership.address}, {selectedMembership.district}, {selectedMembership.state}
                   </div>
                 </div>
 
-                <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
+                {/* Areas of Interest */}
+                {selectedMembership.areasOfInterest?.length > 0 && (
+                  <div>
+                    <h5 style={{ margin: "0 0 0.5rem 0", fontSize: "0.8rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Areas of Interest</h5>
+                    <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+                      {selectedMembership.areasOfInterest.map(area => (
+                        <span key={area} style={{ background: "#e3f2fd", color: "#1565c0", padding: "0.2rem 0.6rem", borderRadius: "999px", fontSize: "0.75rem", fontWeight: 600 }}>
+                          {area}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Motivation */}
+                <div>
+                  <h5 style={{ margin: "0 0 0.5rem 0", fontSize: "0.8rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Motivation</h5>
+                  <div style={{ background: "var(--color-light-gray)", padding: "0.75rem 1rem", borderRadius: "var(--radius-md)", fontSize: "0.9rem", color: "var(--color-dark-gray)", whiteSpace: "pre-wrap", lineHeight: 1.7 }}>
+                    {selectedMembership.motivation}
+                  </div>
+                </div>
+
+                {/* Volunteer-Only Section */}
+                {selectedMembership.membershipType === "volunteer" && (
+                  <div style={{ border: "1px solid #ffe0b2", borderRadius: "var(--radius-md)", padding: "1.25rem", background: "#fffbf5" }}>
+                    <h5 style={{ margin: "0 0 1rem 0", fontSize: "0.85rem", color: "#e65100", textTransform: "uppercase", letterSpacing: "0.5px", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                      <Award size={14} /> Volunteer Details
+                    </h5>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", fontSize: "0.9rem", color: "var(--color-dark-gray)", lineHeight: 1.7 }}>
+                      <div>
+                        <strong style={{ color: "var(--color-text-muted)", fontSize: "0.78rem", textTransform: "uppercase" }}>Availability</strong>
+                        <div>{selectedMembership.availability || "—"}</div>
+                      </div>
+                      <div>
+                        <strong style={{ color: "var(--color-text-muted)", fontSize: "0.78rem", textTransform: "uppercase" }}>Time Contribution</strong>
+                        <div>{selectedMembership.timeContribution || "—"}</div>
+                      </div>
+                      <div>
+                        <strong style={{ color: "var(--color-text-muted)", fontSize: "0.78rem", textTransform: "uppercase" }}>Can Travel</strong>
+                        <div>{selectedMembership.canTravel || "—"}</div>
+                      </div>
+                      <div>
+                        <strong style={{ color: "var(--color-text-muted)", fontSize: "0.78rem", textTransform: "uppercase" }}>NGO Experience</strong>
+                        <div>
+                          {selectedMembership.previousExperienceNGO === "Yes"
+                            ? `Yes — ${selectedMembership.previousExperienceDetails || ""}`
+                            : "No"}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Skills */}
+                    {selectedMembership.skills && selectedMembership.skills.length > 0 && (
+                      <div style={{ marginTop: "0.75rem" }}>
+                        <strong style={{ color: "var(--color-text-muted)", fontSize: "0.78rem", textTransform: "uppercase" }}>Skills</strong>
+                        <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap", marginTop: "0.35rem" }}>
+                          {selectedMembership.skills.map(skill => (
+                            <span key={skill} style={{ background: "#fff3e0", color: "#e65100", border: "1px solid #ffe0b2", padding: "0.2rem 0.55rem", borderRadius: "999px", fontSize: "0.72rem", fontWeight: 600 }}>
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Emergency Contact */}
+                    {selectedMembership.emergencyContact?.name && (
+                      <div style={{ marginTop: "0.75rem", paddingTop: "0.75rem", borderTop: "1px solid #ffe0b2" }}>
+                        <strong style={{ color: "var(--color-text-muted)", fontSize: "0.78rem", textTransform: "uppercase" }}>Emergency Contact</strong>
+                        <div style={{ fontSize: "0.9rem", marginTop: "0.25rem" }}>
+                          {selectedMembership.emergencyContact.name}
+                          {selectedMembership.emergencyContact.relation && ` (${selectedMembership.emergencyContact.relation})`}
+                          {" — "}
+                          <a href={`tel:${selectedMembership.emergencyContact.phone}`} style={{ color: "var(--color-deep-blue)" }}>
+                            {selectedMembership.emergencyContact.phone}
+                          </a>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem" }}>
                   {selectedMembership.status === "pending" && (
                     <>
                       <button

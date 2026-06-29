@@ -8,11 +8,12 @@ import {
 } from "../controllers/membership.controller";
 import { authenticate } from "../middleware/auth.middleware";
 import { requireAdmin } from "../middleware/rbac.middleware";
+import { upload } from "../middleware/upload.middleware";
 
 const router = Router();
 
 // Public submission route
-router.post("/", submitMembership);
+router.post("/", upload.single("photo"), submitMembership);
 
 // Admin restricted routes
 router.get("/admin", authenticate, requireAdmin, getMemberships);
