@@ -134,7 +134,7 @@ export default function AdminDashboard() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem", width: "100%" }}>
       {/* Header Block */}
-      <div style={{ flex: 1, minWidth: "300px", width: "100%" }}>
+      <div style={{ flex: 1, width: "100%" }}>
         <h1 style={{ fontSize: "2rem", color: "var(--color-deep-blue)", fontWeight: 800 }}>
           Dashboard Overview
         </h1>
@@ -145,13 +145,13 @@ export default function AdminDashboard() {
 
       {/* Stats Grid */}
       {loading ? (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem", width: "100%" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="skeleton" style={{ height: "140px", width: "100%" }} />
           ))}
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem", width: "100%" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
           {statCards.map((card, index) => {
             const Icon = card.icon;
             return (
@@ -215,7 +215,7 @@ export default function AdminDashboard() {
       )}
 
       {/* Quick Actions Panel */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: "2rem", width: "100%" }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
         {/* Shortcuts */}
         <div className="card" style={{ padding: "2rem", background: "#ffffff", width: "100%", boxSizing: "border-box" }}>
           <h3 style={{ fontSize: "1.25rem", color: "var(--color-deep-blue)", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>

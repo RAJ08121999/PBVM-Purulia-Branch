@@ -806,6 +806,7 @@ img, video {
 
   .admin-main {
     margin-left: 70px !important;
+    width: calc(100% - 70px) !important;
     padding: 1.5rem !important;
   }
 }
