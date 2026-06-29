@@ -21,6 +21,7 @@ import {
   User,
   Menu,
   X,
+  FileText,
 } from "lucide-react";
 
 interface AdminSidebarProps {
@@ -43,7 +44,7 @@ export default function AdminSidebar({ admin, onOpenProfile }: AdminSidebarProps
   const navItems = [
     { name: "Overview", href: "/admin/dashboard", icon: LayoutDashboard, role: "all" },
     { name: "Notifications", href: "/admin/notifications", icon: Bell, role: "all" },
-    { name: "Activities", href: "/admin/activities", icon: Activity, role: "all" },
+    { name: "Policy Issues", href: "/admin/policy-issues", icon: FileText, role: "all" },
     { name: "Events", href: "/admin/events", icon: Calendar, role: "all" },
     { name: "Gallery", href: "/admin/gallery", icon: ImageIcon, role: "all" },
     { name: "Publications", href: "/admin/publications", icon: BookOpen, role: "all" },

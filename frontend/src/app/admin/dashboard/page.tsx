@@ -5,7 +5,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import {
   Bell,
-  Activity,
+  FileText,
   Calendar,
   BookOpen,
   Mail,
@@ -18,7 +18,7 @@ import { adminApi, publicApi } from "@/lib/api";
 
 interface Stats {
   notifications: number;
-  activities: number;
+  policies: number;
   events: number;
   publications: number;
   pendingMemberships: number;
@@ -28,7 +28,7 @@ interface Stats {
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats>({
     notifications: 0,
-    activities: 0,
+    policies: 0,
     events: 0,
     publications: 0,
     pendingMemberships: 0,
@@ -41,14 +41,14 @@ export default function AdminDashboard() {
       try {
         const [
           notifRes,
-          actRes,
+          policyRes,
           evtRes,
           pubRes,
           memRes,
           conRes,
         ] = await Promise.all([
           publicApi.getNotifications(),
-          publicApi.getActivities(),
+          publicApi.getPolicyArticles({ limit: 1 }),
           publicApi.getEvents({ limit: 1 }),
           publicApi.getPublications({ limit: 1 }),
           adminApi.getMemberships({ status: "pending", limit: 1 }),
@@ -57,7 +57,7 @@ export default function AdminDashboard() {
 
         setStats({
           notifications: notifRes.data.notifications?.length || 0,
-          activities: actRes.data.activities?.length || 0,
+          policies: policyRes.data.total || 0,
           events: evtRes.data.total || 0,
           publications: pubRes.data.total || 0,
           pendingMemberships: memRes.data.total || 0,
@@ -121,13 +121,13 @@ export default function AdminDashboard() {
       badgeText: "Magazines & PDF files",
     },
     {
-      title: "Core Activities",
-      value: stats.activities,
-      icon: Activity,
+      title: "Policy Issues",
+      value: stats.policies,
+      icon: FileText,
       color: "#e91e63",
       bgColor: "rgba(233, 30, 99, 0.1)",
-      link: "/admin/activities",
-      badgeText: "Configured sections",
+      link: "/admin/policy-issues",
+      badgeText: "Environmental & health",
     },
   ];
 
@@ -293,6 +293,31 @@ export default function AdminDashboard() {
                 <div>
                   <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>Upload Publication</div>
                   <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>Share a new booklet or newsletter PDF</div>
+                </div>
+              </div>
+              <PlusCircle size={18} style={{ color: "var(--color-text-muted)" }} />
+            </Link>
+
+            <Link
+              href="/admin/policy-issues"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "1rem",
+                borderRadius: "var(--radius-md)",
+                border: "1px solid var(--color-mid-gray)",
+                textDecoration: "none",
+                color: "var(--color-text)",
+                transition: "background 0.2s",
+              }}
+              className="hover:bg-slate-50"
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <FileText size={18} style={{ color: "#e91e63" }} />
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>Publish Policy Article</div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>Upload scientific/environmental viewpoints</div>
                 </div>
               </div>
               <PlusCircle size={18} style={{ color: "var(--color-text-muted)" }} />

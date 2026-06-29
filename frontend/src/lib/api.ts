@@ -61,7 +61,7 @@ export const publicApi = {
     api.get("/publications", { params }),
 
   // Policy Articles
-  getPolicyArticles: (params?: { tag?: string; page?: number }) =>
+  getPolicyArticles: (params?: { tag?: string; status?: string; page?: number; limit?: number }) =>
     api.get("/policy", { params }),
   getPolicyArticle: (id: string) => api.get(`/policy/${id}`),
 
@@ -120,8 +120,14 @@ export const adminApi = {
   deletePublication: (id: string) => api.delete(`/publications/${id}`),
 
   // Policy Articles
-  createPolicyArticle: (data: object) => api.post("/policy", data),
-  updatePolicyArticle: (id: string, data: object) => api.put(`/policy/${id}`, data),
+  createPolicyArticle: (data: FormData | object) =>
+    api.post("/policy", data, {
+      headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : undefined,
+    }),
+  updatePolicyArticle: (id: string, data: FormData | object) =>
+    api.put(`/policy/${id}`, data, {
+      headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : undefined,
+    }),
   deletePolicyArticle: (id: string) => api.delete(`/policy/${id}`),
 
   // Downloads
