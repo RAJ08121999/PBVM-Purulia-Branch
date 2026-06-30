@@ -113,6 +113,7 @@ const createMembershipSchema = (t: (en: string, bn: string) => string) =>
     emergencyContactName: z.string().optional(),
     emergencyContactRelation: z.string().optional(),
     emergencyContactPhone: z.string().optional(),
+    bloodGroup: z.string().optional(),
   }).superRefine((data, ctx) => {
     if (data.membershipType === "volunteer") {
       if (!data.availability) {
@@ -120,6 +121,13 @@ const createMembershipSchema = (t: (en: string, bn: string) => string) =>
           code: z.ZodIssueCode.custom,
           path: ["availability"],
           message: t("Availability is required for volunteers.", "স্বেচ্ছাসেবকদের কাজের সময় নির্বাচন করা আবশ্যক।")
+        })
+      }
+      if (!data.bloodGroup) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["bloodGroup"],
+          message: t("Blood group is required for volunteers.", "স্বেচ্ছাসেবকদের জন্য রক্তের গ্রুপ আবশ্যক।")
         })
       }
       if (!data.timeContribution) {
@@ -206,6 +214,7 @@ export default function JoinUsPage() {
       emergencyContactName: "",
       emergencyContactRelation: "",
       emergencyContactPhone: "",
+      bloodGroup: "",
     },
   })
 
@@ -264,6 +273,7 @@ export default function JoinUsPage() {
         formData.append("previousExperienceNGO", values.previousExperienceNGO || "No");
         formData.append("previousExperienceDetails", values.previousExperienceDetails || "");
         formData.append("canTravel", values.canTravel || "");
+        formData.append("bloodGroup", values.bloodGroup || "");
 
         formData.append("emergencyContact", JSON.stringify({
           name: values.emergencyContactName || "",
@@ -878,6 +888,32 @@ export default function JoinUsPage() {
                             <div
                               style={{ paddingTop: "1rem" }}
                               className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+                              {/* Blood Group */}
+                              <FormField
+                                control={form.control}
+                                name="bloodGroup"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300">
+                                      {t("Blood Group", "রক্তের গ্রুপ")}
+                                    </FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                      <FormControl>
+                                        <SelectTrigger className="rounded-xl border-zinc-200 dark:border-zinc-800 h-11 bg-white focus:bg-white text-sm" style={{ paddingLeft: "1rem" }}>
+                                          <SelectValue placeholder={t("Select Blood Group", "রক্তের গ্রুপ নির্বাচন করুন")} />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent className="bg-white border border-zinc-100 rounded-xl">
+                                        {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((bg) => (
+                                          <SelectItem key={bg} value={bg} style={{ padding: "0.5rem 1rem" }}>{bg}</SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
 
                               {/* Availability */}
                               <FormField

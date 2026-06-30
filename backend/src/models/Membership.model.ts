@@ -18,6 +18,11 @@ export interface IMembership extends Document {
   
   // New Fields
   membershipType: "member" | "volunteer";
+  bloodGroup?: string;
+  volunteerId?: string;
+  approvedAt?: Date;
+  approvedBy?: mongoose.Types.ObjectId;
+  badgeLevel?: "Curiosity Seeker" | "Knowledge Explorer" | "Renaissance Leader";
   photo?: string;
   availability?: "Weekdays" | "Weekends" | "Any Time" | "Occasionally";
   timeContribution?: "2-4 hrs/week" | "5-10 hrs/week" | "10+ hrs/week";
@@ -51,6 +56,11 @@ const MembershipSchema = new Schema<IMembership>(
     
     // New Fields
     membershipType: { type: String, enum: ["member", "volunteer"], default: "member", required: true },
+    bloodGroup: { type: String },
+    volunteerId: { type: String },
+    approvedAt: { type: Date },
+    approvedBy: { type: Schema.Types.ObjectId, ref: "Admin" },
+    badgeLevel: { type: String, enum: ["Curiosity Seeker", "Knowledge Explorer", "Renaissance Leader"], default: "Curiosity Seeker" },
     photo: { type: String },
     availability: { type: String, enum: ["Weekdays", "Weekends", "Any Time", "Occasionally"] },
     timeContribution: { type: String, enum: ["2-4 hrs/week", "5-10 hrs/week", "10+ hrs/week"] },

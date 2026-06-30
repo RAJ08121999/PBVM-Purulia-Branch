@@ -45,6 +45,7 @@ export const submitMembership = async (req: Request, res: Response): Promise<voi
       state,
       phoneNumber,
       email,
+      bloodGroup,
       motivation,
       availability,
       timeContribution,
@@ -110,6 +111,7 @@ export const submitMembership = async (req: Request, res: Response): Promise<voi
       state,
       phoneNumber,
       email,
+      bloodGroup,
       areasOfInterest: areasOfInterest || [],
       motivation,
       // Volunteer specific fields
@@ -208,9 +210,42 @@ export const updateMembershipStatus = async (req: AuthRequest, res: Response): P
       return;
     }
 
+    const existing = await Membership.findById(req.params.id);
+    if (!existing) {
+      res.status(404).json({ success: false, message: "Membership application not found" });
+      return;
+    }
+
+    const updates: any = { status };
+
+    if (status === "approved" && existing.status !== "approved") {
+      updates.approvedAt = new Date();
+      updates.approvedBy = req.admin?.id;
+      
+      if (existing.membershipType === "volunteer" && !existing.volunteerId) {
+        // Generate volunteerId: PBVM-PUR-YYYYMMDD-XX
+        const dateStr = updates.approvedAt.toISOString().split("T")[0].replace(/-/g, "");
+        
+        // Count how many volunteers were approved today
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+        
+        const countToday = await Membership.countDocuments({
+          membershipType: "volunteer",
+          status: "approved",
+          approvedAt: { $gte: startOfDay, $lte: endOfDay }
+        });
+        
+        const index = String(countToday + 1).padStart(2, "0");
+        updates.volunteerId = `PBVM-PUR-${dateStr}-${index}`;
+      }
+    }
+
     const membership = await Membership.findByIdAndUpdate(
       req.params.id,
-      { status },
+      updates,
       { new: true }
     );
 
@@ -256,7 +291,11 @@ export const exportMemberships = async (req: AuthRequest, res: Response): Promis
       "Emergency Contact Name",
       "Emergency Contact Relation",
       "Emergency Contact Phone",
+      "Blood Group",
       "Status",
+      "Volunteer ID",
+      "Badge Level",
+      "Approved At",
       "Submitted At",
     ];
 
@@ -284,7 +323,11 @@ export const exportMemberships = async (req: AuthRequest, res: Response): Promis
       m.emergencyContact?.name || "",
       m.emergencyContact?.relation || "",
       m.emergencyContact?.phone || "",
+      m.bloodGroup || "",
       m.status,
+      m.volunteerId || "",
+      m.badgeLevel || "",
+      m.approvedAt ? m.approvedAt.toISOString() : "",
       m.submittedAt ? m.submittedAt.toISOString() : "",
     ]);
 
