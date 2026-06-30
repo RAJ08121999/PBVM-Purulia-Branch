@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Printer, Upload, Trash2, ArrowLeft, UserCheck } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import logo from "../../../../public/logo.png";
 
 type ActivityLevel = "highly" | "moderately" | "emerging";
 
@@ -14,17 +15,19 @@ interface VolunteerData {
   bloodGroup: string;
   level: ActivityLevel;
   photoUrl: string;
+  logo: "https://pbvm-purulia-branch.vercel.app/logo.png"
 }
 
 export default function VolunteerIDCardGenerator() {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   const [formData, setFormData] = useState<VolunteerData>({
     idNumber: "PBVM-PUR-001",
     name: "Subrata Sen",
     bloodGroup: "A+",
     level: "highly",
     photoUrl: "",
+    logo: "https://pbvm-purulia-branch.vercel.app/logo.png"
   });
 
   const getBadgeName = (level: ActivityLevel) => {
@@ -108,7 +111,7 @@ export default function VolunteerIDCardGenerator() {
 
   return (
     <>
-    <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }} className="no-print">
+      <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }} className="no-print">
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
           <div>
@@ -299,7 +302,7 @@ export default function VolunteerIDCardGenerator() {
 
           {/* Interactive Card Live Preview */}
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1.5rem" }}>
-            <h3 style={{ fontSize: "1.2rem", color: "var(--color-deep-blue)", fontWeight: 700, alignSelf: "flex-start" }}>
+            <h3 style={{ fontSize: "1.2rem", color: "var(--color-deep-blue)", fontWeight: 700, alignSelf: "center" }}>
               Live Print Preview
             </h3>
 
@@ -349,9 +352,8 @@ export default function VolunteerIDCardGenerator() {
               >
                 <div
                   style={{
-                    width: "30px",
-                    height: "30px",
-                    background: "var(--color-deep-blue)",
+                    width: "50px",
+                    height: "50px",
                     borderRadius: "50%",
                     display: "flex",
                     alignItems: "center",
@@ -361,11 +363,11 @@ export default function VolunteerIDCardGenerator() {
                     fontSize: "0.8rem",
                   }}
                 >
-                  PB
+                  <Image src={logo} alt="Logo" />
                 </div>
-                <div>
-                  <h4 style={{ fontSize: "0.85rem", color: "var(--color-deep-blue)", fontWeight: 800, margin: 0, lineHeight: 1 }}>
-                    PASCHIM BANGA VIGYAN MANCHA
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <h4 style={{ fontSize: "0.85rem", color: "var(--color-deep-blue)", fontWeight: 800, margin: 0, lineHeight: 1, textAlign: "center" }}>
+                    PASHCHIM BANGA VIGYAN MANCHA
                   </h4>
                   <span style={{ fontSize: "0.6rem", color: "var(--color-text-muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>
                     Purulia District Branch
@@ -475,7 +477,7 @@ export default function VolunteerIDCardGenerator() {
             </button>
           </div>
         </div>
-    </div>
+      </div>
 
       {/* Printable Area - Rendered ONLY in print mode */}
       <div id="print-card-area" className="only-print">
@@ -513,21 +515,20 @@ export default function VolunteerIDCardGenerator() {
               style={{
                 width: "6mm",
                 height: "6mm",
-                background: "var(--color-deep-blue)",
                 borderRadius: "50%",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 color: "#fff",
                 fontWeight: "bold",
-                fontSize: "1.5mm",
+                fontSize: "0.8rem",
               }}
             >
-              PB
+              <img src={formData.logo} alt="Logo" style={{ width: "6mm", height: "6mm", objectFit: "cover" }} />
             </div>
-            <div style={{ lineHeight: 1.1 }}>
+            <div style={{ lineHeight: 1.1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
               <div style={{ fontSize: "1.8mm", color: "var(--color-deep-blue)", fontWeight: 800 }}>
-                PASCHIM BANGA VIGYAN MANCHA
+                PASHCHIM BANGA VIGYAN MANCHA
               </div>
               <div style={{ fontSize: "1.3mm", color: "var(--color-text-muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.02mm" }}>
                 Purulia District Branch
@@ -661,6 +662,6 @@ export default function VolunteerIDCardGenerator() {
           }
         }
       `}</style>
-  </>
+    </>
   );
 }

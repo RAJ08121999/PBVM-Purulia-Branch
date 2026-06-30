@@ -53,7 +53,7 @@ export function applicationReceivedTemplate({
   const text = `
 Dear ${applicantName},
 
-Thank you for applying to become a member of Paschim Banga Vigyan Mancha, Purulia District Branch.
+Thank you for applying to become a member of Pashchim Banga Vigyan Mancha, Purulia District Branch.
 
 Your application has been received successfully.
 
@@ -62,7 +62,7 @@ It will now be reviewed by the District Executive Committee.
 You will receive another email after the review process is complete.
 
 Regards,
-Paschim Banga Vigyan Mancha
+Pashchim Banga Vigyan Mancha
 Purulia District Branch
 `;
 

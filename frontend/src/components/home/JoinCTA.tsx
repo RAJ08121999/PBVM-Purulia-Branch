@@ -105,7 +105,7 @@ export const JoinCTA = () => {
           }}
         >
           {t(
-            "Join hands with Paschim Banga Vigyan Mancha, Purulia Branch. Whether you are a student, teacher, doctor, or a science enthusiast — your contribution matters.",
+            "Join hands with Pashchim Banga Vigyan Mancha, Purulia Branch. Whether you are a student, teacher, doctor, or a science enthusiast — your contribution matters.",
             "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ, পুরুলিয়া জেলা শাখার সাথে যুক্ত হন। আপনি ছাত্র, শিক্ষক, চিকিৎসক বা বিজ্ঞানপ্রেমী যাই হোন — আপনার অবদান গুরুত্বপূর্ণ।"
           )}
         </p>

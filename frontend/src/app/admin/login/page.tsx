@@ -35,13 +35,13 @@ export default function AdminLogin() {
       const res = await adminApi.login(email, password);
       if (res.data.success) {
         const { token, admin } = res.data;
-        
+
         // Save token in cookie
         Cookies.set("pbvm_token", token, { expires: 7, secure: true, sameSite: "strict" });
-        
+
         // Save admin details in localStorage for quick display
         localStorage.setItem("pbvm_admin", JSON.stringify(admin));
-        
+
         toast.success(`Welcome back, ${admin.name}!`);
         router.push("/admin/dashboard");
       } else {
@@ -113,7 +113,7 @@ export default function AdminLogin() {
           </div>
           <h2 style={{ fontSize: "1.75rem", color: "var(--color-deep-blue)" }}>Admin Portal</h2>
           <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem", marginTop: "0.25rem" }}>
-            Paschim Banga Vigyan Mancha, Purulia
+            Pashchim Banga Vigyan Mancha, Purulia
           </p>
         </div>
 

@@ -1,23 +1,23 @@
 interface EmailLayoutOptions {
-    title: string;
-    content: string;
-  }
-  
-  export function emailLayout({
-    title,
-    content,
-  }: EmailLayoutOptions): string {
-    const year = new Date().getFullYear();
-  
-    const logo =
-      process.env.LOGO_URL ||
-      "https://pbvmpurulia.org/logo.png";
-  
-    const website =
-      process.env.FRONTEND_URL ||
-      "https://pbvmpurulia.org";
-  
-    return `
+  title: string;
+  content: string;
+}
+
+export function emailLayout({
+  title,
+  content,
+}: EmailLayoutOptions): string {
+  const year = new Date().getFullYear();
+
+  const logo =
+    process.env.LOGO_URL ||
+    "https://pbvmpurulia.org/logo.png";
+
+  const website =
+    process.env.FRONTEND_URL ||
+    "https://pbvmpurulia.org";
+
+  return `
   <!DOCTYPE html>
   <html lang="en">
   
@@ -89,7 +89,7 @@ interface EmailLayoutOptions {
   font-weight:bold;
   "
   >
-  Paschim Banga Vigyan Mancha
+  Pashchim Banga Vigyan Mancha
   </h1>
   
   <p
@@ -185,7 +185,7 @@ interface EmailLayoutOptions {
   
   <p style="margin:0 0 12px 0;">
   This email was sent automatically by the
-  <strong>Paschim Banga Vigyan Mancha, Purulia District Branch</strong>.
+  <strong>Pashchim Banga Vigyan Mancha, Purulia District Branch</strong>.
   </p>
   
   <p style="margin:0 0 12px 0;">
@@ -212,7 +212,7 @@ interface EmailLayoutOptions {
   color:#9CA3AF;
   "
   >
-  © ${year} Paschim Banga Vigyan Mancha, Purulia District Branch.
+  © ${year} Pashchim Banga Vigyan Mancha, Purulia District Branch.
   <br>
   All Rights Reserved.
   </p>
@@ -231,4 +231,4 @@ interface EmailLayoutOptions {
   </body>
   </html>
   `;
-  }
+}

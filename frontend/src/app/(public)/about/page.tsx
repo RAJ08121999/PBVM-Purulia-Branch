@@ -149,7 +149,7 @@ export default function AboutPage() {
               marginBottom: "1.25rem",
             }}
           >
-            {t("About PBVM Purulia", "আমাদের সম্পর্কে")}
+            {t("Pashchim Banga Vigyan Mancha", "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ")}
           </h1>
           <p
             style={{
@@ -162,7 +162,7 @@ export default function AboutPage() {
             }}
           >
             {t(
-              "Learn about the history, mission, vision, and core scientific objectives guiding Paschim Banga Vigyan Mancha, Purulia District Branch.",
+              "Learn about the history, mission, vision, and core scientific objectives guiding Pashchim Banga Vigyan Mancha, Purulia District Branch.",
               "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ, পুরুলিয়া জেলা শাখার ইতিহাস, লক্ষ্য, দৃষ্টিভঙ্গি এবং মূল উদ্দেশ্যসমূহ সম্পর্কে বিস্তারিত জানুন।"
             )}
           </p>
@@ -199,7 +199,7 @@ export default function AboutPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <p style={{ fontFamily: "var(--font-body)", fontSize: "1rem", color: "#475569", lineHeight: 1.8 }}>
                   {t(
-                    "Paschim Banga Vigyan Mancha (PBVM) was established in 1986 as the premier people's science organization in West Bengal. It was founded with the dream of creating a rational, progressive society by spreading scientific consciousness and logical reasoning among the masses.",
+                    "Pashchim Banga Vigyan Mancha (PBVM) was established in 1986 as the premier people's science organization in West Bengal. It was founded with the dream of creating a rational, progressive society by spreading scientific consciousness and logical reasoning among the masses.",
                     "১৯৮৬ সালে পশ্চিমবঙ্গে বিজ্ঞান সচেতনতা ও যুক্তিবাদী দৃষ্টিভঙ্গির প্রসার ঘটিয়ে একটি প্রগতিশীল সমাজ গঠনের স্বপ্ন নিয়ে পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ (PBVM) প্রতিষ্ঠিত হয়।"
                   )}
                 </p>

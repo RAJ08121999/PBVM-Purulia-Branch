@@ -211,7 +211,7 @@ export default function ContactPage() {
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="Paschim Banga Vigyan Mancha Office Location"
+                  title="Pashchim Banga Vigyan Mancha Office Location"
                 />
               </div>
 

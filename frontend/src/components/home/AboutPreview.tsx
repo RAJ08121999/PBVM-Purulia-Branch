@@ -114,7 +114,7 @@ export const AboutPreview = () => {
               }}
             >
               {t(
-                "Paschim Banga Vigyan Mancha (PBVM), Purulia District Branch, is a non-governmental people's science organization. We work tirelessly to propagate scientific logic, eradicate deep-rooted superstitions, and protect local biodiversity.",
+                "Pashchim Banga Vigyan Mancha (PBVM), Purulia District Branch, is a non-governmental people's science organization. We work tirelessly to propagate scientific logic, eradicate deep-rooted superstitions, and protect local biodiversity.",
                 "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ, পুরুলিয়া জেলা শাখা, একটি অলাভজনক গণ-বিজ্ঞান সংগঠন। আমরা বিজ্ঞানভিত্তিক দৃষ্টিভঙ্গি প্রচার করতে, সমাজ থেকে কুসংস্কার দূর করতে এবং স্থানীয় জীববৈচিত্র্য রক্ষা করতে অক্লান্ত পরিশ্রম করি।"
               )}
             </p>

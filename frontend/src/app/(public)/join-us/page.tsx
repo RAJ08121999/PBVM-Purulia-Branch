@@ -326,7 +326,7 @@ export default function JoinUsPage() {
         <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(to right,rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.04) 1px,transparent 1px)", backgroundSize: "40px 40px", pointerEvents: "none" }} />
         <div className="page-container" style={{ position: "relative", zIndex: 1, textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
           <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(1.8rem,4.5vw,3rem)", fontWeight: 800, color: "#ffffff", marginBottom: "1rem", lineHeight: 1.2 }}>
-            {t("Join Paschim Banga Vigyan Mancha", "বিজ্ঞান মঞ্চে যোগদান করুন")}
+            {t("Join Pashchim Banga Vigyan Mancha", "বিজ্ঞান মঞ্চে যোগদান করুন")}
           </h1>
           <p style={{ fontFamily: "var(--font-body)", fontSize: "1rem", color: "rgba(255,255,255,0.78)", maxWidth: "600px", margin: "0 auto", lineHeight: 1.75 }}>
             {t(
@@ -354,15 +354,17 @@ export default function JoinUsPage() {
 
                 <div className="relative z-10 p-7 sm:p-8">
                   {/* Header */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                  <div
+                    style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+                    className="flex items-center gap-3 mb-6">
+                    <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0" style={{ marginTop: "-1rem" }}>
                       <UserPlus className="h-5 w-5 text-teal-400" />
                     </div>
                     <div>
                       <h3 className="font-heading text-base font-black text-white leading-tight" style={{ color: "white", }}>
                         {t("Why Join PBVM?", "কেন বিজ্ঞান মঞ্চে যোগ দেবেন?")}
                       </h3>
-                      <p className="font-body text-xs text-white/60 mt-0.5" style={{ marginBottom: "1rem" }}>
+                      <p className="font-body text-xs text-white/60 mt-0.5" style={{ marginBottom: "1rem", display: "flex", justifyContent: "center", alignItems: "center" }}>
                         {t("Purulia District Branch", "পুরুলিয়া জেলা শাখা")}
                       </p>
                     </div>
@@ -1194,7 +1196,7 @@ export default function JoinUsPage() {
                             render={({ field }) => (
                               <FormItem>
                                 <FormLabel className="font-heading text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300" style={{ paddingTop: "1.5rem", display: "inline-block" }}>
-                                  {t("Why do you want to join Paschim Banga Vigyan Mancha?", "আপনি কেন পশ্চিমবঙ্গ বিজ্ঞান মঞ্চে যোগ দিতে চান?")}
+                                  {t("Why do you want to join Pashchim Banga Vigyan Mancha?", "আপনি কেন পশ্চিমবঙ্গ বিজ্ঞান মঞ্চে যোগ দিতে চান?")}
                                 </FormLabel>
                                 <FormDescription className="font-body text-xxs text-zinc-400">
                                   {t("Write a brief description of your motivation to join our district branch.", "বিজ্ঞান মঞ্চের এই জেলা শাখায় আপনার যোগদানের ইচ্ছা বা অনুপ্রেরণা সংক্ষেপে লিখুন।")}

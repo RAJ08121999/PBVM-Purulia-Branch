@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { Toaster } from "@/components/ui/sonner";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 
 // ─── Brand Fonts (SRS Section 5.9) ────────────────────────
@@ -34,14 +34,14 @@ const notoSansBengali = Noto_Sans_Bengali({
 // ─── Site Metadata ─────────────────────────────────────────
 export const metadata: Metadata = {
   title: {
-    default: "PBVM Purulia | Paschim Banga Vigyan Mancha",
+    default: "PBVM Purulia | Pashchim Banga Vigyan Mancha",
     template: "%s | PBVM Purulia",
   },
   description:
-    "Official website of Paschim Banga Vigyan Mancha (West Bengal Vigyan Mancha), Purulia District Branch — Promoting Scientific Temperament for a Rational and Progressive Society.",
+    "Official website of Pashchim Banga Vigyan Mancha (West Bengal Vigyan Mancha), Purulia District Branch — Promoting Scientific Temperament for a Rational and Progressive Society.",
   keywords: [
     "PBVM Purulia",
-    "Paschim Banga Vigyan Mancha",
+    "Pashchim Banga Vigyan Mancha",
     "West Bengal Vigyan Mancha",
     "science",
     "Purulia",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     siteName: "PBVM Purulia",
-    title: "PBVM Purulia | Paschim Banga Vigyan Mancha",
+    title: "PBVM Purulia | Pashchim Banga Vigyan Mancha",
     description:
       "Promoting Scientific Temperament for a Rational and Progressive Society.",
   },

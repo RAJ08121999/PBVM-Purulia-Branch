@@ -71,7 +71,7 @@ export const Footer = () => {
             </div>
             <p style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", color: "#A1A1AA", lineHeight: 1.6, margin: 0 }}>
               {t(
-                "Paschim Banga Vigyan Mancha (West Bengal Science Forum) Purulia Branch is dedicated to promoting scientific temperament, rational thinking, and eradicating superstitions to build a progressive society.",
+                "Pashchim Banga Vigyan Mancha (West Bengal Science Forum) Purulia Branch is dedicated to promoting scientific temperament, rational thinking, and eradicating superstitions to build a progressive society.",
                 "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ পুরুলিয়া জেলা শাখা বিজ্ঞান মানসিকতা ও যুক্তিবাদী চিন্তাধারার প্রসার ঘটাতে এবং একটি প্রগতিশীল সমাজ গড়ে তোলার লক্ষ্যে কুসংস্কার দূর করতে নিয়োজিত।"
               )}
             </p>

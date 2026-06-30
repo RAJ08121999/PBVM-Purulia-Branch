@@ -4,7 +4,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green)](https://www.mongodb.com/)
 
-Official website for **Paschim Banga Vigyan Mancha (West Bengal Vigyan Mancha), Purulia District Branch** — a modern, bilingual (Bengali/English), mobile-first web platform.
+Official website for **Pashchim Banga Vigyan Mancha (West Bengal Vigyan Mancha), Purulia District Branch** — a modern, bilingual (Bengali/English), mobile-first web platform.
 
 ---
 

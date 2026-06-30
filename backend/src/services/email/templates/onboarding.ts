@@ -18,7 +18,7 @@ export function onboardingTemplate({
   loginUrl,
 }: OnboardingTemplateData) {
   const subject =
-    "Welcome to Paschim Banga Vigyan Mancha | Your Membership is Active";
+    "Welcome to Pashchim Banga Vigyan Mancha | Your Membership is Active";
 
   const html = emailLayout({
     title: "Welcome to the PBVM Family!",
@@ -32,7 +32,7 @@ export function onboardingTemplate({
       <p>
         We are delighted to welcome you as a
         <strong>${membershipType}</strong> of
-        <strong>Paschim Banga Vigyan Mancha, Purulia District Branch.</strong>
+        <strong>Pashchim Banga Vigyan Mancha, Purulia District Branch.</strong>
       </p>
 
       <p>
@@ -184,7 +184,7 @@ export function onboardingTemplate({
 
       <p>
         Regards,<br>
-        <strong>Paschim Banga Vigyan Mancha</strong><br>
+        <strong>Pashchim Banga Vigyan Mancha</strong><br>
         Purulia District Branch
       </p>
     `,
@@ -216,10 +216,10 @@ Your PBVM Membership ID Card has been attached with this email.
 
 Please change your password after your first login.
 
-Welcome to Paschim Banga Vigyan Mancha!
+Welcome to Pashchim Banga Vigyan Mancha!
 
 Regards,
-Paschim Banga Vigyan Mancha
+Pashchim Banga Vigyan Mancha
 Purulia District Branch
 `;
 

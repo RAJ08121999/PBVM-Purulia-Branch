@@ -10,7 +10,7 @@ export function applicationRejectedTemplate({
   rejectionReason,
 }: ApplicationRejectedData) {
   const subject =
-    "Update on Your Membership Application | Paschim Banga Vigyan Mancha";
+    "Update on Your Membership Application | Pashchim Banga Vigyan Mancha";
 
   const html = emailLayout({
     title: "Membership Application Update",
@@ -19,7 +19,7 @@ export function applicationRejectedTemplate({
 
       <p>
         Thank you for your interest in becoming a member of
-        <strong>Paschim Banga Vigyan Mancha, Purulia District Branch</strong>.
+        <strong>Pashchim Banga Vigyan Mancha, Purulia District Branch</strong>.
       </p>
 
       <p>
@@ -28,9 +28,8 @@ export function applicationRejectedTemplate({
         could not be approved at this time.
       </p>
 
-      ${
-        rejectionReason
-          ? `
+      ${rejectionReason
+        ? `
       <div
         style="
           margin:30px 0;
@@ -45,7 +44,7 @@ export function applicationRejectedTemplate({
         ${rejectionReason}
       </div>
       `
-          : ""
+        : ""
       }
 
       <p>
@@ -83,7 +82,7 @@ export function applicationRejectedTemplate({
 
       <p>
         Regards,<br>
-        <strong>Paschim Banga Vigyan Mancha</strong><br>
+        <strong>Pashchim Banga Vigyan Mancha</strong><br>
         Purulia District Branch
       </p>
     `,
@@ -92,22 +91,21 @@ export function applicationRejectedTemplate({
   const text = `
 Dear ${applicantName},
 
-Thank you for applying to Paschim Banga Vigyan Mancha, Purulia District Branch.
+Thank you for applying to Pashchim Banga Vigyan Mancha, Purulia District Branch.
 
 After careful review, we regret to inform you that your membership application could not be approved at this time.
 
-${
-  rejectionReason
-    ? `Reason:\n${rejectionReason}\n`
-    : ""
-}
+${rejectionReason
+      ? `Reason:\n${rejectionReason}\n`
+      : ""
+    }
 
 You are welcome to apply again in the future after resolving the above issue.
 
 If you have any questions, please contact the Purulia District Office.
 
 Regards,
-Paschim Banga Vigyan Mancha
+Pashchim Banga Vigyan Mancha
 Purulia District Branch
 `;
 

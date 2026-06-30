@@ -21,7 +21,7 @@ export function passwordResetTemplate({
 
       <p>
         We received a request to reset the password for your
-        <strong>Paschim Banga Vigyan Mancha</strong> account.
+        <strong>Pashchim Banga Vigyan Mancha</strong> account.
       </p>
 
       <p>
@@ -88,7 +88,7 @@ export function passwordResetTemplate({
 
       <p>
         Regards,<br>
-        <strong>Paschim Banga Vigyan Mancha</strong><br>
+        <strong>Pashchim Banga Vigyan Mancha</strong><br>
         Purulia District Branch
       </p>
     `,
@@ -108,7 +108,7 @@ This link expires in ${expiresIn}.
 If you did not request this password reset, simply ignore this email.
 
 Regards,
-Paschim Banga Vigyan Mancha
+Pashchim Banga Vigyan Mancha
 Purulia District Branch
 `;
 

@@ -125,7 +125,7 @@ export default function ActivitiesPage() {
           </h1>
           <p style={{ fontFamily: "var(--font-body)", fontSize: "1rem", color: "rgba(255,255,255,0.78)", maxWidth: "600px", margin: "0 auto", lineHeight: 1.75 }}>
             {t(
-              "Explore details about the 10 core domains where PBVM Purulia active volunteers work to make science simple and functional for every citizen.",
+              "Explore details about the 10 core domains where Pashchim Banga Vigyan Mancha Purulia active volunteers work to make science simple and functional for every citizen.",
               "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ পুরুলিয়া শাখার সক্রিয় স্বেচ্ছাসেবক দল যে ১০টি ক্ষেত্রে দৈনন্দিন জীবনে বিজ্ঞানকে সহজ ও কার্যকরী করতে কাজ করে, তার বিস্তারিত জানুন।"
             )}
           </p>
