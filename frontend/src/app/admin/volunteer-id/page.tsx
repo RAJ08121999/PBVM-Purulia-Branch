@@ -136,7 +136,7 @@ export default function VolunteerIDCardGenerator() {
         </div>
 
         {/* Dynamic Panels */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "3rem", alignItems: "flex-start" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))", gap: "3rem", alignItems: "flex-start", width: "100%" }}>
           {/* Card Config Form */}
           <div className="card" style={{ padding: "2rem", background: "#ffffff" }}>
             <h3 style={{ fontSize: "1.2rem", color: "var(--color-deep-blue)", marginBottom: "1.5rem", fontWeight: 700 }}>
