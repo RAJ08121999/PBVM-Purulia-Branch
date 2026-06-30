@@ -356,3 +356,29 @@ export const deleteMembership = async (req: AuthRequest, res: Response): Promise
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// @desc    Get volunteer details by volunteerId (public, for QR code verification)
+// @route   GET /api/membership/volunteer/:volunteerId
+// @access  Public
+export const getVolunteerByVolunteerId = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { volunteerId } = req.params;
+    const membership = await Membership.findOne({
+      volunteerId,
+      membershipType: "volunteer",
+      status: "approved",
+    }).select(
+      "fullName photo address district state phoneNumber email bloodGroup volunteerId badgeLevel areasOfInterest availability timeContribution skills emergencyContact approvedAt"
+    );
+
+    if (!membership) {
+      res.status(404).json({ success: false, message: "Volunteer not found" });
+      return;
+    }
+
+    res.json({ success: true, volunteer: membership });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+

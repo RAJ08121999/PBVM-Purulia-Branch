@@ -83,6 +83,10 @@ export const publicApi = {
     api.post("/membership", data, {
       headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : undefined,
     }),
+
+  // Volunteer Profile (public, for QR code verification)
+  getVolunteerById: (volunteerId: string) =>
+    api.get(`/membership/volunteer/${volunteerId}`),
 };
 
 // ─── Admin API helpers ────────────────────────────────────

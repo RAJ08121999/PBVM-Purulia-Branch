@@ -5,6 +5,7 @@ import {
   updateMembershipStatus,
   exportMemberships,
   deleteMembership,
+  getVolunteerByVolunteerId,
 } from "../controllers/membership.controller";
 import { authenticate } from "../middleware/auth.middleware";
 import { requireAdmin } from "../middleware/rbac.middleware";
@@ -12,8 +13,9 @@ import { upload } from "../middleware/upload.middleware";
 
 const router = Router();
 
-// Public submission route
+// Public routes
 router.post("/", upload.single("photo"), submitMembership);
+router.get("/volunteer/:volunteerId", getVolunteerByVolunteerId);
 
 // Admin restricted routes
 router.get("/admin", authenticate, requireAdmin, getMemberships);
@@ -22,3 +24,4 @@ router.put("/:id/status", authenticate, requireAdmin, updateMembershipStatus);
 router.delete("/admin/:id", authenticate, requireAdmin, deleteMembership);
 
 export default router;
+
