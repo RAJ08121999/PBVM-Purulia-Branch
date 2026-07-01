@@ -36,28 +36,32 @@ export async function sendEmail({
 
   const recipients = Array.isArray(to) ? to : [to];
 
+  const payload:any = {
+    sender:{
+      name: senderName,
+      email: senderEmail,
+    },
+    to: recipients,
+    subject,
+    htmlContent: html,
+    textContent: text,
+  };
+
+//only send attachments if present
+if(attachments.length > 0){
+  payload.attachment = attachments.map((file)=>({
+    name: file.name,
+    content: file.content,
+  }));
+}
   try {
-    await brevo.transactionalEmails.sendTransacEmail({
-      sender: {
-        name: senderName,
-        email: senderEmail,
-      },
+    await brevo.transactionalEmails.sendTransacEmail(payload);
 
-      to: recipients,
-
-      subject,
-
-      htmlContent: html,
-
-      textContent: text,
-
-      attachment: attachments.map((file) => ({
-        name: file.name,
-        content: file.content,
-      })),
-    });
-
-    console.log(`✅ Email sent successfully to ${recipients.map((r) => r.email).join(", ")}`);
+    console.log(
+      `✅ Email sent successfully to ${recipients
+        .map((r) => r.email)
+        .join(", ")}`
+    );
   } catch (error) {
     console.error("❌ Brevo Email Error:", error);
     throw error;

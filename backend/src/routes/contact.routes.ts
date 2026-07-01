@@ -3,6 +3,7 @@ import {
   submitContact,
   getContactInquiries,
   updateContactStatus,
+  replyToInquiry,
   exportContactInquiries,
   deleteContactInquiry,
 } from "../controllers/contact.controller";
@@ -18,6 +19,7 @@ router.post("/", submitContact);
 router.get("/admin", authenticate, requireAdmin, getContactInquiries);
 router.get("/export", authenticate, requireAdmin, exportContactInquiries);
 router.put("/:id/status", authenticate, requireAdmin, updateContactStatus);
+router.post("/:id/reply", authenticate, requireAdmin, replyToInquiry);
 router.delete("/admin/:id", authenticate, requireAdmin, deleteContactInquiry);
 
 export default router;

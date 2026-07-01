@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import Contact from "../models/Contact.model";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { sendAdminNotification } from "../config/email";
+import { sendEmail } from "../services/email";
+import { contactReplyTemplate } from "../services/email/templates/contactReply";
 
 // Helper to build CSV text
 const jsonToCsv = (headers: string[], rows: any[][]): string => {
@@ -116,6 +118,67 @@ export const updateContactStatus = async (req: AuthRequest, res: Response): Prom
     res.json({ success: true, contact });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Reply to a contact inquiry
+// @route   POST /api/contact/:id/reply
+// @access  Private (Admin)
+export const replyToInquiry = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const { subject, message } = req.body;
+
+    if (!subject || !message) {
+      res.status(400).json({
+        success: false,
+        message: "Subject and message are required.",
+      });
+      return;
+    }
+
+    const inquiry = await Contact.findById(req.params.id);
+
+    if (!inquiry) {
+      res.status(404).json({
+        success: false,
+        message: "Inquiry not found.",
+      });
+      return;
+    }
+
+    await sendEmail({
+      to: {
+        email: inquiry.email,
+        name: inquiry.name,
+      },
+      subject,
+    
+      html: contactReplyTemplate({
+        recipientName: inquiry.name,
+        message,
+      }),
+    
+      text: message,
+    });
+
+    inquiry.status = "reviewed";
+
+    await inquiry.save();
+
+    res.json({
+      success: true,
+      message: "Reply sent successfully.",
+    });
+  } catch (error: any) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 

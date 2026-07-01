@@ -1,21 +1,23 @@
 interface EmailLayoutOptions {
   title: string;
   content: string;
+  preheader?: string;
 }
 
 export function emailLayout({
   title,
   content,
+  preheader = "",
 }: EmailLayoutOptions): string {
   const year = new Date().getFullYear();
 
   const logo =
     process.env.LOGO_URL ||
-    "https://pbvmpurulia.org/logo.png";
+    "https://pbvm-purulia-branch.vercel.app/logo.png";
 
   const website =
     process.env.FRONTEND_URL ||
-    "https://pbvmpurulia.org";
+    "https://pbvm-purulia-branch.vercel.app";
 
   return `
   <!DOCTYPE html>
@@ -36,6 +38,21 @@ export function emailLayout({
   font-family:Arial,Helvetica,sans-serif;
   color:#111827;
   ">
+
+  <div
+  style="
+    display:none!important;
+    visibility:hidden;
+    opacity:0;
+    color:transparent;
+    height:0;
+    width:0;
+    overflow:hidden;
+    mso-hide:all;
+  "
+>
+  ${preheader}
+</div>
   
   <table
   width="100%"
@@ -71,15 +88,37 @@ export function emailLayout({
   "
   >
   
-  <img
-  src="${logo}"
-  alt="PBVM"
-  width="90"
-  style="
-  display:block;
-  margin-bottom:18px;
-  "
-  />
+  <table
+  role="presentation"
+  cellpadding="0"
+  cellspacing="0"
+  border="0"
+  style="margin:0 auto 22px auto;"
+>
+  <tr>
+    <td
+      align="center"
+      valign="middle"
+      width="120"
+      height="120"
+      style="
+        background:#ffffff;
+        border-radius:60px;
+        box-shadow:0 4px 12px rgba(0,0,0,.18);
+      "
+    >
+      <img
+        src="${logo}"
+        alt="PBVM Logo"
+        width="82"
+        style="
+          display:block;
+          border:0;
+        "
+      />
+    </td>
+  </tr>
+</table>
   
   <h1
   style="
@@ -184,7 +223,7 @@ export function emailLayout({
   >
   
   <p style="margin:0 0 12px 0;">
-  This email was sent automatically by the
+  This email was sent by the
   <strong>Pashchim Banga Vigyan Mancha, Purulia District Branch</strong>.
   </p>
   

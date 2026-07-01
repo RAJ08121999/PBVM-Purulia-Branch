@@ -145,12 +145,25 @@ export const adminApi = {
   // Contact Inquiries
   getContactInquiries: (params?: { status?: string; page?: number; limit?: number }) =>
     api.get("/contact/admin", { params }),
+  
   updateContactStatus: (id: string, status: ContactStatus | string) =>
     api.put(`/contact/${id}/status`, { status: status.toLowerCase() }),
-  deleteContactInquiry: (id: string) => api.delete(`/contact/admin/${id}`),
+  
+  replyToContactInquiry: (
+    id: string,
+    subject: string,
+    message: string
+  ) =>
+    api.post(`/contact/${id}/reply`, {
+      subject,
+      message,
+    }),
+  
+  deleteContactInquiry: (id: string) =>
+    api.delete(`/contact/admin/${id}`),
+  
   exportContactInquiries: () =>
     api.get("/contact/export", { responseType: "blob" }),
-
   // Memberships
   getMemberships: (params?: { status?: string; page?: number; limit?: number }) =>
     api.get("/membership/admin", { params }),

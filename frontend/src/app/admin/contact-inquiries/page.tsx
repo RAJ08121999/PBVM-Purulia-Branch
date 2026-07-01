@@ -6,6 +6,16 @@ import { MessageSquare, Trash2, ArrowLeft, Download, Eye, X, Check } from "lucid
 import Link from "next/link";
 import { adminApi } from "@/lib/api";
 import type { ContactStatus } from "@/types";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ContactInquiry {
   _id: string;
@@ -28,6 +38,11 @@ export default function AdminContactInquiries() {
   
   // View Modal State
   const [selectedInquiry, setSelectedInquiry] = useState<ContactInquiry | null>(null);
+  const [showReplyModal, setShowReplyModal] = useState(false);
+  const [replySubject, setReplySubject] = useState("");
+  const [replyMessage, setReplyMessage] = useState("");
+  const [sendingReply, setSendingReply] = useState(false);
+  const [replyInquiry, setReplyInquiry] = useState<ContactInquiry | null>(null);
 
   const fetchInquiries = useCallback(async () => {
     try {
@@ -87,6 +102,44 @@ export default function AdminContactInquiries() {
     } catch (error) {
       console.error("[DELETE INQUIRY ERROR]", error);
       toast.error("Failed to delete inquiry");
+    }
+  };
+
+  const handleSendReply = async () => {
+    if (!replyInquiry) return;
+  
+    if (!replySubject.trim() || !replyMessage.trim()) {
+      toast.error("Subject and message are required.");
+      return;
+    }
+  
+    try {
+      setSendingReply(true);
+  
+      const res = await adminApi.replyToContactInquiry(
+        replyInquiry._id,
+        replySubject,
+        replyMessage
+      );
+  
+      if (res.data.success) {
+        toast.success("Reply sent successfully.");
+  
+        setShowReplyModal(false);
+        setReplyInquiry(null);
+        setReplySubject("");
+        setReplyMessage("");
+  
+        // Optional: automatically mark as reviewed
+        if (replyInquiry.status !== "reviewed") {
+          await handleStatusUpdate(replyInquiry._id, "reviewed");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to send reply.");
+    } finally {
+      setSendingReply(false);
     }
   };
 
@@ -309,18 +362,178 @@ export default function AdminContactInquiries() {
                       <Check size={18} /> Mark as Reviewed
                     </button>
                   )}
-                  <a
-                    href={`mailto:${selectedInquiry.email}`}
+                  <button
+                    onClick={() => {
+                      setReplyInquiry(selectedInquiry);
+
+                      setReplySubject("Re: Your Inquiry to PBVM Purulia");
+
+                      setReplyMessage("");
+
+                      setSelectedInquiry(null); // closes the details modal
+                      setShowReplyModal(true);
+                    }}
                     className="btn btn-primary"
-                    style={{ flex: 1, borderRadius: "var(--radius-md)", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}
+                    style={{
+                      flex: 1,
+                      borderRadius: "var(--radius-md)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "0.5rem",
+                    }}
                   >
-                    Reply via Email
-                  </a>
+                    Reply
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         )}
-      </div>
+      
+      <Dialog open={showReplyModal} onOpenChange={setShowReplyModal}>
+      <DialogContent
+        className="sm:max-w-2xl"
+        style={{
+          width: "95vw",
+          maxWidth: "760px",
+          maxHeight: "85vh",
+          padding: 0,
+          borderRadius: "18px",
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+          <DialogHeader
+            style={{
+              padding: "1.5rem 2rem",
+              borderBottom: "1px solid #e5e7eb",
+              flexShrink: 0,
+            }}
+          >
+            <DialogTitle
+              style={{
+                fontSize: "1.6rem",
+                fontWeight: 700,
+                color: "var(--color-deep-blue)",
+              }}
+            >
+              Reply to Inquiry
+            </DialogTitle>
+          </DialogHeader>
+
+          <div
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              padding: "1.5rem 2rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1.5rem",
+            }}
+          >
+            <div>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: ".45rem",
+                  fontWeight: 600,
+                  color: "#334155",
+                  fontSize: ".92rem",
+                }}
+              >
+                To
+              </label>
+
+              <Input
+                style={{
+                  height: "46px",
+                  borderRadius: "10px",
+                }}
+                value={replyInquiry?.email ?? ""}
+                disabled
+              />
+            </div>
+
+            <div>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: ".45rem",
+                  fontWeight: 600,
+                  color: "#334155",
+                  fontSize: ".92rem",
+                }}
+              >
+                Subject
+              </label>
+
+              <Input
+                style={{
+                  height: "46px",
+                  borderRadius: "10px",
+                }}
+                value={replySubject}
+                onChange={(e) => setReplySubject(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: ".45rem",
+                  fontWeight: 600,
+                  color: "#334155",
+                  fontSize: ".92rem",
+                }}
+              >
+                Message
+              </label>
+
+              <Textarea
+                rows={8}
+                style={{
+                  padding: "1rem",
+                  borderRadius: "12px",
+                  resize: "vertical",
+                  lineHeight: 1.7,
+                }}
+                value={replyMessage}
+                onChange={(e) => setReplyMessage(e.target.value)}
+              />
+            </div>
+
+          </div>
+
+          <DialogFooter
+            style={{
+              padding: "1.25rem 2rem",
+              borderTop: "1px solid #e5e7eb",
+              flexShrink: 0,
+            }}
+          >
+
+            <button
+              className="btn btn-secondary"
+              onClick={() => setShowReplyModal(false)}
+            >
+              Cancel
+            </button>
+
+            <button
+              className="btn btn-primary"
+              onClick={handleSendReply}
+              disabled={sendingReply}
+            >
+              {sendingReply ? "Sending..." : "Send Reply"}
+            </button>
+
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+    </div>
   );
 }
