@@ -3,14 +3,45 @@ import path from "path";
 import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 
+const chromiumArgs = [
+  "--no-sandbox",
+  "--disable-setuid-sandbox",
+  "--disable-dev-shm-usage",
+  "--disable-gpu",
+  "--disable-extensions",
+  "--disable-background-networking",
+  "--disable-default-apps",
+  "--disable-sync",
+  "--metrics-recording-only",
+  "--disable-features=Translate,BackForwardCache",
+];
+
+const getChromeExecutablePath = (): string | undefined => {
+  const candidates = [
+    process.env.CHROME_PATH,
+    process.env.CHROMIUM_PATH,
+    process.env.PUPPETEER_EXECUTABLE_PATH,
+    path.join(process.env.PROGRAMFILES || "", "Google", "Chrome", "Application", "chrome.exe"),
+    path.join(process.env["PROGRAMFILES(X86)"] || "", "Google", "Chrome", "Application", "chrome.exe"),
+    path.join(process.env.LOCALAPPDATA || "", "Google", "Chrome", "Application", "chrome.exe"),
+    path.join(process.env.PROGRAMFILES || "", "Microsoft", "Edge", "Application", "msedge.exe"),
+    path.join(process.env["PROGRAMFILES(X86)"] || "", "Microsoft", "Edge", "Application", "msedge.exe"),
+    path.join(process.env.LOCALAPPDATA || "", "Microsoft", "Edge", "Application", "msedge.exe"),
+  ];
+
+  return candidates.find((candidate): candidate is string => {
+    return Boolean(candidate) && fs.existsSync(candidate as string);
+  });
+};
+
 export interface VolunteerCardData {
   volunteerId: string;
 }
 
 const resolveExecutablePath = async (): Promise<string | undefined> => {
-  const envExecutable = process.env.CHROME_PATH || process.env.CHROMIUM_PATH;
-  if (envExecutable && fs.existsSync(envExecutable)) {
-    return envExecutable;
+  const explicitExecutable = getChromeExecutablePath();
+  if (explicitExecutable) {
+    return explicitExecutable;
   }
 
   try {
@@ -20,21 +51,6 @@ const resolveExecutablePath = async (): Promise<string | undefined> => {
     }
   } catch (error: any) {
     console.warn("⚠️ chromium.executablePath() failed:", error?.message || error);
-  }
-
-  const candidates = [
-    path.join(process.env.LOCALAPPDATA || "", "Google\\Chrome\\Application\\chrome.exe"),
-    path.join(process.env.PROGRAMFILES || "", "Google\\Chrome\\Application\\chrome.exe"),
-    path.join(process.env["PROGRAMFILES(X86)"] || "", "Google\\Chrome\\Application\\chrome.exe"),
-    path.join(process.env.LOCALAPPDATA || "", "Microsoft\\Edge\\Application\\msedge.exe"),
-    path.join(process.env.PROGRAMFILES || "", "Microsoft\\Edge\\Application\\msedge.exe"),
-    path.join(process.env["PROGRAMFILES(X86)"] || "", "Microsoft\\Edge\\Application\\msedge.exe"),
-  ];
-
-  for (const candidate of candidates) {
-    if (candidate && fs.existsSync(candidate)) {
-      return candidate;
-    }
   }
 
   return undefined;
@@ -49,7 +65,7 @@ export const generateVolunteerIdCard = async (
 
   const launchOptions: any = {
     headless: true,
-    args: chromium.args,
+    args: chromiumArgs,
   };
 
   if (executablePath) {
@@ -67,7 +83,8 @@ export const generateVolunteerIdCard = async (
     const page = await browser.newPage();
 
     await page.goto(printUrl, {
-      waitUntil: "domcontentloaded",
+      waitUntil: "networkidle0",
+      timeout: 60000,
     });
 
     // Optional: emulate print CSS
@@ -92,7 +109,7 @@ export const generateVolunteerIdCard = async (
       },
     });
 
-    return Buffer.from(pdf);
+    return Buffer.isBuffer(pdf) ? pdf : Buffer.from(pdf);
   } finally {
     await browser.close();
   }
