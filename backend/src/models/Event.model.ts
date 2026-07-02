@@ -10,6 +10,8 @@ export interface IEvent extends Document {
   registrationLink?: string;
   gallery: string[];
   status: "upcoming" | "past";
+  announcementEmailSent?: boolean;
+  reminderEmailSent?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -25,6 +27,8 @@ const EventSchema = new Schema<IEvent>(
     registrationLink: { type: String },
     gallery: [{ type: String }],
     status: { type: String, enum: ["upcoming", "past"], default: "upcoming" },
+    announcementEmailSent: { type: Boolean, default: false },
+    reminderEmailSent: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

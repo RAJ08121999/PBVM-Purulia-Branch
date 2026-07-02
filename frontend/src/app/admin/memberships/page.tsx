@@ -446,7 +446,7 @@ export default function AdminMemberships() {
                   <div>
                     <h5 style={{ margin: "0 0 0.5rem 0", fontSize: "0.8rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Contact Info</h5>
                     <div style={{ fontSize: "0.9rem", color: "var(--color-dark-gray)", lineHeight: 1.7 }}>
-                      <div><strong>Email:</strong> <a href={`mailto:${selectedMembership.email}`} style={{ color: "var(--color-deep-blue)" }}>{selectedMembership.email}</a></div>
+                      <div><strong>Email:</strong> {selectedMembership.email}</div>
                       <div><strong>Phone:</strong> <a href={`tel:${selectedMembership.phoneNumber}`} style={{ color: "var(--color-deep-blue)" }}>{selectedMembership.phoneNumber}</a></div>
                     </div>
                   </div>
@@ -572,13 +572,6 @@ export default function AdminMemberships() {
                       </button>
                     </>
                   )}
-                  <a
-                    href={`mailto:${selectedMembership.email}`}
-                    className="btn btn-primary"
-                    style={{ flex: 1, borderRadius: "var(--radius-md)", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}
-                  >
-                    Email Applicant
-                  </a>
                 </div>
               </div>
             </div>

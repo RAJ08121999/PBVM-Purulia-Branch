@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Event from "../models/Event.model";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { handleMultipleUploads } from "../middleware/upload.middleware";
+import { scheduleEventNotifications } from "../services/email/eventNotifications";
 
 const safeParse = (val: any) => {
   if (typeof val === "string") {
@@ -100,6 +101,7 @@ export const createEvent = async (req: AuthRequest, res: Response): Promise<void
     });
 
     await event.save();
+    await scheduleEventNotifications(event);
     res.status(201).json({ success: true, event });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });
@@ -139,6 +141,9 @@ export const updateEvent = async (req: AuthRequest, res: Response): Promise<void
     }
 
     await event.save();
+    if (event.status === "upcoming") {
+      await scheduleEventNotifications(event);
+    }
     res.json({ success: true, event });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });

@@ -18,6 +18,7 @@ import policyRoutes from "./routes/policy.routes";
 import downloadRoutes from "./routes/download.routes";
 import contactRoutes from "./routes/contact.routes";
 import membershipRoutes from "./routes/membership.routes";
+import { initializeEventNotifications } from "./services/email/eventNotifications";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -99,6 +100,7 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 // ─── Start Server ──────────────────────────────────────────
 const startServer = async () => {
   await connectDB();
+  await initializeEventNotifications();
   app.listen(PORT, () => {
     console.log(`✅ PBVM Purulia API running on http://localhost:${PORT}`);
     console.log(`📦 Environment: ${process.env.NODE_ENV}`);
