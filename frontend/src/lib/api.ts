@@ -6,17 +6,29 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 const api = axios.create({
   baseURL: API_URL,
-  headers: { "Content-Type": "application/json" },
   withCredentials: false,
 });
 
-// ─── Request Interceptor: attach JWT ──────────────────────
+// ─── Request Interceptor: attach JWT and set Content-Type ──────────────────────
 api.interceptors.request.use(
   (config) => {
     const token = Cookies.get("pbvm_token");
     if (token) {
+      config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    if (config.data instanceof FormData) {
+      if (config.headers) {
+        delete config.headers["Content-Type"];
+      }
+    } else {
+      config.headers = config.headers || {};
+      if (!config.headers["Content-Type"]) {
+        config.headers["Content-Type"] = "application/json";
+      }
+    }
+
     return config;
   },
   (error) => Promise.reject(error)
@@ -80,9 +92,11 @@ export const publicApi = {
 
   // Membership
   submitMembership: (data: FormData | object) =>
-    api.post("/membership", data, {
-      headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : undefined,
-    }),
+    api.post(
+      "/membership",
+      data,
+      data instanceof FormData ? { headers: { "Content-Type": undefined } } : undefined
+    ),
 
   // Volunteer Profile (public, for QR code verification)
   getVolunteerById: (volunteerId: string) =>

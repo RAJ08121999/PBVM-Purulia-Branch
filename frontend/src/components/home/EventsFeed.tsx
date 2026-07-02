@@ -36,10 +36,11 @@ export const EventsFeed = () => {
           status: "upcoming",
           limit: 3,
         })
-  
-        setEvents(res.data.events)
+
+        setEvents(res.data.events || [])
       } catch (err) {
         console.error("Failed to fetch events:", err)
+        setEvents([])
       } finally {
         setLoading(false)
       }

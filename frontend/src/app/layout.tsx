@@ -69,6 +69,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={cn("h-full", "antialiased", poppins.variable, inter.variable, notoSansBengali.variable, "font-sans", geist.variable)}
     >
       <body className="min-h-full flex flex-col overflow-x-hidden w-full">

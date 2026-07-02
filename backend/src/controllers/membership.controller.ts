@@ -3,6 +3,11 @@ import Membership from "../models/Membership.model";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { sendAdminNotification } from "../config/email";
 import { handleSingleUpload } from "../middleware/upload.middleware";
+import { applicationReceivedTemplate } from "../services/email/templates/applicationReceived";
+import { sendEmail } from "../services/email";
+import { onboardingTemplate } from "../services/email/templates/onboarding";
+import { applicationRejectedTemplate } from "../services/email/templates/applicationRejected";
+import { generateVolunteerIdCard } from "../services/idCard/idCard.service";
 
 const safeParse = (val: any) => {
   if (typeof val === "string") {
@@ -33,6 +38,12 @@ const jsonToCsv = (headers: string[], rows: any[][]): string => {
 // @access  Public
 export const submitMembership = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log("📥 Membership submit request received", {
+      route: "/api/membership",
+      bodyEmail: req.body?.email,
+      membershipType: req.body?.membershipType,
+    });
+
     const {
       membershipType = "member",
       fullName,
@@ -126,6 +137,23 @@ export const submitMembership = async (req: Request, res: Response): Promise<voi
 
     await membership.save();
 
+    const applicantEmail = applicationReceivedTemplate({
+      applicantName: fullName,
+    });
+
+    console.log("📩 Sending application received email to", email);
+    sendEmail({
+      to: {
+        email,
+        name: fullName,
+      },
+      subject: applicantEmail.subject,
+      html: applicantEmail.html,
+      text: applicantEmail.text,
+    }).catch((err) => {
+      console.error("[APPLICATION RECEIVED EMAIL ERROR]", err);
+    });
+
     // Trigger Admin Notification Email asynchronously
     const typeLabel = membershipType === "volunteer" ? "Volunteer" : "General Member";
     const subject = `New ${typeLabel} Application from ${fullName}`;
@@ -202,8 +230,15 @@ export const getMemberships = async (req: AuthRequest, res: Response): Promise<v
 // @desc    Update membership application status
 // @route   PUT /api/membership/:id/status
 // @access  Private (Admin)
+
 export const updateMembershipStatus = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
+    console.log("🔁 Membership status update request received", {
+      route: `/api/membership/${req.params.id}/status`,
+      bodyStatus: req.body?.status,
+      membershipId: req.params.id,
+    });
+
     const { status } = req.body;
     if (status !== "pending" && status !== "approved" && status !== "rejected") {
       res.status(400).json({ success: false, message: "Invalid status" });
@@ -221,25 +256,41 @@ export const updateMembershipStatus = async (req: AuthRequest, res: Response): P
     if (status === "approved" && existing.status !== "approved") {
       updates.approvedAt = new Date();
       updates.approvedBy = req.admin?.id;
-      
-      if (existing.membershipType === "volunteer" && !existing.volunteerId) {
-        // Generate volunteerId: PBVM-PUR-YYYYMMDD-XX
-        const dateStr = updates.approvedAt.toISOString().split("T")[0].replace(/-/g, "");
-        
-        // Count how many volunteers were approved today
-        const startOfDay = new Date();
-        startOfDay.setHours(0, 0, 0, 0);
-        const endOfDay = new Date();
-        endOfDay.setHours(23, 59, 59, 999);
-        
-        const countToday = await Membership.countDocuments({
-          membershipType: "volunteer",
-          status: "approved",
-          approvedAt: { $gte: startOfDay, $lte: endOfDay }
-        });
-        
-        const index = String(countToday + 1).padStart(2, "0");
-        updates.volunteerId = `PBVM-PUR-${dateStr}-${index}`;
+    
+      // Generate ID only once
+      if (!existing.volunteerId) {
+    
+        // Volunteer ID
+        if (existing.membershipType === "volunteer") {
+          const dateStr = updates.approvedAt
+            .toISOString()
+            .split("T")[0]
+            .replace(/-/g, "");
+    
+          const startOfDay = new Date(updates.approvedAt);
+          startOfDay.setHours(0, 0, 0, 0);
+    
+          const endOfDay = new Date(updates.approvedAt);
+          endOfDay.setHours(23, 59, 59, 999);
+    
+          const countToday = await Membership.countDocuments({
+            membershipType: "volunteer",
+            status: "approved",
+            approvedAt: {
+              $gte: startOfDay,
+              $lte: endOfDay,
+            },
+          });
+    
+          const sequence = String(countToday + 1).padStart(2, "0");
+    
+          updates.volunteerId = `PBVM-PUR-${dateStr}-${sequence}`;
+        }
+    
+        // Member ID (temporary)
+        else {
+          updates.volunteerId = Date.now().toString();
+        }
       }
     }
 
@@ -252,6 +303,81 @@ export const updateMembershipStatus = async (req: AuthRequest, res: Response): P
     if (!membership) {
       res.status(404).json({ success: false, message: "Membership application not found" });
       return;
+    }
+
+    const previousStatus = existing.status;
+
+    if ( previousStatus !== status ){
+      if (status === "approved") {
+        console.log("✅ Approval flow started");
+        const memberId = membership.volunteerId!;
+        const onboarding = onboardingTemplate({
+          applicantName: membership.fullName,
+          memberId,
+          membershipType:
+            membership.membershipType === "volunteer"
+              ? "Volunteer"
+              : "Member",
+        });
+        console.log("📄 Generating volunteer ID PDF...");
+
+        let pdf: Buffer | undefined;
+        try {
+          pdf = await generateVolunteerIdCard({
+            volunteerId: membership.volunteerId!,
+          });
+          console.log("PDF generated", pdf.length);
+        } catch (err) {
+          console.warn("⚠️ Volunteer ID PDF generation failed; sending onboarding email without attachment.", err);
+        }
+
+        try {
+          console.log("sending onboarding email...");
+          await sendEmail({
+            to: {
+              email: membership.email,
+              name: membership.fullName,
+            },
+            subject: onboarding.subject,
+            html: onboarding.html,
+            text: onboarding.text,
+            attachments: pdf
+              ? [
+                  {
+                    filename: `${membership.volunteerId}.pdf`,
+                    content: pdf,
+                    contentType: "application/pdf",
+                  },
+                ]
+              : [],
+          });
+          console.log("onboarding email sent successfully");
+        } catch (err) {
+          console.error("❌ ONBOARDING EMAIL ERROR");
+          console.error(err);
+        }
+        
+      }
+      else if (status === "rejected") {
+        const rejected = applicationRejectedTemplate({
+          applicantName: membership.fullName,
+        });
+
+        console.log("📩 Sending rejection email to", membership.email);
+
+        sendEmail({
+          to: {
+            email: membership.email,
+            name: membership.fullName,
+          },
+          subject: rejected.subject,
+          html: rejected.html,
+          text: rejected.text,
+        }).catch((err: unknown) => {
+          console.error("[REJECTION EMAIL ERROR]", err);
+        });
+      }
+  
     }
 
     res.json({ success: true, membership });

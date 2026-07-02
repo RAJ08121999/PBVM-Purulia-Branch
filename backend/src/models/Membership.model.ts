@@ -57,7 +57,11 @@ const MembershipSchema = new Schema<IMembership>(
     // New Fields
     membershipType: { type: String, enum: ["member", "volunteer"], default: "member", required: true },
     bloodGroup: { type: String },
-    volunteerId: { type: String },
+    volunteerId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
     approvedAt: { type: Date },
     approvedBy: { type: Schema.Types.ObjectId, ref: "Admin" },
     badgeLevel: { type: String, enum: ["Curiosity Seeker", "Knowledge Explorer", "Renaissance Leader"], default: "Curiosity Seeker" },

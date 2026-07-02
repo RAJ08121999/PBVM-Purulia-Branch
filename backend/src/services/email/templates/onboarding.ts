@@ -4,21 +4,15 @@ interface OnboardingTemplateData {
   applicantName: string;
   memberId: string;
   membershipType: "Member" | "Volunteer";
-  username: string;
-  temporaryPassword: string;
-  loginUrl: string;
 }
 
 export function onboardingTemplate({
   applicantName,
   memberId,
   membershipType,
-  username,
-  temporaryPassword,
-  loginUrl,
 }: OnboardingTemplateData) {
   const subject =
-    "Welcome to Pashchim Banga Vigyan Mancha | Your Membership is Active";
+    "Welcome to Pashchim Banga Vigyan Mancha, Purulia District Branch";
 
   const html = emailLayout({
     title: "Welcome to the PBVM Family!",
@@ -33,6 +27,8 @@ export function onboardingTemplate({
         We are delighted to welcome you as a
         <strong>${membershipType}</strong> of
         <strong>Pashchim Banga Vigyan Mancha, Purulia District Branch.</strong>
+        Thank you for choosing to be a part of our mission to promote scientific
+        temper, rational thinking and social awareness.
       </p>
 
       <p>
@@ -59,7 +55,7 @@ export function onboardingTemplate({
           </tr>
 
           <tr>
-            <td style="padding:8px 0;"><strong>Member ID</strong></td>
+            <td style="padding:8px 0;"><strong>${membershipType} ID</strong></td>
             <td>${memberId}</td>
           </tr>
 
@@ -70,113 +66,34 @@ export function onboardingTemplate({
         </table>
       </div>
 
-      <div
-        style="
-          margin:30px 0;
-          padding:20px;
-          background:#EFF6FF;
-          border:1px solid #BFDBFE;
-          border-radius:10px;
-        "
-      >
-        <h3 style="margin-top:0;color:#1D4ED8;">
-          Login Credentials
-        </h3>
-
-        <table style="width:100%;font-size:15px;">
-          <tr>
-            <td style="padding:8px 0;"><strong>Username</strong></td>
-            <td>${username}</td>
-          </tr>
-
-          <tr>
-            <td style="padding:8px 0;"><strong>Temporary Password</strong></td>
-            <td>${temporaryPassword}</td>
-          </tr>
-        </table>
-
-        <p style="margin-top:18px;">
-          <a
-            href="${loginUrl}"
-            style="
-              background:#2563EB;
-              color:#ffffff;
-              text-decoration:none;
-              padding:12px 24px;
-              border-radius:8px;
-              display:inline-block;
-              font-weight:bold;
-            "
-          >
-            Login to Your Account
-          </a>
-        </p>
-      </div>
-
-      <div
-        style="
-          margin:30px 0;
-          padding:20px;
-          background:#FEFCE8;
-          border-left:4px solid #EAB308;
-          border-radius:8px;
-        "
-      >
-        <strong>Important Security Notice</strong>
-
-        <ul style="margin-top:12px;">
-          <li>Change your password after your first login.</li>
-          <li>Do not share your login credentials.</li>
-          <li>Keep your Member ID safe for future reference.</li>
-        </ul>
-      </div>
-
-      <div
-        style="
-          margin:30px 0;
-          padding:20px;
-          background:#F8FAFC;
-          border-radius:10px;
-          border:1px solid #E2E8F0;
-        "
-      >
-        <h3 style="margin-top:0;">
-          Your Digital Membership ID Card
-        </h3>
-
-        <p>
-          Your official PBVM Digital Membership ID Card is attached with this email.
-        </p>
-
-        <p>
-          As a newly approved member, your activity level is currently:
-        </p>
-
-        <p style="font-size:18px;font-weight:bold;color:#0F766E;">
-          🌱 Rarely Active Member
-        </p>
-
-        <p>
-          Your activity badge will automatically improve as you participate in
-          events, awareness campaigns, workshops, science exhibitions,
-          volunteer activities, publications and other PBVM programs.
-        </p>
-      </div>
-
       <h3>What happens next?</h3>
 
       <ul>
-        <li>Login using the credentials above.</li>
-        <li>Complete your profile.</li>
-        <li>Join upcoming events.</li>
-        <li>Participate in scientific awareness programmes.</li>
-        <li>Stay connected through your dashboard.</li>
-      </ul>
+        ${
+          membershipType === "Volunteer"
+            ? `
+              <li>Your official PBVM Volunteer Identity Card will be sent to you along with this email.</li>
+            `
+            : `
+              <li>Your membership has been activated successfully. Digital member services will be introduced in future updates.</li>
+            `
+        }
 
-      <p>
-        We sincerely thank you for joining our mission to build a rational,
-        scientific and superstition-free society.
-      </p>
+        <li>
+          We will notify you about upcoming events, workshops, awareness programmes
+          and volunteer activities.
+        </li>
+
+        <li>
+          Additional member services, including an online member portal, will be
+          introduced in the future. We will inform you once they become available.
+        </li>
+
+        <li>
+          We encourage you to actively participate in district activities and help
+          us promote scientific thinking throughout society.
+        </li>
+      </ul>
 
       <p>
         Welcome to the PBVM family!
@@ -190,7 +107,7 @@ export function onboardingTemplate({
     `,
   });
 
-  const text = `
+const text = `
 Dear ${applicantName},
 
 Congratulations!
@@ -203,20 +120,16 @@ ${memberId}
 Role:
 ${membershipType}
 
-Username:
-${username}
+${
+  membershipType === "Volunteer"
+    ? "Your PBVM Volunteer Identity Card is attached with this email."
+    : "Welcome to the PBVM family. Digital member services will be available in future updates."
+}
 
-Temporary Password:
-${temporaryPassword}
+We will keep you informed about upcoming events, awareness programmes,
+workshops and volunteer activities.
 
-Login:
-${loginUrl}
-
-Your PBVM Membership ID Card has been attached with this email.
-
-Please change your password after your first login.
-
-Welcome to Pashchim Banga Vigyan Mancha!
+Thank you for joining the PBVM family.
 
 Regards,
 Pashchim Banga Vigyan Mancha

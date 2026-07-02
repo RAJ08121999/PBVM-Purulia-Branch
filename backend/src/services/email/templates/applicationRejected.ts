@@ -25,7 +25,7 @@ export function applicationRejectedTemplate({
       <p>
         After careful review by the District Executive Committee,
         we regret to inform you that your membership application
-        could not be approved at this time.
+        has not been approved at this time.
       </p>
 
       ${rejectionReason
@@ -49,12 +49,14 @@ export function applicationRejectedTemplate({
 
       <p>
         This decision does not permanently prevent you from becoming
-        a member in the future.
+        a member of the organisation. We encourage you to apply again
+        in the future if you remain interested.
       </p>
 
       <p>
-        If the above issue is resolved, you are welcome to submit a
-        new application at any time.
+        If you wish to become a member in the future, you are welcome
+        to submit a fresh application. Each application is reviewed
+        independently by the District Executive Committee.
       </p>
 
       <div
@@ -69,15 +71,17 @@ export function applicationRejectedTemplate({
         <strong>Need Help?</strong>
 
         <p style="margin-top:10px;">
-          If you believe this decision was made due to missing
-          information or an error, please contact the Purulia
-          District Office.
+          If you believe any important information was missing from your
+          application or you require further clarification, please contact
+          the Purulia District Office.
         </p>
       </div>
 
       <p style="margin-top:35px;">
         We sincerely appreciate your interest in promoting scientific
-        thinking and wish you all the best.
+        temper and rational thinking. Thank you for your willingness to
+        be associated with our organisation, and we wish you every
+        success in your future endeavours.
       </p>
 
       <p>
@@ -100,9 +104,10 @@ ${rejectionReason
       : ""
     }
 
-You are welcome to apply again in the future after resolving the above issue.
+    If you remain interested in joining the organisation, you are
+    welcome to submit a fresh application in the future.
 
-If you have any questions, please contact the Purulia District Office.
+    If you have any questions, please contact the Purulia District Office.
 
 Regards,
 Pashchim Banga Vigyan Mancha

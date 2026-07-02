@@ -1,8 +1,8 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import dotenv from "dotenv";
 import path from "path";
 import { connectDB } from "./config/db";
 import "./config/cloudinary";
@@ -18,8 +18,6 @@ import policyRoutes from "./routes/policy.routes";
 import downloadRoutes from "./routes/download.routes";
 import contactRoutes from "./routes/contact.routes";
 import membershipRoutes from "./routes/membership.routes";
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;

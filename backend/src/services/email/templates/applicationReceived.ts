@@ -8,7 +8,7 @@ export function applicationReceivedTemplate({
   applicantName,
 }: ApplicationReceivedData) {
   const subject =
-    "Application Received | Pashchim Banga Vigyan Mancha, Purulia";
+    "Membership Application Received | Paschim Banga Vigyan Mancha";
 
   const html = emailLayout({
     title: "Application Received",
@@ -16,25 +16,24 @@ export function applicationReceivedTemplate({
       <p>Dear <strong>${applicantName}</strong>,</p>
 
       <p>
-        Thank you for applying to become a member of
-        <strong>Pashchim Banga Vigyan Mancha, Purulia District Branch</strong>.
+        Thank you for your interest in becoming a member of 
+        <strong>Pashchim Banga Vigyan Mancha</strong>,Purulia District Branch. We appreciate the time you took to submit your application and your willingness to contribute towards promoting scientific awareness and rational thinking.
       </p>
 
       <p>
-        We have successfully received your membership application.
+      Your application has been successfully submitted and is now under review by the District Executive Committee. During this process, we verify the information provided and evaluate each application carefully.
       </p>
 
       <p>
-        Your application will now be reviewed by the District Executive Committee.
-        You will receive another email once your application has been approved or rejected.
+      Once the review is complete, you will receive another email informing you whether your application has been approved or declined.
       </p>
 
       <div style="margin:30px 0;padding:16px;background:#F3F4F6;border-left:4px solid #0B3D91;border-radius:6px;">
-        <strong>Application Status:</strong> Under Review
+        <strong>Application Status:</strong> Review Process Started
       </div>
 
       <p>
-        No further action is required from your side at this moment.
+        At this stage, no further action is required from your side. If we need any additional information, we will contact you using this email address.
       </p>
 
       <p>
@@ -51,20 +50,22 @@ export function applicationReceivedTemplate({
   });
 
   const text = `
-Dear ${applicantName},
+    Dear ${applicantName},
 
-Thank you for applying to become a member of Pashchim Banga Vigyan Mancha, Purulia District Branch.
+    Thank you for your interest in becoming a member of Pashchim Banga Vigyan Mancha, Purulia District Branch.
 
-Your application has been received successfully.
+    We have successfully received your membership application.
 
-It will now be reviewed by the District Executive Committee.
+    Your application is now under review by the District Executive Committee.
 
-You will receive another email after the review process is complete.
+    Once the review process is complete, you will receive another email informing you whether your application has been approved or declined.
 
-Regards,
-Pashchim Banga Vigyan Mancha
-Purulia District Branch
-`;
+    No further action is required from your side at this time.
+
+    Regards,
+    Pashchim Banga Vigyan Mancha
+    Purulia District Branch
+    `;
 
   return {
     subject,

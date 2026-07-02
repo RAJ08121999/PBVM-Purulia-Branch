@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { BrevoClient } from "@getbrevo/brevo";
 
 if (!process.env.BREVO_API_KEY) {

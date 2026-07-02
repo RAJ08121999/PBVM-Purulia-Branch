@@ -1,27 +1,28 @@
-import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import { sendEmail } from "../services/email";
 
 dotenv.config();
 
-export const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: Number(process.env.SMTP_PORT) || 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
-
 export const sendAdminNotification = async (subject: string, html: string): Promise<void> => {
+  const recipients = (process.env.ADMIN_EMAIL || process.env.BREVO_SENDER_EMAIL || "")
+    .split(",")
+    .map((email) => email.trim())
+    .filter(Boolean);
+
+  if (recipients.length === 0) {
+    console.warn("[EMAIL] No admin recipient configured; skipping admin notification.");
+    return;
+  }
+
   try {
-    await transporter.sendMail({
-      from: process.env.FROM_EMAIL || '"PBVM Purulia" <noreply@pbvmpurulia.org>',
-      to: process.env.ADMIN_EMAIL,
+    await sendEmail({
+      to: recipients.map((email) => ({ email })),
       subject,
       html,
+      text: html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim(),
     });
   } catch (error) {
     console.error("[EMAIL] Failed to send notification:", error);
+    throw error;
   }
 };
