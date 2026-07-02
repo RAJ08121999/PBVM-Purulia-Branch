@@ -34,6 +34,14 @@ interface EventDetail {
   updatedAt: string
 }
 
+const getAssetUrl = (url?: string) => {
+  if (!url) return ""
+  if (/^https?:\/\//i.test(url)) return url
+
+  const base = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api").replace(/\/api$/, "")
+  return `${base}${url.startsWith("/") ? "" : "/"}${url}`
+}
+
 export default function EventDetailPage({ params }: PageProps) {
   const { language, t } = useLanguage()
   const resolvedParams = React.use(params)
@@ -154,10 +162,18 @@ export default function EventDetailPage({ params }: PageProps) {
           </div>
 
           <div className="hidden lg:flex lg:w-1/3 justify-center lg:justify-end pr-0 lg:pr-8">
-            <div className="h-56 w-56 xl:h-64 xl:w-64 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border-[6px] border-white/30 shadow-[0_0_40px_rgba(0,0,0,0.2)] relative">
-              <span className="text-7xl xl:text-8xl z-10">
-                {event.status === "upcoming" ? "🌟" : "📅"}
-              </span>
+            <div className="h-56 w-56 xl:h-64 xl:w-64 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border-[6px] border-white/30 shadow-[0_0_40px_rgba(0,0,0,0.2)] relative overflow-hidden">
+              {event.gallery?.[0] ? (
+                <img
+                  src={getAssetUrl(event.gallery[0])}
+                  alt={language === "bn" ? event.title.bn : event.title.en}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span className="text-7xl xl:text-8xl z-10">
+                  {event.status === "upcoming" ? "🌟" : "📅"}
+                </span>
+              )}
             </div>
           </div>
         </div>

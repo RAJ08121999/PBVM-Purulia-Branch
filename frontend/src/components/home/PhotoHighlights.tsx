@@ -1,9 +1,10 @@
 "use client"
 
-import React from "react"
+import React, { useEffect, useState } from "react"
 import Link from "next/link"
 import { useLanguage } from "@/context/LanguageContext"
 import { Image as ImageIcon, ArrowRight } from "lucide-react"
+import { publicApi } from "@/lib/api"
 
 interface HighlightItem {
   id: string
@@ -12,12 +13,13 @@ interface HighlightItem {
   categoryEn: string
   categoryBn: string
   svgBg: string
+  imageUrl?: string
 }
 
 export const PhotoHighlights = () => {
   const { t } = useLanguage()
 
-  const items: HighlightItem[] = [
+  const fallbackItems: HighlightItem[] = [
     {
       id: "h-1",
       titleEn: "Annual Science Congress 2026",
@@ -52,6 +54,44 @@ export const PhotoHighlights = () => {
     },
   ]
 
+  const [items, setItems] = useState<HighlightItem[]>(fallbackItems)
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      try {
+        const res = await publicApi.getGallery({ limit: 4 })
+        const images = res.data.images || []
+
+        const galleryItems = images.slice(0, 4).map((image: any, index: number) => ({
+          id: image._id || `${index}`,
+          titleEn: image.caption?.en || "Recent Activity",
+          titleBn: image.caption?.bn || "সাম্প্রতিক কর্মসূচি",
+          categoryEn: image.category || "Activity Photo",
+          categoryBn: image.category || "কর্মসূচির ছবি",
+          svgBg: fallbackItems[index % fallbackItems.length].svgBg,
+          imageUrl: image.fileUrl,
+        }))
+
+        if (galleryItems.length > 0) {
+          setItems(galleryItems)
+        }
+      } catch (error) {
+        console.error("Failed to load recent activity photos", error)
+        setItems(fallbackItems)
+      }
+    }
+
+    fetchGallery()
+  }, [])
+
+  const getAssetUrl = (url?: string) => {
+    if (!url) return ""
+    if (/^https?:\/\//i.test(url)) return url
+
+    const base = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api").replace(/\/api$/, "")
+    return `${base}${url.startsWith("/") ? "" : "/"}${url}`
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-900 pb-4">
@@ -80,8 +120,15 @@ export const PhotoHighlights = () => {
               borderRadius: "16px",
             }}
           >
-            {/* Visual Colored Graphic Container simulating a photo */}
-            <div className={`absolute inset-0 ${item.svgBg} transition-transform duration-500 group-hover:scale-105`} />
+            {/* Visual Background */}
+            <div
+              className={`absolute inset-0 transition-transform duration-500 group-hover:scale-105 ${item.imageUrl ? "" : item.svgBg}`}
+              style={item.imageUrl ? {
+                backgroundImage: `linear-gradient(135deg, rgba(2,6,23,0.7), rgba(15,23,42,0.35)), url(${getAssetUrl(item.imageUrl)})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              } : undefined}
+            />
             
             {/* Styled Icon indicating it is a photo */}
             <div className="absolute top-4 right-4 h-9 w-9 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
@@ -89,7 +136,7 @@ export const PhotoHighlights = () => {
             </div>
 
             {/* Vignette Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent" />
 
             {/* Card Content details */}
             <div

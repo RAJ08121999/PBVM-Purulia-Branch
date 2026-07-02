@@ -1,16 +1,30 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useLanguage } from "@/context/LanguageContext"
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowRight, ChevronLeft, ChevronRight, FlaskConical } from "lucide-react"
+import { publicApi } from "@/lib/api"
+import Image from "next/image"
 
 export const HeroBanner = () => {
   const { t } = useLanguage()
-  const [currentSlide, setCurrentSlide] = useState(0)
 
-  const slides = [
+  interface HeroSlide {
+    titleEn: string
+    titleBn: string
+    descEn: string
+    descBn: string
+    bgFrom: string
+    bgTo: string
+    accent: string
+    accentBg: string
+    imageUrl?: string
+    showText?: boolean
+  }
+
+  const defaultSlides= useMemo<HeroSlide[]>(()=>[
     {
       titleEn: "Promoting Scientific Temperament for a Rational Society",
       titleBn: "যুক্তিবাদী সমাজ গঠনে বিজ্ঞান মানসিকতার প্রসার",
@@ -22,6 +36,7 @@ export const HeroBanner = () => {
       bgTo: "#0A3D32",
       accent: "#2DD4BF",
       accentBg: "rgba(45,212,191,0.18)",
+      showText: true,
     },
     {
       titleEn: "Exploring the Wonders of the Universe",
@@ -34,6 +49,7 @@ export const HeroBanner = () => {
       bgTo: "#1A1A4E",
       accent: "#F97316",
       accentBg: "rgba(249,115,22,0.18)",
+      showText: true,
     },
     {
       titleEn: "Environmental Action & Biodiversity",
@@ -46,8 +62,74 @@ export const HeroBanner = () => {
       bgTo: "#0F3460",
       accent: "#4ADE80",
       accentBg: "rgba(74,222,128,0.18)",
-    },
-  ]
+      showText: true,
+    }
+  ],
+[]);
+  interface EventData {
+    title?:
+      | string
+      | {
+          en?: string
+          bn?: string
+        }
+  
+    description?:
+      | string
+      | {
+          en?: string
+          bn?: string
+        }
+  
+    gallery?: string[]
+  }
+
+  const getAssetUrl = (url?: string) => {
+    if (!url) return ""
+    if (/^https?:\/\//i.test(url)) return url
+
+    const base = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api").replace(/\/api$/, "")
+    return `${base}${url.startsWith("/") ? "" : "/"}${url}`
+  }
+
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [slides, setSlides] = useState(defaultSlides)
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await publicApi.getEvents({ limit: 3 });
+        const events: EventData[] = res.data.events || [];
+  
+        const eventSlides = events.slice(0, 3).map((event, index) => ({
+          titleEn: "",
+          titleBn: "",
+          descEn: "",
+          descBn: "",
+          bgFrom: ["#0B1F4A", "#0D0D2B", "#052E16"][index % 3],
+          bgTo: ["#0A3D32", "#1A1A4E", "#0F3460"][index % 3],
+          accent: ["#2DD4BF", "#F97316", "#4ADE80"][index % 3],
+          accentBg: [
+            "rgba(45,212,191,0.18)",
+            "rgba(249,115,22,0.18)",
+            "rgba(74,222,128,0.18)",
+          ][index % 3],
+          imageUrl: getAssetUrl(event.gallery?.[0]),
+          showText: false,
+        }));
+  
+        if (eventSlides.length) {
+          setSlides([...defaultSlides, ...eventSlides]);
+        }
+      } catch (err) {
+        console.error(err);
+        setSlides(defaultSlides);
+      }
+    };
+  
+    fetchEvents();
+  }, [defaultSlides]);
+
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -64,22 +146,43 @@ export const HeroBanner = () => {
 
   return (
     <section
-      className="relative w-full overflow-hidden flex items-center"
-      style={{ minHeight: "620px" }}
+      className="relative w-full overflow-hidden"
+      style={{
+        height: "calc(100vh - 80px)", // replace 80px with your actual navbar height
+      }}
     >
       {/* ── Animated Background ── */}
       <AnimatePresence mode="wait">
-        <motion.div
-          key={currentSlide}
-          initial={{ opacity: 0, scale: 1.04 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.1 }}
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(135deg, ${slide.bgFrom} 0%, ${slide.bgTo} 100%)`,
-          }}
-        />
+      <motion.div
+            key={currentSlide}
+            initial={{ opacity: 0, scale: 1.02 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+            className="absolute inset-0"
+        >
+            {slide.imageUrl ? (
+                <Image
+                  src={slide.imageUrl}
+                  alt="Hero Banner"
+                  fill
+                  priority
+                  sizes="100vw"
+                  style={{
+                    objectFit: "fill",
+                    objectPosition: "center",
+                  }}
+                />
+            ) : (
+                <div
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                        background: `linear-gradient(135deg, ${slide.bgFrom}, ${slide.bgTo})`,
+                    }}
+                />
+            )}
+        </motion.div>
       </AnimatePresence>
 
       {/* Subtle grid texture */}
@@ -127,205 +230,209 @@ export const HeroBanner = () => {
                 maxWidth: "720px",
               }}
             >
-              {/* ── Badge ── */}
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <span
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: "32px",
-                    height: "32px",
-                    borderRadius: "50%",
-                    backgroundColor: slide.accentBg,
-                    border: `1px solid ${slide.accent}`,
-                  }}
-                >
-                  <FlaskConical
-                    size={15}
-                    style={{ color: slide.accent }}
-                  />
-                </span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: "0.72rem",
-                    fontWeight: 700,
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    color: slide.accent,
-                  }}
-                >
-                  {t("Purulia Branch Movement", "পুরুলিয়া শাখা আন্দোলন")}
-                </span>
-              </div>
-
-              {/* ── Heading ── */}
-              <h1
-                style={{
-                  fontFamily: "var(--font-heading)",
-                  fontSize: "clamp(2rem, 5vw, 3.5rem)",
-                  fontWeight: 800,
-                  lineHeight: 1.15,
-                  color: "#FFFFFF",
-                  letterSpacing: "-0.01em",
-                  textShadow: "0 2px 20px rgba(0,0,0,0.45)",
-                }}
-              >
-                {t(slide.titleEn, slide.titleBn)}
-              </h1>
-
-              {/* ── Description ── */}
-              <p
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: "clamp(0.95rem, 1.8vw, 1.15rem)",
-                  color: "rgba(255,255,255,0.82)",
-                  lineHeight: 1.75,
-                  maxWidth: "560px",
-                }}
-              >
-                {t(slide.descEn, slide.descBn)}
-              </p>
-
-              {/* ── Buttons ── */}
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: "1rem",
-                  marginTop: "0.5rem",
-                }}
-              >
-                {/* Primary CTA */}
-                <Link href="/join-us">
-                  <button
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      padding: "0.85rem 2.2rem",
-                      borderRadius: "9999px",
-                      fontFamily: "var(--font-heading)",
-                      fontWeight: 700,
-                      fontSize: "0.95rem",
-                      cursor: "pointer",
-                      border: "none",
-                      background:
-                        "linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%)",
-                      color: "#FFFFFF",
-                      boxShadow:
-                        "0 4px 24px rgba(37,99,235,0.45), 0 1px 4px rgba(0,0,0,0.2)",
-                      transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                      letterSpacing: "0.01em",
-                      whiteSpace: "nowrap",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "translateY(-2px)"
-                      e.currentTarget.style.boxShadow =
-                        "0 8px 32px rgba(37,99,235,0.55), 0 2px 8px rgba(0,0,0,0.25)"
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "translateY(0)"
-                      e.currentTarget.style.boxShadow =
-                        "0 4px 24px rgba(37,99,235,0.45), 0 1px 4px rgba(0,0,0,0.2)"
-                    }}
-                  >
-                    {t("Join Us", "যোগদান করুন")}
-                    <ArrowRight size={18} />
-                  </button>
-                </Link>
-
-                {/* Secondary CTA — always visible */}
-                <Link href="/activities">
-                  <button
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      padding: "0.85rem 2.2rem",
-                      borderRadius: "9999px",
-                      fontFamily: "var(--font-heading)",
-                      fontWeight: 700,
-                      fontSize: "0.95rem",
-                      cursor: "pointer",
-                      background: "rgba(255,255,255,0.12)",
-                      color: "#FFFFFF",
-                      border: "2px solid rgba(255,255,255,0.55)",
-                      backdropFilter: "blur(8px)",
-                      transition:
-                        "background 0.2s ease, border-color 0.2s ease, transform 0.2s ease",
-                      letterSpacing: "0.01em",
-                      whiteSpace: "nowrap",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = "rgba(255,255,255,0.22)"
-                      e.currentTarget.style.borderColor =
-                        "rgba(255,255,255,0.85)"
-                      e.currentTarget.style.transform = "translateY(-2px)"
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = "rgba(255,255,255,0.12)"
-                      e.currentTarget.style.borderColor =
-                        "rgba(255,255,255,0.55)"
-                      e.currentTarget.style.transform = "translateY(0)"
-                    }}
-                  >
-                    {t("Explore Activities", "কর্মসূচি দেখুন")}
-                  </button>
-                </Link>
-              </div>
-
-              {/* ── Trust Indicators ── */}
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: "1.5rem",
-                  marginTop: "0.25rem",
-                  paddingTop: "1rem",
-                  borderTop: "1px solid rgba(255,255,255,0.12)",
-                }}
-              >
-                {[
-                  { value: "40", label: t("Years Active", "বছর সক্রিয়") },
-                  {
-                    value: "500+",
-                    label: t("Members", "সদস্য"),
-                  },
-                  {
-                    value: "1000+",
-                    label: t("Camps & Events", "শিবির ও ইভেন্ট"),
-                  },
-                ].map((stat) => (
-                  <div
-                    key={stat.label}
-                    style={{ display: "flex", alignItems: "baseline", gap: "6px" }}
-                  >
+              {slide.showText !== false && (
+                <>
+                  {/* ── Badge ── */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                     <span
                       style={{
-                        fontFamily: "var(--font-heading)",
-                        fontWeight: 800,
-                        fontSize: "1.35rem",
-                        color: slide.accent,
-                        lineHeight: 1,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "50%",
+                        backgroundColor: slide.accentBg,
+                        border: `1px solid ${slide.accent}`,
                       }}
                     >
-                      {stat.value}
+                      <FlaskConical
+                        size={15}
+                        style={{ color: slide.accent }}
+                      />
                     </span>
                     <span
                       style={{
                         fontFamily: "var(--font-body)",
-                        fontSize: "0.8rem",
-                        color: "rgba(255,255,255,0.65)",
-                        fontWeight: 500,
+                        fontSize: "0.72rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.12em",
+                        textTransform: "uppercase",
+                        color: slide.accent,
                       }}
                     >
-                      {stat.label}
+                      {t("Purulia Branch Movement", "পুরুলিয়া শাখা আন্দোলন")}
                     </span>
                   </div>
-                ))}
-              </div>
+
+                  {/* ── Heading ── */}
+                  <h1
+                    style={{
+                      fontFamily: "var(--font-heading)",
+                      fontSize: "clamp(2rem, 5vw, 3.5rem)",
+                      fontWeight: 800,
+                      lineHeight: 1.15,
+                      color: "#FFFFFF",
+                      letterSpacing: "-0.01em",
+                      textShadow: "0 2px 20px rgba(0,0,0,0.45)",
+                    }}
+                  >
+                    {t(slide.titleEn, slide.titleBn)}
+                  </h1>
+
+                  {/* ── Description ── */}
+                  <p
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "clamp(0.95rem, 1.8vw, 1.15rem)",
+                      color: "rgba(255,255,255,0.82)",
+                      lineHeight: 1.75,
+                      maxWidth: "560px",
+                    }}
+                  >
+                    {t(slide.descEn, slide.descBn)}
+                  </p>
+
+                  {/* ── Buttons ── */}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "1rem",
+                      marginTop: "0.5rem",
+                    }}
+                  >
+                    {/* Primary CTA */}
+                    <Link href="/join-us">
+                      <button
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          padding: "0.85rem 2.2rem",
+                          borderRadius: "9999px",
+                          fontFamily: "var(--font-heading)",
+                          fontWeight: 700,
+                          fontSize: "0.95rem",
+                          cursor: "pointer",
+                          border: "none",
+                          background:
+                            "linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%)",
+                          color: "#FFFFFF",
+                          boxShadow:
+                            "0 4px 24px rgba(37,99,235,0.45), 0 1px 4px rgba(0,0,0,0.2)",
+                          transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                          letterSpacing: "0.01em",
+                          whiteSpace: "nowrap",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = "translateY(-2px)"
+                          e.currentTarget.style.boxShadow =
+                            "0 8px 32px rgba(37,99,235,0.55), 0 2px 8px rgba(0,0,0,0.25)"
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = "translateY(0)"
+                          e.currentTarget.style.boxShadow =
+                            "0 4px 24px rgba(37,99,235,0.45), 0 1px 4px rgba(0,0,0,0.2)"
+                        }}
+                      >
+                        {t("Join Us", "যোগদান করুন")}
+                        <ArrowRight size={18} />
+                      </button>
+                    </Link>
+
+                    {/* Secondary CTA — always visible */}
+                    <Link href="/activities">
+                      <button
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          padding: "0.85rem 2.2rem",
+                          borderRadius: "9999px",
+                          fontFamily: "var(--font-heading)",
+                          fontWeight: 700,
+                          fontSize: "0.95rem",
+                          cursor: "pointer",
+                          background: "rgba(255,255,255,0.12)",
+                          color: "#FFFFFF",
+                          border: "2px solid rgba(255,255,255,0.55)",
+                          backdropFilter: "blur(8px)",
+                          transition:
+                            "background 0.2s ease, border-color 0.2s ease, transform 0.2s ease",
+                          letterSpacing: "0.01em",
+                          whiteSpace: "nowrap",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = "rgba(255,255,255,0.22)"
+                          e.currentTarget.style.borderColor =
+                            "rgba(255,255,255,0.85)"
+                          e.currentTarget.style.transform = "translateY(-2px)"
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = "rgba(255,255,255,0.12)"
+                          e.currentTarget.style.borderColor =
+                            "rgba(255,255,255,0.55)"
+                          e.currentTarget.style.transform = "translateY(0)"
+                        }}
+                      >
+                        {t("Explore Activities", "কর্মসূচি দেখুন")}
+                      </button>
+                    </Link>
+                  </div>
+
+                  {/* ── Trust Indicators ── */}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "1.5rem",
+                      marginTop: "0.25rem",
+                      paddingTop: "1rem",
+                      borderTop: "1px solid rgba(255,255,255,0.12)",
+                    }}
+                  >
+                    {[
+                      { value: "40", label: t("Years Active", "বছর সক্রিয়") },
+                      {
+                        value: "500+",
+                        label: t("Members", "সদস্য"),
+                      },
+                      {
+                        value: "1000+",
+                        label: t("Camps & Events", "শিবির ও ইভেন্ট"),
+                      },
+                    ].map((stat) => (
+                      <div
+                        key={stat.label}
+                        style={{ display: "flex", alignItems: "baseline", gap: "6px" }}
+                      >
+                        <span
+                          style={{
+                            fontFamily: "var(--font-heading)",
+                            fontWeight: 800,
+                            fontSize: "1.35rem",
+                            color: slide.accent,
+                            lineHeight: 1,
+                          }}
+                        >
+                          {stat.value}
+                        </span>
+                        <span
+                          style={{
+                            fontFamily: "var(--font-body)",
+                            fontSize: "0.8rem",
+                            color: "rgba(255,255,255,0.65)",
+                            fontWeight: 500,
+                          }}
+                        >
+                          {stat.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
