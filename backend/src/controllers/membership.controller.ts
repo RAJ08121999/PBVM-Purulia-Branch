@@ -7,6 +7,7 @@ import { applicationReceivedTemplate } from "../services/email/templates/applica
 import { sendEmail } from "../services/email";
 import { onboardingTemplate } from "../services/email/templates/onboarding";
 import { applicationRejectedTemplate } from "../services/email/templates/applicationRejected";
+import { volunteerIdUpgradedTemplate } from "../services/email/templates/volunteerIdUpgraded";
 import { generateVolunteerIdCard } from "../services/idCard/idCard.service";
 
 const safeParse = (val: any) => {
@@ -325,6 +326,7 @@ export const updateMembershipStatus = async (req: AuthRequest, res: Response): P
         try {
           pdf = await generateVolunteerIdCard({
             volunteerId: membership.volunteerId!,
+            cacheBust: String(Date.now()),
           });
           console.log("PDF generated", pdf.length);
         } catch (err) {
@@ -379,6 +381,113 @@ export const updateMembershipStatus = async (req: AuthRequest, res: Response): P
       }
   
     }
+
+    res.json({ success: true, membership });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Send volunteer ID upgrade email with PDF attachment
+// @route   POST /api/membership/:id/send-volunteer-id-card
+// @access  Private (Admin)
+export const sendVolunteerIdUpgradeEmail = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const membership = await Membership.findById(req.params.id);
+    if (!membership) {
+      res.status(404).json({ success: false, message: "Membership application not found" });
+      return;
+    }
+
+    if (membership.membershipType !== "volunteer") {
+      res.status(400).json({ success: false, message: "Only volunteers can receive volunteer ID card emails." });
+      return;
+    }
+
+    if (!membership.volunteerId) {
+      res.status(400).json({ success: false, message: "Volunteer ID is not generated yet for this volunteer." });
+      return;
+    }
+
+    const template = volunteerIdUpgradedTemplate({
+      volunteerName: membership.fullName,
+      volunteerId: membership.volunteerId,
+    });
+
+    let pdf: Buffer | undefined;
+    let pdfError: string | undefined;
+    try {
+      pdf = await generateVolunteerIdCard({
+        volunteerId: membership.volunteerId,
+        cacheBust: String(Date.now()),
+      });
+    } catch (err: any) {
+      pdfError = err?.message || String(err);
+      console.error("⚠️ Volunteer ID PDF generation failed:", err); 
+      console.warn("⚠️ Volunteer ID PDF generation failed; sending email without attachment.", err);
+    }
+
+    await sendEmail({
+      to: {
+        email: membership.email,
+        name: membership.fullName,
+      },
+      subject: template.subject,
+      html: template.html,
+      text: template.text,
+      attachments: pdf
+        ? [
+            {
+              filename: `${membership.volunteerId}.pdf`,
+              content: pdf,
+              contentType: "application/pdf",
+            },
+          ]
+        : [],
+    });
+
+    res.json({
+      success: true,
+      message: pdf
+        ? "Volunteer ID upgrade email sent successfully."
+        : "Email sent, but the ID card PDF could not be generated.",
+      pdfAttached: !!pdf,
+      pdfError: pdf ? undefined : pdfError,
+    });
+    
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Update membership application (admin editable fields)
+// @route   PUT /api/membership/:id
+// @access  Private (Admin)
+export const updateMembership = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const membership = await Membership.findById(req.params.id);
+    if (!membership) {
+      res.status(404).json({ success: false, message: "Membership application not found" });
+      return;
+    }
+
+    const allowed: string[] = [
+      "volunteerId",
+      "fullName",
+      "address",
+      "bloodGroup",
+      "badgeLevel",
+      "photo",
+      "emergencyContact",
+    ];
+
+    allowed.forEach((key) => {
+      if (req.body[key] !== undefined) {
+        ;(membership as any)[key] = req.body[key];
+      }
+    });
+
+    await membership.save();
 
     res.json({ success: true, membership });
   } catch (error: any) {

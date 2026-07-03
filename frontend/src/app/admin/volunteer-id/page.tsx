@@ -6,9 +6,19 @@ import { Printer, Upload, Trash2, ArrowLeft, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { adminApi } from "@/lib/api";
-import VolunteerIdCard, { type VolunteerData } from "@/components/admin/id_card/VolunteerIdCard";
-import { BadgeLevel } from "@/components/admin/id_card/VolunteerIdCard";
+import VolunteerIdCard, {
+  type VolunteerData,
+  type BadgeLevel,
+  normalizeBadgeLevel,
+} from "@/components/admin/id_card/VolunteerIdCard";
 
+// Maps the short badge key used in the UI <select> to the display label
+// that gets persisted to MongoDB.
+const badgeMap: Record<string, string> = {
+  gold: "Renaissance Leader",
+  silver: "Knowledge Explorer",
+  bronze: "Curiosity Seeker",
+};
 
 export default function VolunteerIDCardGenerator() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -16,12 +26,14 @@ export default function VolunteerIDCardGenerator() {
   const [volunteers, setVolunteers] = useState<VolunteerData[]>([]);
   const [selectedVolunteerId, setSelectedVolunteerId] = useState<string>("");
   const [isFlipped, setIsFlipped] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   const [formData, setFormData] = useState<VolunteerData>({
     _id: "",
     membershipType: "Volunteer",
     volunteerId: "PBVM-PUR-YYYYMMDD-01",
     fullName: "Volunteer Name",
+    email: "",
     bloodGroup: "O+",
     badgeLevel: "bronze",
     photoUrl: "",
@@ -72,8 +84,9 @@ export default function VolunteerIDCardGenerator() {
         membershipType: vol.membershipType || "Volunteer",
         volunteerId: vol.volunteerId || "Pending",
         fullName: vol.fullName,
+        email: vol.email || "",
         bloodGroup: vol.bloodGroup || "N/A",
-        badgeLevel: vol.badgeLevel || "bronze",
+        badgeLevel: normalizeBadgeLevel(vol.badgeLevel),
         photoUrl: getFullImageUrl(vol.photo || vol.photoUrl || ""),
         address: vol.address || "",
         emergencyContact: vol.emergencyContact || { name: "N/A", relation: "N/A", phone: "N/A" }
@@ -105,6 +118,42 @@ export default function VolunteerIDCardGenerator() {
     window.print();
   };
 
+  const handleSendEmail = async () => {
+    if (!selectedVolunteerId) {
+      toast.error("Please select a volunteer before sending the email.");
+      return;
+    }
+
+    const toastId = toast.loading("Sending ID upgradation email...");
+
+    try {
+      setIsSending(true);
+
+      await adminApi.updateMembership(selectedVolunteerId, {
+        volunteerId: formData.volunteerId,
+        fullName: formData.fullName,
+        address: formData.address,
+        bloodGroup: formData.bloodGroup,
+        badgeLevel: badgeMap[formData.badgeLevel] || formData.badgeLevel,
+        photo: formData.photoUrl,
+        emergencyContact: formData.emergencyContact,
+      });
+
+      const res = await adminApi.sendVolunteerIdCard(selectedVolunteerId);
+
+      if (res.data?.pdfAttached === false) {
+        toast.warning("Email sent, but the ID card PDF failed to attach. Check server logs.", { id: toastId });
+      } else {
+        toast.success("Upgradation email sent successfully.", { id: toastId });
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to send upgradation email.", { id: toastId });
+    } finally {
+      setIsSending(false);
+    }
+  };
+
   return (
     <>
       <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }} className="no-print">
@@ -121,14 +170,6 @@ export default function VolunteerIDCardGenerator() {
               Select a volunteer to generate their two-sided ID card.
             </p>
           </div>
-          <button
-            onClick={handlePrint}
-            className="btn btn-primary"
-            style={{ borderRadius: "var(--radius-md)", display: "flex", alignItems: "center", gap: "0.5rem" }}
-          >
-            <Printer size={18} />
-            Print Card
-          </button>
         </div>
 
         {/* Dynamic Panels */}
@@ -251,6 +292,39 @@ export default function VolunteerIDCardGenerator() {
               />
             )}
 
+            {/* Action Buttons — centered below the card preview */}
+            <div
+              style={{
+                display: "flex",
+                gap: "0.75rem",
+                flexWrap: "wrap",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+                maxWidth: "300px",
+              }}
+            >
+              <div
+              style={{display:"flex", justifyContent:"center", alignItems:"center" , gap:"2rem"}}
+              >
+                <button
+                  onClick={handlePrint}
+                  className="btn btn-primary"
+                  style={{ borderRadius: "var(--radius-md)", display: "flex", alignItems: "center", gap: "0.5rem", minHeight: "44px" }}
+                >
+                  <Printer size={18} />
+                  Print Card
+                </button>
+                <button
+                  onClick={handleSendEmail}
+                  disabled={!selectedVolunteerId || !formData.email || isSending}
+                  className="btn btn-primary"
+                  style={{ borderRadius: "var(--radius-md)", display: "flex", alignItems: "center", gap: "0.5rem", minHeight: "44px" }}
+                >
+                  Send Upgradation Email
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -183,6 +183,8 @@ export const adminApi = {
     api.get("/membership/admin", { params }),
   updateMembershipStatus: (id: string, status: MembershipStatus | string) =>
     api.put(`/membership/${id}/status`, { status: status.toLowerCase() }),
+  sendVolunteerIdCard: (id: string) => api.post(`/membership/${id}/send-volunteer-id-card`),
+  updateMembership: (id: string, data: object) => api.put(`/membership/${id}`, data),
   deleteMembership: (id: string) => api.delete(`/membership/admin/${id}`),
   exportMemberships: () =>
     api.get("/membership/export", { responseType: "blob" }),

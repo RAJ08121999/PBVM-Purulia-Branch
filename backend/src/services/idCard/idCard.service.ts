@@ -36,6 +36,7 @@ const getChromeExecutablePath = (): string | undefined => {
 
 export interface VolunteerCardData {
   volunteerId: string;
+  cacheBust?: string;
 }
 
 const resolveExecutablePath = async (): Promise<string | undefined> => {
@@ -61,7 +62,10 @@ export const generateVolunteerIdCard = async (
 ): Promise<Buffer> => {
   const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
   const printUrl = `${frontendUrl}/print/volunteer/${volunteer.volunteerId}`;
+  const urlWithCacheBust = volunteer.cacheBust ? `${printUrl}?_=${volunteer.cacheBust}` : printUrl;
   const executablePath = await resolveExecutablePath();
+
+  console.log("🌐 Navigating to print URL:", urlWithCacheBust);
 
   const launchOptions: any = {
     headless: true,
@@ -82,23 +86,67 @@ export const generateVolunteerIdCard = async (
   try {
     const page = await browser.newPage();
 
-    await page.goto(printUrl, {
+    // ── Diagnostics: surface everything happening inside the headless tab ──
+    page.on("console", (msg) => {
+      console.log(`   [browser console:${msg.type()}]`, msg.text());
+    });
+    page.on("pageerror", (err:any) => {
+      console.error("   [browser pageerror]", err.message);
+    });
+    page.on("requestfailed", (req) => {
+      console.error(
+        "   [browser requestfailed]",
+        req.url(),
+        req.failure()?.errorText
+      );
+    });
+    page.on("response", (res) => {
+      if (!res.ok()) {
+        console.warn("   [browser response not-ok]", res.status(), res.url());
+      }
+    });
+
+    const navigationResponse = await page.goto(urlWithCacheBust, {
       waitUntil: "networkidle0",
       timeout: 60000,
     });
 
+    console.log(
+      "✅ Navigation finished. Status:",
+      navigationResponse?.status(),
+      "URL:",
+      page.url()
+    );
+
     // Optional: emulate print CSS
     await page.emulateMediaType("print");
 
-    // Optional: wait until the card is actually rendered
-    await page.waitForSelector(".id-card-front",{
-      visible:true,
-    });
+    try {
+      // Optional: wait until the card is actually rendered
+      await page.waitForSelector('body[data-ready="true"]', {
+        visible: true,
+        timeout: 15000,
+      });
+      console.log("✅ data-ready flag detected.");
+    } catch (waitErr) {
+      // Dump the actual DOM state so we can see what the headless browser
+      // is really rendering instead of guessing.
+      const bodyHtml = await page
+        .evaluate(() => document.body.innerHTML.slice(0, 2000))
+        .catch(() => "<could not read body>");
+      const bodyAttrs = await page
+        .evaluate(() => document.body.getAttribute("data-ready"))
+        .catch(() => "<could not read attribute>");
+      console.error("❌ data-ready wait failed.");
+      console.error("   Current data-ready attribute value:", bodyAttrs);
+      console.error("   Body HTML snapshot (first 2000 chars):\n", bodyHtml);
+      throw waitErr;
+    }
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const pdf = await page.pdf({
-      width: "128mm", // Front + gap + Back
+      width: "128mm",
       height: "86mm",
       printBackground: true,
       margin: {

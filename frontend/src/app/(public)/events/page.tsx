@@ -119,58 +119,77 @@ export default function EventsPage() {
             </div>
 
             {/* Filter Buttons */}
-            <div className="flex flex-wrap gap-2 w-full md:w-auto justify-center md:justify-end">
-              <Button
-                variant={selectedFilter === "All" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedFilter("All")}
+            <div
+              style={{
+                width: "100%",
+                overflowX: "auto",
+              }}
+              className="no-scrollbar"
+            >
+              <div
                 style={{
-                  borderRadius: "9999px",
-                  padding: "0.5rem 1.25rem",
-                  fontSize: "0.85rem",
-                  fontWeight: 700,
-                  height: "auto",
-                  cursor: "pointer",
-                  boxSizing: "border-box",
-                  whiteSpace: "nowrap",
+                  display: "flex",
+                  flexWrap: "nowrap",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.65rem",
+                  padding: "0.25rem 0",
+                  minWidth: "max-content",
+                  margin: "0 auto",
                 }}
               >
-                {t("All Events", "সব ইভেন্ট")}
-              </Button>
-              <Button
-                variant={selectedFilter === "Upcoming" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedFilter("Upcoming")}
-                style={{
-                  borderRadius: "9999px",
-                  padding: "0.5rem 1.25rem",
-                  fontSize: "0.85rem",
-                  fontWeight: 700,
-                  height: "auto",
-                  cursor: "pointer",
-                  boxSizing: "border-box",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {t("Upcoming", "আসন্ন")}
-              </Button>
-              <Button
-                variant={selectedFilter === "Past" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedFilter("Past")}
-                style={{
-                  borderRadius: "9999px",
-                  padding: "0.5rem 1.25rem",
-                  fontSize: "0.85rem",
-                  fontWeight: 700,
-                  height: "auto",
-                  cursor: "pointer",
-                  boxSizing: "border-box",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {t("Past Campaigns", "বিগত কর্মসূচি")}
-              </Button>
+                <Button
+                  variant={selectedFilter === "All" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedFilter("All")}
+                  style={{
+                    borderRadius: "9999px",
+                    padding: "0.5rem 1.25rem",
+                    fontSize: "0.85rem",
+                    fontWeight: 700,
+                    height: "auto",
+                    cursor: "pointer",
+                    boxSizing: "border-box",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {t("All Events", "সব ইভেন্ট")}
+                </Button>
+                <Button
+                  variant={selectedFilter === "Upcoming" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedFilter("Upcoming")}
+                  style={{
+                    borderRadius: "9999px",
+                    padding: "0.5rem 1.25rem",
+                    fontSize: "0.85rem",
+                    fontWeight: 700,
+                    height: "auto",
+                    cursor: "pointer",
+                    boxSizing: "border-box",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {t("Upcoming", "আসন্ন")}
+                </Button>
+                <Button
+                  variant={selectedFilter === "Past" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedFilter("Past")}
+                  style={{
+                    borderRadius: "9999px",
+                    padding: "0.5rem 1.25rem",
+                    fontSize: "0.85rem",
+                    fontWeight: 700,
+                    height: "auto",
+                    cursor: "pointer",
+                    boxSizing: "border-box",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {t("Past Campaigns", "বিগত কর্মসূচি")}
+                </Button>
+              </div>
             </div>
 
           </div>

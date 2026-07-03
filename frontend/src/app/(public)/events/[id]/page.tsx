@@ -102,7 +102,7 @@ export default function EventDetailPage({ params }: PageProps) {
           {t("Event Not Found", "ইভেন্টটি পাওয়া যায়নি")}
         </h2>
         <p className="font-body text-sm text-zinc-500 dark:text-zinc-400 mt-2 mb-6">
-          {t("The event you are trying to visit does not exist or has been removed.", "আপনি যে ইভেন্টের পাতাটি দেখার চেষ্টা করছেন তা আমাদের তালিকায় নেই।")}
+          {t("The event you are trying to visit does not exist or has been removed.", "আপনি যে ইভেন্টের পাতাটি দেখার চেষ্টা করছেন তা আমাদের তালিকায় নেই।")}
         </p>
         <Link href="/events">
           <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full">
@@ -118,62 +118,85 @@ export default function EventDetailPage({ params }: PageProps) {
 
       {/* Event Header Banner */}
       <section
-        className="relative w-full pt-20 pb-40 lg:pb-56 text-white overflow-hidden flex items-center justify-center"
+        className="relative w-full pt-20 pb-40 lg:pb-56 text-white overflow-hidden"
         style={{
           background: event.status === "upcoming"
             ? "linear-gradient(135deg, #0A3D32 0%, #0B3D91 60%, #0D0D2B 100%)"
             : "linear-gradient(135deg, #3F3F46 0%, #18181B 100%)",
+          padding:"1rem"
         }}
       >
         <div className="absolute inset-0 bg-black/10 mix-blend-multiply" />
-        <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-125 h-125 rounded-full bg-white/10 blur-3xl" />
+        <div
+        className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-125 h-125 rounded-full bg-white/10 blur-3xl" />
 
-        <div className="relative w-full max-w-7xl px-6 lg:px-8 z-10 flex flex-col lg:flex-row gap-12 items-center justify-between mx-auto">
-          <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-6 lg:w-2/3">
-            <Link href="/events" className="flex items-center gap-2 text-sm font-bold text-white/90 hover:text-white transition-all group bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 px-5 py-2.5 rounded-full w-fit mb-2">
-              <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-              {t("Back to Events", "সকল ইভেন্টে ফিরে যান")}
+        <div
+        className="relative w-full max-w-10xl px-6 lg:px-8 z-10 mx-auto">
+
+          {/* Top bar: back button + status badge — sits above the image, never overlapping it */}
+          <div className="relative z-20 flex items-center justify-between gap-4 mb-8">
+            <Link
+              href="/events"
+              className="inline-flex items-center justify-center rounded-full border border-white/25 bg-white/10 backdrop-blur-md text-white text-sm font-bold transition-colors hover:bg-white/20"
+              style={{
+                padding: "0.75rem 1rem",
+              }}
+            >
+              <span className="text-lg font-extrabold"><ArrowLeft/></span>
+              <span className="sr-only">{t("Back to Events", "সকল ইভেন্টে ফিরে যান")}</span>
             </Link>
 
-            <span className="font-body uppercase tracking-widest w-fit"
+            <span
+              className="font-body uppercase tracking-widest w-fit rounded-full text-xs font-bold border border-white/25 bg-white/10 backdrop-blur-md text-white"
               style={{
-                backgroundColor: event.status === "upcoming" ? "#E0F2FE" : "#F4F4F5",
-                color: event.status === "upcoming" ? "#0369A1" : "#71717A",
-                borderRadius: "9999px",
-                padding: "0.5rem 1.25rem",
-                fontSize: "0.85rem",
-                fontWeight: 700,
-                height: "auto",
-                cursor: "pointer",
-                boxSizing: "border-box",
-                whiteSpace: "nowrap",
+                padding: "0.6rem 1rem",
               }}
             >
               {t(event.status, event.status === "upcoming" ? "আসন্ন ইভেন্ট" : "বিগত কর্মসূচি")}
             </span>
-
-            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] drop-shadow-sm"
-              style={{
-                color: "#F1F5F9",
-              }}
-            >
-              {language === "bn" ? event.title.bn : event.title.en}
-            </h1>
           </div>
 
-          <div className="hidden lg:flex lg:w-1/3 justify-center lg:justify-end pr-0 lg:pr-8">
-            <div className="h-56 w-56 xl:h-64 xl:w-64 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border-[6px] border-white/30 shadow-[0_0_40px_rgba(0,0,0,0.2)] relative overflow-hidden">
-              {event.gallery?.[0] ? (
-                <img
-                  src={getAssetUrl(event.gallery[0])}
-                  alt={language === "bn" ? event.title.bn : event.title.en}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <span className="text-7xl xl:text-8xl z-10">
-                  {event.status === "upcoming" ? "🌟" : "📅"}
-                </span>
-              )}
+          <div className="mb-8 mt-6 overflow-hidden rounded-[2rem] h-64 sm:h-72 md:h-80 lg:hidden">
+            {event.gallery?.[0] ? (
+              <img
+                src={getAssetUrl(event.gallery[0])}
+                alt={language === "bn" ? event.title.bn : event.title.en}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-white/10 text-7xl text-white/80">
+                {event.status === "upcoming" ? "🌟" : "📅"}
+              </div>
+            )}
+          </div>
+
+          <div className="relative z-10 flex flex-col lg:flex-row gap-12 items-center justify-between">
+            <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-6 lg:w-2/3">
+              <h1
+                className="font-heading text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] drop-shadow-sm"
+                style={{
+                  color: "#F1F5F9",
+                  paddingLeft:"2rem"
+                }}
+              >
+                {language === "bn" ? event.title.bn : event.title.en}
+              </h1>
+            </div>
+
+            <div className="hidden lg:flex lg:w-1/3 justify-center lg:justify-end pr-0 lg:pr-8">
+              <div className="h-56 w-56 xl:h-64 xl:w-64 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border-[6px] border-white/30 shadow-[0_0_40px_rgba(0,0,0,0.2)] relative overflow-hidden">
+                {event.gallery?.[0] ? (
+                  <img
+                    src={getAssetUrl(event.gallery[0])}
+                    alt={language === "bn" ? event.title.bn : event.title.en}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-7xl xl:text-8xl z-10">
+                    {event.status === "upcoming" ? "🌟" : "📅"}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -201,7 +224,7 @@ export default function EventDetailPage({ params }: PageProps) {
           {/* Sidebar Info Card */}
           <div className="lg:col-span-4 flex flex-col justify-center items-center text-center gap-8 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-2xl border border-solid border-zinc-300 dark:border-zinc-700 rounded-3xl" style={{ padding: "2rem", marginTop: "1rem" }}>
             <h3 className="font-heading text-lg lg:text-xl font-black text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-800 pb-4 w-full text-left">
-              {t("Logistics & Contact", "যোগাযোগ ও সময়সূচী")}
+              {t("Logistics & Contact", "যোগাযোগ ও সময়সূচী")}
             </h3>
 
             <div className="flex flex-col items-start gap-6 w-full text-left font-body text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">

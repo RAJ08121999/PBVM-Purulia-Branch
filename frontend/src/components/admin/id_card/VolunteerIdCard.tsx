@@ -11,8 +11,9 @@ export interface VolunteerData {
   membershipType: string;
   volunteerId: string;
   fullName: string;
+  email?: string;
   bloodGroup: string;
-  badgeLevel: BadgeLevel;
+  badgeLevel: BadgeLevel | string;
   photo?: string;
   photoUrl: string;
   address: string;
@@ -29,8 +30,27 @@ interface VolunteerIdCardProps {
   printable?: boolean;
 }
 
-const getBadgeName = (level: BadgeLevel) => {
-  switch (level) {
+/**
+ * Normalizes any incoming badge representation — whether it's the short
+ * key ("gold" | "silver" | "bronze") or the display label ("Renaissance
+ * Leader" | "Knowledge Explorer" | "Curiosity Seeker") that gets persisted
+ * to MongoDB — into the canonical BadgeLevel key.
+ *
+ * This is the single source of truth for badge normalization; every
+ * consumer (admin preview, print page, PDF generation) should read the
+ * badge through this function instead of trusting the raw stored value.
+ */
+export const normalizeBadgeLevel = (raw?: string | null): BadgeLevel => {
+  if (!raw) return "bronze";
+  const v = raw.toLowerCase();
+
+  if (v.includes("gold") || v.includes("renaissance")) return "gold";
+  if (v.includes("silver") || v.includes("explorer")) return "silver";
+  return "bronze";
+};
+
+const getBadgeName = (level: BadgeLevel | string) => {
+  switch (normalizeBadgeLevel(level)) {
     case "gold":
       return "Renaissance Leader";
     case "silver":
@@ -41,8 +61,8 @@ const getBadgeName = (level: BadgeLevel) => {
   }
 };
 
-const getBadgeColors = (level: BadgeLevel) => {
-  switch (level) {
+const getBadgeColors = (level: BadgeLevel | string) => {
+  switch (normalizeBadgeLevel(level)) {
     case "gold":
       return {
         bg: "#FFD700",
@@ -84,8 +104,9 @@ export default function VolunteerIdCard({
   side,
   printable = false,
 }: VolunteerIdCardProps) {
-  const colors = getBadgeColors(volunteer.badgeLevel);
-  const badgeName = getBadgeName(volunteer.badgeLevel);
+  const normalizedBadge = normalizeBadgeLevel(volunteer.badgeLevel);
+  const colors = getBadgeColors(normalizedBadge);
+  const badgeName = getBadgeName(normalizedBadge);
 
   if (side === "front") {
     return (
@@ -336,7 +357,7 @@ export default function VolunteerIdCard({
                 fontSize: printable ? "2mm" : "0.9rem",
                 letterSpacing: "1px",
                 textShadow:
-                volunteer.badgeLevel !== "silver"
+                normalizedBadge !== "silver"
                     ? "0 1px 2px rgba(0,0,0,0.2)"
                     : "none",
             }}

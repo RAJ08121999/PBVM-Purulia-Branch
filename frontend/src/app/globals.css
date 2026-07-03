@@ -212,6 +212,15 @@ video {
   padding: 3rem 0;
 }
 
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* ─── Brand Buttons ─────────────────────────────────────── */
 .btn {
   display: inline-flex;
@@ -253,6 +262,15 @@ video {
   background: var(--color-deep-blue);
   color: var(--color-white);
   transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(1px) !important;
+}
+
+.btn:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.8);
+  outline-offset: 2px;
 }
 
 .btn-orange {
