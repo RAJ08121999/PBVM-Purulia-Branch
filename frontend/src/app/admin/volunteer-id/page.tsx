@@ -264,7 +264,7 @@ export default function VolunteerIDCardGenerator() {
           </div>
 
           {/* Interactive Card Live Preview */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1.5rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1.5rem", width: "100%" }}>
             <div style={{ display: "flex", width: "100%", maxWidth: "300px", justifyContent: "space-between", alignItems: "center" }}>
               <h3 style={{ fontSize: "1.2rem", color: "var(--color-deep-blue)", fontWeight: 700, margin: 0 }}>Print Preview</h3>
               <button
@@ -292,38 +292,59 @@ export default function VolunteerIDCardGenerator() {
               />
             )}
 
-            {/* Action Buttons — centered below the card preview */}
+            {/* Action Buttons — centered below the card preview, wraps safely on narrow screens */}
             <div
               style={{
                 display: "flex",
-                gap: "0.75rem",
                 flexWrap: "wrap",
+                gap: "0.75rem",
                 justifyContent: "center",
-                alignItems: "center",
+                alignItems: "stretch",
                 width: "100%",
                 maxWidth: "300px",
+                boxSizing: "border-box",
               }}
             >
-              <div
-              style={{display:"flex", justifyContent:"center", alignItems:"center" , gap:"2rem"}}
+              <button
+                onClick={handlePrint}
+                className="btn btn-primary"
+                style={{
+                  borderRadius: "var(--radius-md)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.5rem",
+                  minHeight: "44px",
+                  flex: "1 1 130px",
+                  minWidth: 0,
+                  maxWidth: "100%",
+                  whiteSpace: "nowrap",
+                }}
               >
-                <button
-                  onClick={handlePrint}
-                  className="btn btn-primary"
-                  style={{ borderRadius: "var(--radius-md)", display: "flex", alignItems: "center", gap: "0.5rem", minHeight: "44px" }}
-                >
-                  <Printer size={18} />
-                  Print Card
-                </button>
-                <button
-                  onClick={handleSendEmail}
-                  disabled={!selectedVolunteerId || !formData.email || isSending}
-                  className="btn btn-primary"
-                  style={{ borderRadius: "var(--radius-md)", display: "flex", alignItems: "center", gap: "0.5rem", minHeight: "44px" }}
-                >
-                  Send Upgradation Email
-                </button>
-              </div>
+                <Printer size={18} />
+                Print Card
+              </button>
+              <button
+                onClick={handleSendEmail}
+                disabled={!selectedVolunteerId || !formData.email || isSending}
+                className="btn btn-primary"
+                style={{
+                  borderRadius: "var(--radius-md)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.5rem",
+                  minHeight: "44px",
+                  flex: "1 1 130px",
+                  minWidth: 0,
+                  maxWidth: "100%",
+                  whiteSpace: "nowrap",
+                  opacity: !selectedVolunteerId || !formData.email || isSending ? 0.55 : 1,
+                  cursor: !selectedVolunteerId || !formData.email || isSending ? "not-allowed" : "pointer",
+                }}
+              >
+                Send Upgradation Email
+              </button>
             </div>
           </div>
         </div>
@@ -364,6 +385,12 @@ export default function VolunteerIDCardGenerator() {
             padding: 10mm;
           }
           body { background: none !important; margin: 0; padding: 0; }
+        }
+        @media (max-width: 380px) {
+          #print-card-area,
+          .no-print button {
+            font-size: 0.85rem;
+          }
         }
       `}</style>
     </>
