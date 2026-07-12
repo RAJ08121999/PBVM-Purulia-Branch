@@ -61,6 +61,14 @@ export const EventsFeed = () => {
     return d.toLocaleDateString("en-IN", { month: "short", timeZone: "UTC" }).toUpperCase()
   }
 
+  const DESCRIPTION_LIMIT = 120
+
+  const truncateDescription = (text: string) => {
+    if (!text) return ""
+    if (text.length <= DESCRIPTION_LIMIT) return text
+    return text.slice(0, DESCRIPTION_LIMIT).trimEnd() + "…"
+  }
+
   if (loading) {
     return (
       <div className="py-10 text-center">
@@ -144,7 +152,7 @@ export const EventsFeed = () => {
                 margin: 0,
                 textAlign: "left",
               }}>
-                {t(evt.description.en, evt.description.bn)}
+                {truncateDescription(t(evt.description.en, evt.description.bn))}
               </p>
             </div>
 
