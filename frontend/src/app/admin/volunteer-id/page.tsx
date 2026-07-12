@@ -343,7 +343,7 @@ export default function VolunteerIDCardGenerator() {
                   cursor: !selectedVolunteerId || !formData.email || isSending ? "not-allowed" : "pointer",
                 }}
               >
-                Send Upgradation Email
+                Send ID to Email
               </button>
             </div>
           </div>
