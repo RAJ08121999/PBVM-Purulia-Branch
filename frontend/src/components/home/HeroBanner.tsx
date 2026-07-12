@@ -119,17 +119,28 @@ export const HeroBanner = () => {
         }));
   
         if (eventSlides.length) {
-          setSlides([...defaultSlides, ...eventSlides]);
+          const interleavedSlides: HeroSlide[] = []
+          const maxLength = Math.max(defaultSlides.length, eventSlides.length)
+  
+          for (let idx = 0; idx < maxLength; idx += 1) {
+            if (idx < defaultSlides.length) {
+              interleavedSlides.push(defaultSlides[idx])
+            }
+            if (idx < eventSlides.length) {
+              interleavedSlides.push(eventSlides[idx])
+            }
+          }
+  
+          setSlides(interleavedSlides)
         }
       } catch (err) {
-        console.error(err);
-        setSlides(defaultSlides);
+        console.error(err)
+        setSlides(defaultSlides)
       }
-    };
-  
-    fetchEvents();
-  }, [defaultSlides]);
+    }
 
+    fetchEvents()
+  }, [defaultSlides])
 
   useEffect(() => {
     const timer = setInterval(() => {
