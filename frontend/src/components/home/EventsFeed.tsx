@@ -53,12 +53,12 @@ export const EventsFeed = () => {
 
   const getCalendarDay = (dateStr: string) => {
     const d = new Date(dateStr)
-    return d.getDate()
+    return d.getUTCDate()
   }
 
   const getCalendarMonth = (dateStr: string) => {
     const d = new Date(dateStr)
-    return d.toLocaleDateString("en-IN", { month: "short" }).toUpperCase()
+    return d.toLocaleDateString("en-IN", { month: "short", timeZone: "UTC" }).toUpperCase()
   }
 
   if (loading) {

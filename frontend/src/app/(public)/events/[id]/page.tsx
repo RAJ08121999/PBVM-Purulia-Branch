@@ -234,7 +234,7 @@ export default function EventDetailPage({ params }: PageProps) {
                 <Calendar className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
                 <div>
                   <span className="font-bold block text-zinc-400 uppercase text-xxs tracking-wider">{t("Date", "তারিখ")}</span>
-                  <span className="font-black text-zinc-800 dark:text-white">{new Date(event.date).toLocaleDateString("en-IN")}</span>
+                  <span className="font-black text-zinc-800 dark:text-white">{new Date(event.date).toLocaleDateString("en-IN", { timeZone: "UTC" })}</span>
                 </div>
               </div>
 

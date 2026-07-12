@@ -157,19 +157,20 @@ export default function GalleryPage() {
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />                                    
                   {/* Hover icon */}
-                  <div className="absolute top-4 right-4 h-9 w-9 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm flex items-center justify-center text-white">
+                  <div
+                  className="absolute top-4 right-4 h-9 w-9 rounded-full bg-white/70 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm flex items-center justify-center text-slate-800 shadow-sm">
                     <ZoomIn className="h-4.5 w-4.5" />
                   </div>
 
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/30 to-transparent" />
+                  {/* Bright overlay for hover-only text reveal */}
+                  <div className="absolute inset-0 bg-white/85 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300" />
 
                   {/* Content details */}
-                  <div className="relative flex flex-col text-white z-10" style={{ padding: "1.25rem 1.75rem", gap: "0.375rem" }}>
-                    <span className="font-body text-xxs font-black uppercase tracking-widest text-teal-400">
+                  <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col text-slate-900 opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300" style={{ padding: "1.25rem 1.75rem", gap: "0.375rem" }}>
+                    <span className="font-body text-xxs font-black uppercase tracking-widest text-blue-900">
                       {t(item.category, item.category === "Science Camps" ? "বিজ্ঞান শিবির" : item.category === "Exhibitions" ? "বিজ্ঞান প্রদর্শনী" : item.category === "Awareness Campaigns" ? "সচেতনতা প্রচার" : item.category === "Skywatching" ? "আকাশ পর্যবেক্ষণ" : item.category === "Environmental Activities" ? "পরিবেশ কর্মসূচি" : "কর্মশালা")}
                     </span>
-                    <h3 className="font-heading text-sm sm:text-base font-extrabold leading-snug">
+                    <h3 className="font-heading text-sm sm:text-base font-extrabold leading-snug text-slate-900">
                       {t(item.caption?.en || "", item.caption?.bn || "")}
                     </h3>
                   </div>

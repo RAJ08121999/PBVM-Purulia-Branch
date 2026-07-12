@@ -98,10 +98,10 @@ export const HeroBanner = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await publicApi.getEvents({ limit: 3 });
+        const res = await publicApi.getEvents({ limit: 5, sortBy: "createdAt", hasImages: "true" });
         const events: EventData[] = res.data.events || [];
   
-        const eventSlides = events.slice(0, 3).map((event, index) => ({
+        const eventSlides = events.slice(0, 5).map((event, index) => ({
           titleEn: "",
           titleBn: "",
           descEn: "",
@@ -160,10 +160,11 @@ export const HeroBanner = () => {
       className="relative w-full overflow-hidden"
       style={{
         height: "calc(100vh - 80px)", // replace 80px with your actual navbar height
+        backgroundColor: "#0B1F4A", // Dark fallback to prevent white flashes
       }}
     >
       {/* ── Animated Background ── */}
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
       <motion.div
             key={currentSlide}
             initial={{ opacity: 0, scale: 1.02 }}

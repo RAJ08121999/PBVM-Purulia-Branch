@@ -60,7 +60,7 @@ export const publicApi = {
   getActivity: (slug: string) => api.get(`/activities/${slug}`),
 
   // Events
-  getEvents: (params?: { status?: string; page?: number; limit?: number }) =>
+  getEvents: (params?: { status?: string; page?: number; limit?: number; sortBy?: string; hasImages?: string }) =>
     api.get("/events", { params }),
   getEvent: (id: string) => api.get(`/events/${id}`),
 

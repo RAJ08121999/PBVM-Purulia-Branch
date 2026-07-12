@@ -212,90 +212,97 @@ export default function EventsPage() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "1.5rem" }}>
               {filteredEvents.map((evt) => (
                 <div
                   key={evt._id}
                   className="flex flex-col justify-between rounded-2xl bg-white border border-zinc-100 hover:border-zinc-200 dark:bg-black dark:border-zinc-900 dark:hover:border-zinc-800 transition-all hover:shadow-md relative overflow-hidden"
                   style={{
-                    padding: "1.5rem",
-                    margin: "0.5rem",
+                    height: "100%",
                   }}
                 >
                   {evt.gallery.length > 0 && (
-                    <Image
-                      src={evt.gallery[0]}
-                      width={600}
-                      height={300}
-                      alt={t(evt.title.en, evt.title.bn)}
-                      className="w-full h-52 object-cover rounded-xl mb-4"
-                    />
-                  )}
-                  <div className="flex flex-col" style={{ gap: "1rem" }}>
-                    {/* Badge and Type */}
-                    <div className="flex items-center justify-between border-b border-zinc-50 dark:border-zinc-900" style={{ paddingBottom: "0.75rem" }}>
-                      <span
-                        className="font-body text-xxs font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
-                        style={{
-                          backgroundColor: evt.status === "upcoming" ? "#E0F2FE" : "#F4F4F5",
-                          color: evt.status === "upcoming" ? "#0369A1" : "#71717A",
-                        }}
-                      >
-                        {t(
-                            evt.status === "upcoming"
-                              ? "Upcoming"
-                              : "Past",
-                            evt.status === "upcoming"
-                              ? "আসন্ন"
-                              : "বিগত"
-                          )}
-                      </span>
-                      <span className="font-body text-xs text-zinc-400 dark:text-zinc-500 flex items-center gap-1 font-semibold">
-                        <Calendar className="h-3.5 w-3.5" />
-                        {new Date(evt.date).toLocaleDateString("en-IN")}
-                      </span>
+                    <div style={{ height: "150px", overflow: "hidden", position: "relative", width: "100%", backgroundColor: "#f4f4f5" }}>
+                      <Image
+                        src={evt.gallery[0]}
+                        fill
+                        alt={t(evt.title.en, evt.title.bn)}
+                        className="object-cover"
+                      />
                     </div>
-
-                    <h3 className="font-heading text-base sm:text-lg font-black text-zinc-900 dark:text-white leading-snug">
-                      {t(evt.title.en, evt.title.bn)}
-                    </h3>
-
-                    <p className="font-body text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                      {t(evt.description.en, evt.description.bn)}
-                    </p>
-
-                    {/* Venue & Time details */}
-                    <div className="flex flex-col gap-1.5 mt-2 font-body text-xxs text-zinc-500 dark:text-zinc-400 border-t border-zinc-50 dark:border-zinc-900" style={{ paddingTop: "0.75rem" }}>
-                      <div className="flex items-center gap-1.5 font-bold">
-                        <MapPin className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
-                        <span>{t(evt.venue, evt.venue)}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 font-semibold">
-                        <span className="text-zinc-400 dark:text-zinc-600 font-black">&bull;</span>
-                        <span>
-                          {new Date(evt.date).toLocaleTimeString("en-IN", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                  )}
+                  <div className="flex flex-col justify-between flex-1" style={{ padding: "1.5rem" }}>
+                    <div className="flex flex-col" style={{ gap: "1rem" }}>
+                      {/* Badge and Type */}
+                      <div className="flex items-center justify-between border-b border-zinc-50 dark:border-zinc-900" style={{ paddingBottom: "0.75rem" }}>
+                        <span
+                          className="font-body text-xxs font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
+                          style={{
+                            backgroundColor: evt.status === "upcoming" ? "#E0F2FE" : "#F4F4F5",
+                            color: evt.status === "upcoming" ? "#0369A1" : "#71717A",
+                          }}
+                        >
+                          {t(
+                              evt.status === "upcoming"
+                                ? "Upcoming"
+                                : "Past",
+                              evt.status === "upcoming"
+                                ? "আসন্ন"
+                                : "বিগত"
+                            )}
+                        </span>
+                        <span className="font-body text-xs text-zinc-400 dark:text-zinc-500 flex items-center gap-1 font-semibold">
+                          <Calendar className="h-3.5 w-3.5" />
+                          {new Date(evt.date).toLocaleDateString("en-IN", { timeZone: "UTC" })}
                         </span>
                       </div>
-                    </div>
-                  </div>
 
-                  <div className="border-t border-zinc-50 dark:border-zinc-900/50" style={{ marginTop: "1.5rem", paddingTop: "1rem" }}>
-                    <Link href={`/events/${evt._id}`} className="w-full">
-                      <Button
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg flex items-center justify-center gap-2"
-                        style={{
-                          padding: "0.75rem 1.5rem",
-                          height: "auto",
-                          cursor: "pointer",
-                        }}
-                      >
-                        {t("More Details", "বিস্তারিত জানুন")}
-                        <ArrowRight className="h-4.5 w-4.5" />
-                      </Button>
-                    </Link>
+                      <h3 className="font-heading text-base sm:text-lg font-black text-zinc-900 dark:text-white leading-snug">
+                        {t(evt.title.en, evt.title.bn)}
+                      </h3>
+
+                      <p className="font-body text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        {(() => {
+                          const desc = t(evt.description.en, evt.description.bn) || "";
+                          const maxLength = 120;
+                          return desc.length > maxLength ? desc.substring(0, maxLength) + "..." : desc;
+                        })()}
+                      </p>
+
+                      {/* Venue & Time details */}
+                      <div className="flex flex-col gap-1.5 mt-2 font-body text-xxs text-zinc-500 dark:text-zinc-400 border-t border-zinc-50 dark:border-zinc-900" style={{ paddingTop: "0.75rem" }}>
+                        <div className="flex items-center gap-1.5 font-bold">
+                          <MapPin className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
+                          <span>{t(evt.venue, evt.venue)}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 font-semibold">
+                          <span className="text-zinc-400 dark:text-zinc-600 font-black">&bull;</span>
+                          <span>
+                            {new Date(evt.date).toLocaleTimeString("en-IN", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              timeZone: "UTC",
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-zinc-50 dark:border-zinc-900/50" style={{ marginTop: "1.5rem", paddingTop: "1rem" }}>
+                      <Link href={`/events/${evt._id}`} className="w-full">
+                        <Button
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg flex items-center justify-center gap-2"
+                          style={{
+                            padding: "0.75rem 1.5rem",
+                            height: "auto",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {t("More Details", "বিস্তারিত জানুন")}
+                          <ArrowRight className="h-4.5 w-4.5" />
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
 
                 </div>

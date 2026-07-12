@@ -20,11 +20,15 @@ const safeParse = (val: any) => {
 // @access  Public
 export const getEvents = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { status, page = 1, limit = 10 } = req.query;
+    const { status, page = 1, limit = 10, sortBy, hasImages } = req.query;
     const filter: any = {};
     
     if (status === "upcoming" || status === "past") {
       filter.status = status;
+    }
+
+    if (hasImages === "true") {
+      filter.gallery = { $exists: true, $ne: [] };
     }
 
     const skipIndex = (Number(page) - 1) * Number(limit);
@@ -39,9 +43,14 @@ export const getEvents = async (req: Request, res: Response): Promise<void> => {
       }
     }
 
+    let sortObj: any = { date: status === "upcoming" ? 1 : -1 };
+    if (sortBy === "createdAt") {
+      sortObj = { createdAt: -1 };
+    }
+
     const total = await Event.countDocuments(filter);
     const events = await Event.find(filter)
-      .sort({ date: status === "upcoming" ? 1 : -1 }) // Sort upcoming chronologically ascending, past descending
+      .sort(sortObj)
       .skip(skipIndex)
       .limit(Number(limit));
 

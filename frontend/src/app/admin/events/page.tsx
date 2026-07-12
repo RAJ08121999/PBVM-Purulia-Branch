@@ -90,8 +90,14 @@ export default function AdminEvents() {
     setEditId(evt._id);
     setTitleEn(evt.title.en);
     setTitleBn(evt.title.bn);
-    // Format date string to fit datetime-local input
-    const formattedDate = new Date(evt.date).toISOString().slice(0, 16);
+    // Format date string to fit datetime-local input using UTC parts
+    const utcDate = new Date(evt.date);
+    const year = utcDate.getUTCFullYear();
+    const month = String(utcDate.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(utcDate.getUTCDate()).padStart(2, "0");
+    const hours = String(utcDate.getUTCHours()).padStart(2, "0");
+    const minutes = String(utcDate.getUTCMinutes()).padStart(2, "0");
+    const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
     setDate(formattedDate);
     setVenue(evt.venue);
     setDescriptionEn(evt.description.en);
@@ -127,7 +133,7 @@ export default function AdminEvents() {
     setSubmitting(true);
     const formData = new FormData();
     formData.append("title", JSON.stringify({ en: titleEn, bn: titleBn }));
-    formData.append("date", date);
+    formData.append("date", new Date(date + "Z").toISOString());
     formData.append("venue", venue);
     formData.append("description", JSON.stringify({ en: descriptionEn, bn: descriptionBn }));
     formData.append("registrationLink", regLink);
@@ -230,7 +236,7 @@ export default function AdminEvents() {
                   <div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
                       <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
-                        {new Date(evt.date).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
+                        {new Date(evt.date).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" })}
                       </span>
                       <span className={`badge ${evt.status === "upcoming" ? "badge-green" : "badge-gray"}`} style={{ fontSize: "0.65rem" }}>
                         {evt.status}
