@@ -202,7 +202,7 @@ export default function AdminGallery() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "1.5rem" }}>
             {images.map((img) => (
               <div key={img._id} className="card" style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                <div style={{ position: "relative", aspectRatio: "4/3", backgroundColor: "var(--color-mid-gray)" }}>
+                <div style={{ position: "relative", aspectRatio: "4/3", backgroundColor: "var(--color-mid-gray)"}}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={img.fileUrl} alt="Gallery" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   <div style={{ position: "absolute", top: "0.5rem", right: "0.5rem", display: "flex", gap: "0.25rem" }}>
@@ -215,7 +215,7 @@ export default function AdminGallery() {
                     </button>
                   </div>
                   <div style={{ position: "absolute", bottom: "0.5rem", left: "0.5rem" }}>
-                    <span className="badge badge-blue" style={{ fontSize: "0.6rem", backdropFilter: "blur(4px)", background: "rgba(11, 61, 145, 0.8)" }}>
+                    <span className="badge badge-blue" style={{ fontSize: "0.6rem", backdropFilter: "blur(4px)", background: "rgba(11, 61, 145, 0.8)", color:"white" }}>
                       {img.category}
                     </span>
                   </div>

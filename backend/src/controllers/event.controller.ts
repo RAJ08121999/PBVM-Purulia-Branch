@@ -96,8 +96,13 @@ export const createEvent = async (req: AuthRequest, res: Response): Promise<void
       return;
     }
 
-    // Upload photos from 'gallery' field
+    // Enforce single-image limit
     const files = req.files as Express.Multer.File[] | undefined;
+    if (files && files.length > 1) {
+      res.status(400).json({ success: false, message: "Only 1 image is allowed per event." });
+      return;
+    }
+
     const galleryUrls = await handleMultipleUploads(files, "events", req);
 
     const event = new Event({
@@ -135,6 +140,15 @@ export const updateEvent = async (req: AuthRequest, res: Response): Promise<void
 
     // Upload new photos from 'gallery' field
     const files = req.files as Express.Multer.File[] | undefined;
+
+    // Enforce single-image limit: existing kept + newly uploaded must not exceed 1
+    const keptCount = Array.isArray(existingGallery) ? existingGallery.length : event.gallery.length;
+    const newCount = files ? files.length : 0;
+    if (keptCount + newCount > 1) {
+      res.status(400).json({ success: false, message: "Only 1 image is allowed per event." });
+      return;
+    }
+
     const newGalleryUrls = await handleMultipleUploads(files, "events", req);
 
     if (title) event.title = title;

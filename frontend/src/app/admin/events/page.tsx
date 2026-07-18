@@ -110,9 +110,19 @@ export default function AdminEvents() {
 
   const handleGalleryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files) {
-      setNewGalleryFiles((prev) => [...prev, ...Array.from(files)]);
+    if (!files || files.length === 0) return;
+
+    // Enforce single-image limit
+    const totalImages = existingGallery.length + newGalleryFiles.length;
+    if (totalImages >= 1) {
+      toast.warning("Only 1 image is allowed per event. Remove the existing image first.");
+      // Reset the input so the same file can be re-selected after removing
+      if (galleryInputRef.current) galleryInputRef.current.value = "";
+      return;
     }
+
+    setNewGalleryFiles([files[0]]);
+    if (galleryInputRef.current) galleryInputRef.current.value = "";
   };
 
   const removeExistingPhoto = (url: string) => {
@@ -355,30 +365,39 @@ export default function AdminEvents() {
                   <input type="url" className="form-input" placeholder="https://forms.gle/..." value={regLink} onChange={(e) => setRegLink(e.target.value)} />
                 </div>
 
-                {/* Event Photo Manager */}
+                {/* Event Photo Manager – max 1 image */}
                 <div className="form-group">
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                    <span className="form-label">Event Photos</span>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.25rem" }}>
+                    <span className="form-label">
+                      Event Photo
+                      <span style={{ fontWeight: 400, fontSize: "0.75rem", color: "var(--color-text-muted)", marginLeft: "0.4rem" }}>(max 1 image)</span>
+                    </span>
                     <button
                       type="button"
                       onClick={() => galleryInputRef.current?.click()}
                       className="btn btn-secondary"
-                      style={{ padding: "0.35rem 0.75rem", fontSize: "0.75rem", borderRadius: "var(--radius-sm)" }}
+                      disabled={(existingGallery.length + newGalleryFiles.length) >= 1}
+                      title={(existingGallery.length + newGalleryFiles.length) >= 1 ? "Remove the current image before uploading a new one" : "Choose an image"}
+                      style={{ padding: "0.35rem 0.75rem", fontSize: "0.75rem", borderRadius: "var(--radius-sm)", opacity: (existingGallery.length + newGalleryFiles.length) >= 1 ? 0.45 : 1, cursor: (existingGallery.length + newGalleryFiles.length) >= 1 ? "not-allowed" : "pointer" }}
                     >
-                      Choose Images
+                      Choose Image
                     </button>
                     <input
                       ref={galleryInputRef}
                       type="file"
                       accept="image/*"
-                      multiple
                       onChange={handleGalleryChange}
                       style={{ display: "none" }}
                     />
                   </div>
 
-                  {/* Photo List Grid */}
+                  {/* Photo Grid */}
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))", gap: "0.75rem", border: "1px solid var(--color-mid-gray)", padding: "1rem", borderRadius: "var(--radius-md)", minHeight: "80px", backgroundColor: "var(--color-light-gray)" }}>
+                    {existingGallery.length === 0 && newGalleryFiles.length === 0 && (
+                      <p style={{ color: "var(--color-text-muted)", fontSize: "0.8rem", margin: "auto", gridColumn: "1/-1", textAlign: "center" }}>
+                        No image selected. Click &quot;Choose Image&quot; to upload one.
+                      </p>
+                    )}
                     {/* Existing */}
                     {existingGallery.map((url, i) => (
                       <div key={`exist-${i}`} style={{ position: "relative", aspectRatio: "4/3", borderRadius: "4px", overflow: "hidden" }}>
