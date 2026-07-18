@@ -42,7 +42,7 @@ export const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-zinc-200 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-black/95">
       <div className="w-full max-w-[1920px] mx-auto px-4 lg:px-8 xl:px-12" style={{ display: "flex", height: "5rem", alignItems: "center", justifyContent: "space-between" }}>
-        
+
         {/* Brand Logo & Name */}
         <Link href="/" className="flex items-center gap-3 shrink-0" style={{ textDecoration: "none" }}>
           <img
@@ -141,24 +141,31 @@ export const Navbar = () => {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[280px] sm:w-[350px] p-6 bg-white dark:bg-black">
-                <SheetHeader className="text-left border-b border-zinc-100 pb-4 mb-4 dark:border-zinc-900">
+                <SheetHeader className="text-left border-b border-zinc-100 pb-4 mb-4 px-6 dark:border-zinc-900 ">
                   <SheetTitle className="flex items-center gap-2">
                     <img
                       src="/logo.png"
                       alt="PBVM Logo"
                       className="h-8 w-8 object-contain"
                     />
-                    <div className="flex flex-col">
-                      <span className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
+                    <div
+                      style={{ marginTop: "10px" }}
+                      className="flex flex-col">
+                      <span className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
                         {t("PBVM Purulia", "পশ্চিমবঙ্গ বিজ্ঞান মঞ্চ")}
                       </span>
-                      <span className="text-xxs text-zinc-500 leading-none">
+                      <span className="text-sm text-zinc-500 leading-none">
                         {t("Purulia District Branch", "পুরুলিয়া জেলা শাখা")}
                       </span>
                     </div>
                   </SheetTitle>
                 </SheetHeader>
-                <div className="flex flex-col gap-4 mt-6">
+                <div
+                  style={{
+                    marginTop: "10px",
+                    paddingLeft: "22px"
+                  }}
+                  className="flex flex-col gap-4 mt-6">
                   {navItems.map((item) => (
                     <Link
                       key={item.href}
@@ -174,7 +181,7 @@ export const Navbar = () => {
                       {language === "bn" ? item.labelBn : item.labelEn}
                     </Link>
                   ))}
-                  
+
                   {/* Join Us Link (Mobile) */}
                   <Link
                     href="/join-us"
