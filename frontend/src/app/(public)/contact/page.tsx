@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from "lucide-react"
+import { MapPin, Phone, Mail, Send, CheckCircle2 } from "lucide-react"
 
 // Create bilingual contact schema
 const createContactSchema = (t: (en: string, bn: string) => string) =>
@@ -56,7 +56,7 @@ const createContactSchema = (t: (en: string, bn: string) => string) =>
   })
 
 export default function ContactPage() {
-  const { language, t } = useLanguage()
+  const { t } = useLanguage()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
 
@@ -158,7 +158,7 @@ export default function ContactPage() {
                   </h3>
                   <p className="font-body text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
                     {t(
-                      "Students Health Home, North Lake Road, Purulia, West Bengal, Pin - 723101",
+                      "Students Health Home Near Purulia Municipality, North Lake Road, And ABPTA Hall Near Hat tola Book Shops, Purulia, West Bengal, Pin - 723101",
                       "ছাত্র-ছাত্রী স্বাস্থ্য ভবন, উত্তর লেক রোড, পুরুলিয়া, পশ্চিমবঙ্গ, পিন - ৭২৩১০১"
                     )}
                   </p>
@@ -175,7 +175,7 @@ export default function ContactPage() {
                     {t("Call Us", "ফোন নম্বর")}
                   </h3>
                   <p className="font-body text-sm text-zinc-500 dark:text-zinc-400">
-                    +91 3252 222413
+                    +91 9476373607
                   </p>
                   <span className="font-body text-xxs text-zinc-400">
                     {t("Mon - Sat: 10:00 AM - 5:00 PM", "সোম - শনি: সকাল ১০ টা - বিকাল ৫ টা")}
@@ -193,7 +193,7 @@ export default function ContactPage() {
                     {t("Email Correspondence", "ইমেল যোগাযোগ")}
                   </h3>
                   <p className="font-body text-sm text-zinc-500 dark:text-zinc-400">
-                    purulia.pbvm@gmail.com
+                    rajmd1800@gmail.com
                   </p>
                   <span className="font-body text-xxs text-zinc-400">
                     {t("Expect a response within 24 hours.", "আমরা ২৪ ঘণ্টার মধ্যে উত্তর দেওয়ার চেষ্টা করি।")}

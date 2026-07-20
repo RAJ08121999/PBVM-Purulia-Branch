@@ -10,7 +10,6 @@ import {
   BookOpen,
   Mail,
   Users,
-  CreditCard,
   PlusCircle,
   TrendingUp,
 } from "lucide-react";
@@ -121,7 +120,7 @@ export default function AdminDashboard() {
       badgeText: "Magazines & PDF files",
     },
     {
-      title: "Policy Issues",
+      title: "News & Updates",
       value: stats.policies,
       icon: FileText,
       color: "#e91e63",
@@ -316,7 +315,7 @@ export default function AdminDashboard() {
               <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                 <FileText size={18} style={{ color: "#e91e63" }} />
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>Publish Policy Article</div>
+                  <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>Publish News</div>
                   <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>Upload scientific/environmental viewpoints</div>
                 </div>
               </div>
@@ -343,7 +342,7 @@ export default function AdminDashboard() {
               Need Help?
             </span>
             <p style={{ fontSize: "0.85rem", color: "var(--color-text)", margin: "0.25rem 0 0" }}>
-              Contact the development team at tech@pbvmpurulia.org for technical assistance.
+              Contact the development team at rajmd1800@gmail.com for technical assistance.
             </p>
           </div>
         </div>

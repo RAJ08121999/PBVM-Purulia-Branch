@@ -35,48 +35,6 @@ export default function AdminPolicyIssues() {
   // Form State
   const [titleEn, setTitleEn] = useState("");
   const [titleBn, setTitleBn] = useState("");
-  const [summaryEn, setSummaryEn] = useState(""); // Wait, backend schema uses title and body. Let's make bodyEn/bodyBn double-spaced so they have introduction and body, or since the schema doesn't have summary field explicitly:
-  // Wait, let's look at backend PolicyArticle.model.ts:
-  // title: { en, bn }, body: { en, bn }, topicTags: [String], coverImage: String, status: draft/published, publishDate: Date.
-  // Wait, the public policy-issues page has ArticleItem with: titleEn, titleBn, tags, date, summaryEn, summaryBn, bodyEn, bodyBn.
-  // Let's check how the backend PolicyArticle is converted or how public page fetches policies.
-  // Wait! Let's check if the public policy-issues page actually uses the backend API or if it has static data!
-  // In `frontend/src/app/(public)/policy-issues/page.tsx`, we saw:
-  // `const articles: ArticleItem[] = [ ... ]` which is a hardcoded list inside the page component!
-  // Ah! It was hardcoded!
-  // And the user requested: "replace the activity section with policy issues because our activity lists are almost constant... create the admin page for policy issues so that admins can upload, edit, or delete policies... look at the frontend for policy issues page... and accordingly create for admin"
-  // So we need to make sure the public page also fetches policies from the backend instead of using the hardcoded list!
-  // Yes! The backend schema has `body` and `title` as bilingual strings.
-  // Wait! If the public page displays `summaryEn` and `summaryBn` and `bodyEn` and `bodyBn`, how should we handle it?
-  // Let's check if `bodyEn` and `bodyBn` in the public page are just the main text, and `summaryEn`/`summaryBn` is a shorter text.
-  // If the backend `PolicyArticle` schema only has `title` and `body`, we can:
-  // 1. Either use the first 150 characters of `body` as a summary (automatically computed).
-  // 2. Or, we can update the backend `PolicyArticle` schema to include a `summary` field (which is bilingual `{ en: String, bn: String }`), or update the frontend to fetch and display the title and body (using the body's first paragraph as the summary, or displaying the body).
-  // Wait! Let's check if there is a summary field in the backend model or if we can add one.
-  // Let's look at `backend/src/models/PolicyArticle.model.ts` again. It has:
-  // `title: { type: BilingualStringSchema, required: true },`
-  // `topicTags: [{ type: String, enum: TOPIC_TAGS }],`
-  // `body: { type: BilingualStringSchema, required: true },`
-  // Wait, does the backend have any other fields? No.
-  // If we want to keep it simple and clean without changing backend model files (which might require migrations/DB changes or not), we can just store the summary inside the `body` (e.g. by separating summary and body with a delimiter like `<!-- summary-split -->` or similar, or just extracting the first sentence/paragraph as the summary), OR we can add a summary field to the backend model!
-  // Wait, let's see. If we look at the backend controller `policy.controller.ts`, it does not explicitly filter out extra fields from `req.body` if they are not defined, but mongoose schema will strip out fields not defined in the schema.
-  // Let's see: is it easy to add `summary: { type: BilingualStringSchema }` to `backend/src/models/PolicyArticle.model.ts`?
-  // Yes, absolutely! We can modify the model and controller to support a summary bilingual field so that admins can edit the summary separately! It's much cleaner and professional.
-  // Let's check if we should do that, or if the public page can just generate a summary by truncating the body (e.g., `truncate(body, 180)`).
-  // Actually, generating a summary by truncating the body is extremely robust and does not require any backend database changes or API updates. It works out-of-the-box!
-  // But wait! If we look at the hardcoded articles in `policy-issues/page.tsx`:
-  // Article 1:
-  // `summaryEn: "A study on how deforestation and shifting monsoons affect the local springs and tribal villages in Purulia."`
-  // `bodyEn: "The Ajodhya Hills region in Purulia has seen a consistent drop in water levels in natural springs..."`
-  // The summary is a short description of the article, while the body is the detailed article text.
-  // If we can just truncate the body, it works fine. But if we want exact control, we can add a summary. Let's see if we can just do the truncation or extract the first paragraph/line. Truncation is very standard.
-  // Wait, let's look at the body text in hardcoded articles. They are about 3-5 sentences.
-  // If we display the body or truncate it for the summary, it will look perfect!
-  // Let's see: `summaryEn` is about 120-150 chars. We can simply input a single `body` field in English and Bengali, and use a helper function to truncate it for the list view, or let the user write the whole article and we display the truncated version on the card.
-  // Actually, let's check if we can add a summary field. Let's look at the backend model `PolicyArticle.model.ts` again.
-  // If we modify the backend model, it's very simple. But to be safe and avoid database schema conflicts, let's just use the `body` field. On the public page, we can show the title, tag, date, and a summary which is the truncated `body` (e.g. `truncate(art.bodyEn, 150)`), and then show the full `body` in the modal dialog! This is 100% compatible with the existing backend schema and doesn't require any backend changes!
-  // Let's double check if we should do this. Yes, this is extremely clean and safe.
-
   const [bodyEn, setBodyEn] = useState("");
   const [bodyBn, setBodyBn] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -106,7 +64,7 @@ export default function AdminPolicyIssues() {
       setArticles(unique);
     } catch (error) {
       console.error("[FETCH POLICIES ERROR]", error);
-      toast.error("Failed to load policy articles");
+      toast.error("Failed to load news & updates");
     } finally {
       setLoading(false);
     }
@@ -186,40 +144,40 @@ export default function AdminPolicyIssues() {
       if (editId) {
         const res = await adminApi.updatePolicyArticle(editId, formData);
         if (res.data.success) {
-          toast.success("Policy article updated successfully!");
+          toast.success("News & Updates updated successfully!");
           setModalOpen(false);
           fetchArticles();
         }
       } else {
         const res = await adminApi.createPolicyArticle(formData);
         if (res.data.success) {
-          toast.success("Policy article created successfully!");
+          toast.success("News & Updates created successfully!");
           setModalOpen(false);
           fetchArticles();
         }
       }
     } catch (error: any) {
       console.error("[SUBMIT POLICY ERROR]", error);
-      toast.error(error.response?.data?.message || "Failed to save policy article");
+      toast.error(error.response?.data?.message || "Failed to save news & updates");
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this policy article?")) {
+    if (!window.confirm("Are you sure you want to delete this News article?")) {
       return;
     }
 
     try {
       const res = await adminApi.deletePolicyArticle(id);
       if (res.data.success) {
-        toast.success("Policy article deleted successfully!");
+        toast.success("News article deleted successfully!");
         fetchArticles();
       }
     } catch (error) {
       console.error("[DELETE POLICY ERROR]", error);
-      toast.error("Failed to delete policy article");
+      toast.error("Failed to delete news article");
     }
   };
 
@@ -239,9 +197,9 @@ export default function AdminPolicyIssues() {
               <ArrowLeft size={16} /> Back to Dashboard
             </Link>
           </div>
-          <h1 style={{ fontSize: "2rem", color: "var(--color-deep-blue)", fontWeight: 800 }}>Manage Policy Issues</h1>
+          <h1 style={{ fontSize: "2rem", color: "var(--color-deep-blue)", fontWeight: 800 }}>Manage News & Updates </h1>
           <p style={{ color: "var(--color-text-muted)", fontSize: "0.95rem" }}>
-            Publish research articles, scientific viewpoint papers, and policy issue alerts for Purulia.
+            Publish research articles, scientific viewpoint papers, and news & updates alerts for Purulia.
           </p>
         </div>
         <button
@@ -250,7 +208,7 @@ export default function AdminPolicyIssues() {
           style={{ borderRadius: "var(--radius-md)", display: "flex", alignItems: "center", gap: "0.5rem" }}
         >
           <Plus size={18} />
-          Add Policy Article
+          Add News Article
         </button>
       </div>
 
@@ -314,7 +272,7 @@ export default function AdminPolicyIssues() {
         <div className="card" style={{ padding: "4rem 2rem", textAlign: "center", color: "var(--color-text-muted)" }}>
           <FileText size={48} style={{ margin: "0 auto 1.5rem", opacity: 0.4, color: "var(--color-deep-blue)" }} />
           <p style={{ fontSize: "1.1rem", marginBottom: "0.5rem" }}>No articles found</p>
-          <p style={{ fontSize: "0.9rem" }}>Get started by clicking the "Add Policy Article" button above.</p>
+          <p style={{ fontSize: "0.9rem" }}>{`Get started by clicking the "Add News Article" button above.`}</p>
         </div>
       ) : (
         <div className="card animate-fade-in" style={{ overflowX: "auto", background: "#ffffff" }}>
@@ -451,7 +409,7 @@ export default function AdminPolicyIssues() {
             {/* Modal Header */}
             <div style={{ padding: "1.5rem 2rem", borderBottom: "1px solid var(--color-mid-gray)" }}>
               <h3 style={{ fontSize: "1.35rem", fontWeight: 750, color: "var(--color-deep-blue)", margin: 0 }}>
-                {editId ? "Edit Policy Article" : "Create Policy Article"}
+                {editId ? "Edit News Article" : "Create News Article"}
               </h3>
             </div>
 
@@ -658,7 +616,7 @@ export default function AdminPolicyIssues() {
                   style={{ flex: 1, borderRadius: "var(--radius-md)", padding: "0.6rem 0" }}
                   disabled={submitting}
                 >
-                  {submitting ? "Saving..." : "Save Policy Article"}
+                  {submitting ? "Saving..." : "Save News Article"}
                 </button>
               </div>
 

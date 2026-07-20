@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { FileText, Calendar, Tag, BookOpen } from "lucide-react"
+import { FileText, Calendar, Tag} from "lucide-react"
 import { publicApi } from "@/lib/api"
 
 interface BackendPolicyArticle {
@@ -70,7 +70,7 @@ const SEED_ARTICLES = [
 ]
 
 export default function PolicyIssuesPage() {
-  const { language, t } = useLanguage()
+  const { t } = useLanguage()
   const [selectedTag, setSelectedTag] = useState<string>("All")
   const [articles, setArticles] = useState<BackendPolicyArticle[]>([])
   const [loading, setLoading] = useState(true)
@@ -88,7 +88,7 @@ export default function PolicyIssuesPage() {
           setArticles(SEED_ARTICLES as any)
         }
       } catch (error) {
-        console.error("Failed to load policy articles from backend:", error)
+        console.error("Failed to load news & updates from backend:", error)
         // Fallback to seed articles on error
         setArticles(SEED_ARTICLES as any)
       } finally {
@@ -128,12 +128,12 @@ export default function PolicyIssuesPage() {
         <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(to right,rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.04) 1px,transparent 1px)", backgroundSize: "40px 40px", pointerEvents: "none" }} />
         <div className="page-container" style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
           <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(1.8rem,4.5vw,3rem)", fontWeight: 800, color: "#ffffff", marginBottom: "1rem", lineHeight: 1.2 }}>
-            {t("Policy Issues & Editorial Articles", "নীতিমালা ও বিজ্ঞান প্রবন্ধ")}
+            {t("News & Updates", "সংবাদ ও আপডেট")}
           </h1>
           <p style={{ fontFamily: "var(--font-body)", fontSize: "1rem", color: "rgba(255,255,255,0.78)", maxWidth: "600px", margin: "0 auto", lineHeight: 1.75 }}>
             {t(
-              "Read research articles, environmental warnings, and scientific viewpoints on water, public health, education, and anti-superstition campaigns in Purulia.",
-              "পুরুলিয়ার জলসংকট, জনস্বাস্থ্য, শিক্ষা ব্যবস্থা এবং কুসংস্কার বিরোধী আন্দোলনের উপর আমাদের বিজ্ঞানকর্মী ও গবেষকদের বিভিন্ন প্রবন্ধ পড়ুন।"
+              "Read research articles, latest news & updates, environmental warnings, and scientific viewpoints on water, public health, education, and anti-superstition campaigns in Purulia.",
+              "পুরুলিয়ার জলসংকট, সংবাদ ও আপডেট, জনস্বাস্থ্য, শিক্ষা ব্যবস্থা এবং কুসংস্কার বিরোধী আন্দোলনের উপর আমাদের বিজ্ঞানকর্মী ও গবেষকদের বিভিন্ন প্রবন্ধ পড়ুন।"
             )}
           </p>
         </div>

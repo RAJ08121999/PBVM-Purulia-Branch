@@ -50,7 +50,7 @@ export const Footer = () => {
     { href: "/events", labelEn: "Upcoming Events", labelBn: "ইভেন্টসমূহ" },
     { href: "/gallery", labelEn: "Photo Gallery", labelBn: "ছবি গ্যালারি" },
     { href: "/publications", labelEn: "Publications", labelBn: "প্রকাশনা" },
-    { href: "/policy-issues", labelEn: "Policy Issues", labelBn: "নীতিমালা" },
+    { href: "/policy-issues", labelEn: "News & Updates", labelBn: "সংবাদ ও আপডেট" },
     { href: "/downloads", labelEn: "Downloads", labelBn: "ডাউনলোড" },
   ]
 
@@ -112,18 +112,18 @@ export const Footer = () => {
                 <MapPin style={{ width: "1.25rem", height: "1.25rem", color: "#0D9488", flexShrink: 0, marginTop: "0.125rem" }} />
                 <span>
                   {t(
-                    "Students Health Home Near Purulia Municipality, North Lake Road, Purulia, West Bengal, Pin - 723101",
+                    "Students Health Home Near Purulia Municipality, North Lake Road And ABPTA Hall Near Hat Tola Book Shops, Purulia, West Bengal, Pin - 723101",
                     "ছাত্র-ছাত্রী স্বাস্থ্য ভবন, পুরুলিয়া পৌরসভা সংলগ্ন, উত্তর লেক রোড, পুরুলিয়া, পশ্চিমবঙ্গ, পিন - ৭২৩১০১"
                   )}
                 </span>
               </div>
               <div style={{ display: "flex", gap: "0.625rem", alignItems: "center" }}>
                 <Phone style={{ width: "1.25rem", height: "1.25rem", color: "#0D9488", flexShrink: 0 }} />
-                <span>+91 3252 222413</span>
+                <span>+91 9476373607</span>
               </div>
               <div style={{ display: "flex", gap: "0.625rem", alignItems: "center" }}>
                 <Mail style={{ width: "1.25rem", height: "1.25rem", color: "#0D9488", flexShrink: 0 }} />
-                <span>purulia.pbvm@gmail.com</span>
+                <span>rajmd1800@gmail.com</span>
               </div>
             </div>
           </div>

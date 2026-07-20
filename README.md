@@ -69,7 +69,7 @@ npm run dev                         # http://localhost:5000
 | Event Detail     | `/events/[id]`               |
 | Gallery          | `/gallery`                   |
 | Publications     | `/publications`              |
-| Policy Issues    | `/policy-issues`             |
+| News & Updates    | `/policy-issues`             |
 | Downloads        | `/downloads`                 |
 | Contact          | `/contact`                   |
 | Join Us          | `/join-us`                   |

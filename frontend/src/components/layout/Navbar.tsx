@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useLanguage } from "@/context/LanguageContext"
 import { cn } from "@/lib/utils"
-import { Globe, Menu, X } from "lucide-react"
+import { Globe, Menu} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -27,7 +27,7 @@ export const Navbar = () => {
     { href: "/events", labelEn: "Events", labelBn: "ইভেন্টসমূহ" },
     { href: "/gallery", labelEn: "Gallery", labelBn: "গ্যালারি" },
     { href: "/publications", labelEn: "Publications", labelBn: "প্রকাশনা" },
-    { href: "/policy-issues", labelEn: "Policy Issues", labelBn: "নীতিমালা" },
+    { href: "/policy-issues", labelEn: "News & Updates", labelBn: "সংবাদ ও আপডেট" },
     { href: "/downloads", labelEn: "Downloads", labelBn: "ডাউনলোড" },
     { href: "/contact", labelEn: "Contact", labelBn: "যোগাযোগ" },
   ]
@@ -140,7 +140,7 @@ export const Navbar = () => {
                   <Menu className="h-6 w-6" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[280px] sm:w-[350px] p-6 bg-white dark:bg-black">
+              <SheetContent side="right" className="w-70 sm:w-87.5 p-6 bg-white dark:bg-black">
                 <SheetHeader className="text-left border-b border-zinc-100 pb-4 mb-4 px-6 dark:border-zinc-900 ">
                   <SheetTitle className="flex items-center gap-2">
                     <img
